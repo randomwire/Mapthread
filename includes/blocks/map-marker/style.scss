@@ -1,0 +1,27 @@
+/**
+ * Map Marker Block Styles
+ *
+ * @package Pathway
+ */
+
+// Editor placeholder styles
+.pathway-map-marker-placeholder {
+    padding: 0.75rem 1rem;
+    background-color: #fff8e6;
+    border: 1px dashed #e6a700;
+    border-radius: 4px;
+
+    p {
+        margin: 0;
+        color: #996600;
+        font-size: 0.875rem;
+    }
+}
+
+// Frontend styles - invisible by default (acts as scroll trigger)
+.pathway-marker {
+    // Invisible anchor point - theme can optionally style as visible
+    display: block;
+    height: 0;
+    overflow: hidden;
+}

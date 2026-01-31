@@ -1,0 +1,45 @@
+{
+    "$schema": "https://schemas.wp.org/trunk/block.json",
+    "apiVersion": 2,
+    "name": "pathway/map-marker",
+    "version": "0.1.0",
+    "title": "Map Marker",
+    "category": "media",
+    "icon": "location",
+    "description": "Mark a location on the map that corresponds to this point in your story.",
+    "keywords": ["map", "marker", "waypoint", "location", "pathway"],
+    "textdomain": "pathway",
+    "attributes": {
+        "id": {
+            "type": "string",
+            "default": ""
+        },
+        "title": {
+            "type": "string",
+            "default": ""
+        },
+        "lat": {
+            "type": "number",
+            "default": 0
+        },
+        "lng": {
+            "type": "number",
+            "default": 0
+        },
+        "address": {
+            "type": "string",
+            "default": ""
+        },
+        "zoom": {
+            "type": "integer",
+            "default": 14
+        }
+    },
+    "supports": {
+        "html": false,
+        "align": false,
+        "customClassName": false
+    },
+    "editorScript": "file:../../../build/blocks/map-marker/index.js",
+    "style": "file:../../../build/blocks/map-marker/style-style.css"
+}

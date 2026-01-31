@@ -1,0 +1,24 @@
+/**
+ * Map GPX Block Styles
+ *
+ * @package Pathway
+ */
+
+// Editor placeholder styles
+.pathway-map-gpx-placeholder {
+    padding: 1rem;
+    background-color: #f0f0f0;
+    border: 1px dashed #ccc;
+    border-radius: 4px;
+    text-align: center;
+
+    p {
+        margin: 0;
+        color: #666;
+    }
+}
+
+// Frontend styles - minimal, inherits from theme
+.pathway-map-gpx {
+    // Container for map - styles will be added in Phase 5
+}

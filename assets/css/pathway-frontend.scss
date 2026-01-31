@@ -1,0 +1,60 @@
+/**
+ * Pathway Frontend Styles
+ *
+ * Layout and map container styles for the frontend display.
+ *
+ * @package Pathway
+ */
+
+// CSS Custom Properties - can be overridden by theme
+:root {
+    --pathway-map-height: 100vh;
+    --pathway-map-height-mobile: 30vh;
+    --pathway-grid-gap: 2rem;
+    --pathway-track-color: #3388ff;
+    --pathway-track-width: 3px;
+    --pathway-marker-color: var(--wp--preset--color--primary, #e74c3c);
+}
+
+// Main story container - provides 2-column layout
+// Full implementation coming in Phase 5
+.pathway-story-container {
+    // Desktop: 2-column grid (3:2 ratio)
+    @media (min-width: 768px) {
+        display: grid;
+        grid-template-columns: 3fr 2fr;
+        gap: var(--pathway-grid-gap);
+    }
+}
+
+// Map container
+.pathway-map {
+    // Desktop: sticky sidebar
+    @media (min-width: 768px) {
+        position: sticky;
+        top: 0;
+        height: var(--pathway-map-height);
+    }
+
+    // Mobile: sticky at top
+    @media (max-width: 767px) {
+        position: sticky;
+        top: 0;
+        height: var(--pathway-map-height-mobile);
+        z-index: 100;
+    }
+}
+
+// Leaflet map instance
+.pathway-map-instance {
+    width: 100%;
+    height: 100%;
+}
+
+// Story content wrapper
+.pathway-story-content {
+    // Inherits from theme - minimal custom styles
+}
+
+// Marker pins on map - styled via Leaflet, colors via CSS custom props
+// Implementation in Phase 4

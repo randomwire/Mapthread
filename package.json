@@ -1,0 +1,29 @@
+{
+  "name": "pathway",
+  "version": "0.1.0",
+  "description": "WordPress plugin for interactive map-based storytelling",
+  "scripts": {
+    "build": "wp-scripts build",
+    "start": "wp-scripts start",
+    "lint:js": "wp-scripts lint-js",
+    "format": "wp-scripts format",
+    "packages-update": "wp-scripts packages-update"
+  },
+  "keywords": [
+    "wordpress",
+    "gutenberg",
+    "block",
+    "map",
+    "gpx",
+    "leaflet"
+  ],
+  "author": "David Gilbert",
+  "license": "GPL-2.0-or-later",
+  "devDependencies": {
+    "@babel/runtime": "^7.28.6",
+    "@wordpress/scripts": "^28.0.0"
+  },
+  "dependencies": {
+    "leaflet": "^1.9.4"
+  }
+}

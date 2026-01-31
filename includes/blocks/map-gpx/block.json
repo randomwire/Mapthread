@@ -1,0 +1,42 @@
+{
+    "$schema": "https://schemas.wp.org/trunk/block.json",
+    "apiVersion": 2,
+    "name": "pathway/map-gpx",
+    "version": "0.1.0",
+    "title": "Map GPX",
+    "category": "media",
+    "icon": "location-alt",
+    "description": "Upload and display a GPX track on an interactive map.",
+    "keywords": ["map", "gpx", "track", "route", "pathway"],
+    "textdomain": "pathway",
+    "attributes": {
+        "attachmentId": {
+            "type": "integer",
+            "default": 0
+        },
+        "fileName": {
+            "type": "string",
+            "default": ""
+        },
+        "pointCount": {
+            "type": "integer",
+            "default": 0
+        },
+        "bounds": {
+            "type": "object",
+            "default": {
+                "north": 0,
+                "south": 0,
+                "east": 0,
+                "west": 0
+            }
+        }
+    },
+    "supports": {
+        "html": false,
+        "align": false,
+        "customClassName": false
+    },
+    "editorScript": "file:../../../build/blocks/map-gpx/index.js",
+    "style": "file:../../../build/blocks/map-gpx/style-style.css"
+}
