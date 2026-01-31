@@ -16,8 +16,122 @@
     --pathway-marker-color: var(--wp--preset--color--primary, #e74c3c);
 }
 
-// Main story container - provides 2-column layout
-// Full implementation coming in Phase 5
+// Map container
+#pathway-map,
+.pathway-map {
+    width: 100%;
+    height: 500px;
+    z-index: 1;
+    background: #f0f0f0;
+
+    // Will be positioned properly in Phase 5
+    // For now, displays inline after GPX block
+}
+
+// Numbered marker pins
+.pathway-marker-icon {
+    background: transparent;
+    border: none;
+}
+
+.pathway-marker-pin {
+    position: relative;
+    width: 30px;
+    height: 40px;
+    background: var(--pathway-marker-color);
+    clip-path: polygon(
+        50% 100%,
+        0% 38%,
+        0% 15%,
+        15% 0%,
+        85% 0%,
+        100% 15%,
+        100% 38%
+    );
+    display: flex;
+    align-items: flex-start;
+    justify-content: center;
+    cursor: pointer;
+    transition: transform 0.2s ease, filter 0.2s ease;
+    filter: drop-shadow(0 2px 4px rgba(0, 0, 0, 0.3));
+
+    &:hover {
+        transform: scale(1.1);
+    }
+
+    // Active marker state
+    &--active {
+        transform: scale(1.15);
+        filter: drop-shadow(0 3px 6px rgba(0, 0, 0, 0.4));
+        z-index: 1000;
+    }
+}
+
+.pathway-marker-number {
+    position: absolute;
+    top: 6px;
+    left: 50%;
+    transform: translateX(-50%);
+    color: white;
+    font-size: 14px;
+    font-weight: 700;
+    line-height: 1;
+    text-shadow: 0 1px 2px rgba(0, 0, 0, 0.3);
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+}
+
+// Leaflet tooltip overrides
+.leaflet-tooltip {
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen-Sans, Ubuntu, Cantarell, 'Helvetica Neue', sans-serif;
+    font-size: 14px;
+    font-weight: 500;
+    padding: 6px 10px;
+    background: rgba(0, 0, 0, 0.85);
+    color: white;
+    border: none;
+    border-radius: 4px;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
+}
+
+.leaflet-tooltip-top:before {
+    border-top-color: rgba(0, 0, 0, 0.85);
+}
+
+// Map controls
+.leaflet-control-zoom {
+    border: 2px solid rgba(0, 0, 0, 0.1) !important;
+    border-radius: 4px !important;
+
+    a {
+        color: #333 !important;
+
+        &:hover {
+            background-color: #f4f4f4 !important;
+        }
+    }
+}
+
+// Attribution styling
+.leaflet-control-attribution {
+    font-size: 10px;
+    background: rgba(255, 255, 255, 0.8) !important;
+}
+
+// Hide GPX block on frontend (invisible, just holds data)
+.pathway-map-gpx {
+    display: none;
+}
+
+// Hide marker blocks on frontend (invisible scroll triggers)
+.pathway-marker {
+    display: block;
+    height: 0;
+    overflow: hidden;
+    // Acts only as scroll position trigger
+}
+
+// Main story container - placeholder for Phase 5
+// Full 2-column layout will be implemented there
 .pathway-story-container {
     // Desktop: 2-column grid (3:2 ratio)
     @media (min-width: 768px) {
@@ -27,34 +141,7 @@
     }
 }
 
-// Map container
-.pathway-map {
-    // Desktop: sticky sidebar
-    @media (min-width: 768px) {
-        position: sticky;
-        top: 0;
-        height: var(--pathway-map-height);
-    }
-
-    // Mobile: sticky at top
-    @media (max-width: 767px) {
-        position: sticky;
-        top: 0;
-        height: var(--pathway-map-height-mobile);
-        z-index: 100;
-    }
-}
-
-// Leaflet map instance
-.pathway-map-instance {
-    width: 100%;
-    height: 100%;
-}
-
 // Story content wrapper
 .pathway-story-content {
     // Inherits from theme - minimal custom styles
 }
-
-// Marker pins on map - styled via Leaflet, colors via CSS custom props
-// Implementation in Phase 4
