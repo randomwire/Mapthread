@@ -35,6 +35,10 @@ class Pathway {
 
         // Add body class for posts with Pathway blocks
         add_filter( 'body_class', array( $this, 'add_body_class' ) );
+
+        // Allow GPX file uploads
+        add_filter( 'upload_mimes', array( $this, 'allow_gpx_uploads' ) );
+        add_filter( 'wp_check_filetype_and_ext', array( $this, 'check_gpx_filetype' ), 10, 4 );
     }
 
     /**
@@ -134,5 +138,45 @@ class Pathway {
         }
 
         return $classes;
+    }
+
+    /**
+     * Allow GPX file uploads
+     *
+     * @param array $mimes Existing MIME types
+     * @return array Modified MIME types
+     */
+    public function allow_gpx_uploads( $mimes ) {
+        $mimes['gpx'] = 'application/gpx+xml';
+        return $mimes;
+    }
+
+    /**
+     * Check GPX file type on upload
+     *
+     * @param array $data File data from wp_check_filetype_and_ext
+     * @param string $file Full path to the file
+     * @param string $filename The name of the file
+     * @param array $mimes Array of allowed MIME types
+     * @return array Modified file data
+     */
+    public function check_gpx_filetype( $data, $file, $filename, $mimes ) {
+        $ext = strtolower( pathinfo( $filename, PATHINFO_EXTENSION ) );
+
+        if ( $ext === 'gpx' ) {
+            // Read first few bytes to verify it's XML with GPX content
+            $file_content = file_get_contents( $file, false, null, 0, 500 );
+
+            if ( $file_content !== false &&
+                 strpos( $file_content, '<?xml' ) !== false &&
+                 strpos( $file_content, '<gpx' ) !== false ) {
+                // It's a valid GPX file
+                $data['ext'] = 'gpx';
+                $data['type'] = 'application/gpx+xml';
+                $data['proper_filename'] = $filename;
+            }
+        }
+
+        return $data;
     }
 }
