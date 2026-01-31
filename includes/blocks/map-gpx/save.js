@@ -14,13 +14,14 @@ import { useBlockProps } from '@wordpress/block-editor';
  */
 export default function save( { attributes } ) {
     const blockProps = useBlockProps.save();
-    const { attachmentId, bounds } = attributes;
+    const { attachmentId, gpxUrl, bounds } = attributes;
 
     return (
         <div
             { ...blockProps }
             className="pathway-map-gpx"
             data-attachment-id={ attachmentId }
+            data-gpx-url={ gpxUrl }
             data-bounds={ JSON.stringify( bounds ) }
         />
     );

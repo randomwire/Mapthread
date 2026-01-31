@@ -18,6 +18,10 @@
             "type": "string",
             "default": ""
         },
+        "gpxUrl": {
+            "type": "string",
+            "default": ""
+        },
         "pointCount": {
             "type": "integer",
             "default": 0

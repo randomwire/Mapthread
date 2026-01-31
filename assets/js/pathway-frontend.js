@@ -96,27 +96,6 @@
     }
 
     /**
-     * Get GPX file URL from attachment ID
-     * We need to get this from the WordPress REST API
-     *
-     * @param {number} attachmentId - WordPress attachment ID
-     * @return {Promise<string|null>} GPX file URL
-     */
-    async function getAttachmentUrl( attachmentId ) {
-        try {
-            const response = await fetch( `/wp-json/wp/v2/media/${attachmentId}` );
-            if ( ! response.ok ) {
-                throw new Error( `HTTP ${response.status}` );
-            }
-            const data = await response.json();
-            return data.source_url || null;
-        } catch ( error ) {
-            console.error( 'Pathway: Failed to get attachment URL', error );
-            return null;
-        }
-    }
-
-    /**
      * Create numbered marker icon
      *
      * @param {number} number - Marker number
@@ -421,12 +400,13 @@
             return; // No GPX block, nothing to do
         }
 
-        // Get GPX data
+        // Get GPX data from block attributes
         const attachmentId = parseInt( gpxBlock.dataset.attachmentId );
+        const gpxUrl = gpxBlock.dataset.gpxUrl;
         const boundsData = gpxBlock.dataset.bounds;
 
-        if ( ! attachmentId ) {
-            console.warn( 'Pathway: Missing GPX attachment ID' );
+        if ( ! gpxUrl ) {
+            console.warn( 'Pathway: Missing GPX URL' );
             return;
         }
 
@@ -443,16 +423,11 @@
         map = initializeMap( bounds );
 
         // Fetch and render GPX track
-        const gpxUrl = await getAttachmentUrl( attachmentId );
-        if ( gpxUrl ) {
-            const coords = await fetchGPX( attachmentId, gpxUrl );
-            if ( coords.length > 0 ) {
-                addGPXTrack( coords );
-            } else {
-                console.warn( 'Pathway: No track coordinates found in GPX' );
-            }
+        const coords = await fetchGPX( attachmentId, gpxUrl );
+        if ( coords.length > 0 ) {
+            addGPXTrack( coords );
         } else {
-            console.warn( 'Pathway: Could not get GPX URL' );
+            console.warn( 'Pathway: No track coordinates found in GPX' );
         }
 
         // Add marker pins

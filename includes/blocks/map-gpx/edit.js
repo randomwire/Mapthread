@@ -163,6 +163,7 @@ export default function Edit( { attributes, setAttributes, clientId } ) {
             setAttributes( {
                 attachmentId: media.id,
                 fileName: media.filename,
+                gpxUrl: media.url,
                 pointCount: parsed.pointCount,
                 bounds: parsed.bounds
             } );
@@ -181,6 +182,7 @@ export default function Edit( { attributes, setAttributes, clientId } ) {
         setAttributes( {
             attachmentId: 0,
             fileName: '',
+            gpxUrl: '',
             pointCount: 0,
             bounds: { north: 0, south: 0, east: 0, west: 0 }
         } );
