@@ -4,8 +4,90 @@
  * @package Pathway
  */
 
-import { __ } from '@wordpress/i18n';
-import { useBlockProps } from '@wordpress/block-editor';
+import { __, sprintf } from '@wordpress/i18n';
+import { useBlockProps, InspectorControls } from '@wordpress/block-editor';
+import {
+    PanelBody,
+    TextControl,
+    Notice,
+    __experimentalNumberControl as NumberControl
+} from '@wordpress/components';
+import { useEffect } from '@wordpress/element';
+
+/**
+ * Generate a unique ID for the marker
+ *
+ * @return {string} Unique ID
+ */
+function generateUniqueId() {
+    return `marker-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`;
+}
+
+/**
+ * Calculate distance between two coordinates using Haversine formula
+ *
+ * @param {number} lat1 First latitude
+ * @param {number} lon1 First longitude
+ * @param {number} lat2 Second latitude
+ * @param {number} lon2 Second longitude
+ * @return {number} Distance in kilometers
+ */
+function calculateDistance( lat1, lon1, lat2, lon2 ) {
+    const R = 6371; // Earth's radius in km
+    const dLat = ( lat2 - lat1 ) * Math.PI / 180;
+    const dLon = ( lon2 - lon1 ) * Math.PI / 180;
+    const a =
+        Math.sin( dLat / 2 ) * Math.sin( dLat / 2 ) +
+        Math.cos( lat1 * Math.PI / 180 ) * Math.cos( lat2 * Math.PI / 180 ) *
+        Math.sin( dLon / 2 ) * Math.sin( dLon / 2 );
+    const c = 2 * Math.atan2( Math.sqrt( a ), Math.sqrt( 1 - a ) );
+    return R * c;
+}
+
+/**
+ * Check if marker is within reasonable distance of GPX bounds
+ *
+ * @param {number} lat Marker latitude
+ * @param {number} lng Marker longitude
+ * @param {Object} bounds GPX bounds object
+ * @return {Object} Result with isNear boolean and distance
+ */
+function checkDistanceFromTrack( lat, lng, bounds ) {
+    if ( ! bounds || bounds.north === 0 ) {
+        return { isNear: true, distance: 0 };
+    }
+
+    // Calculate distance to each corner of bounds
+    const distances = [
+        calculateDistance( lat, lng, bounds.north, bounds.east ),
+        calculateDistance( lat, lng, bounds.north, bounds.west ),
+        calculateDistance( lat, lng, bounds.south, bounds.east ),
+        calculateDistance( lat, lng, bounds.south, bounds.west )
+    ];
+
+    // Also check center point
+    const centerLat = ( bounds.north + bounds.south ) / 2;
+    const centerLng = ( bounds.east + bounds.west ) / 2;
+    distances.push( calculateDistance( lat, lng, centerLat, centerLng ) );
+
+    // Get minimum distance
+    const minDistance = Math.min( ...distances );
+
+    return {
+        isNear: minDistance <= 50, // 50km threshold
+        distance: Math.round( minDistance )
+    };
+}
+
+/**
+ * Find Map GPX block on the page
+ *
+ * @return {Object|null} GPX block or null
+ */
+function findGPXBlock() {
+    const blocks = wp.data.select( 'core/block-editor' ).getBlocks();
+    return blocks.find( block => block.name === 'pathway/map-gpx' ) || null;
+}
 
 /**
  * Edit component for Map Marker block
@@ -13,23 +95,141 @@ import { useBlockProps } from '@wordpress/block-editor';
  * @param {Object} props Block props
  * @return {Element} Block editor element
  */
-export default function Edit( { attributes } ) {
+export default function Edit( { attributes, setAttributes, clientId } ) {
     const blockProps = useBlockProps();
-    const { title, lat, lng } = attributes;
+    const { id, title, lat, lng, address, zoom } = attributes;
 
-    const hasLocation = lat !== 0 || lng !== 0;
+    // Auto-generate ID on mount if not set
+    useEffect( () => {
+        if ( ! id ) {
+            setAttributes( { id: generateUniqueId() } );
+        }
+    }, [] );
+
+    // Find GPX block and check distance
+    const gpxBlock = findGPXBlock();
+    const hasGPXBlock = !! gpxBlock;
+    const gpxBounds = gpxBlock?.attributes?.bounds;
+
+    // Validate coordinates
+    const hasValidCoords = lat !== 0 || lng !== 0;
+    const isMissingCoords = ! lat && ! lng;
+
+    // Check distance from GPX track
+    let distanceWarning = null;
+    if ( hasValidCoords && hasGPXBlock && gpxBounds ) {
+        const distanceCheck = checkDistanceFromTrack( lat, lng, gpxBounds );
+        if ( ! distanceCheck.isNear ) {
+            distanceWarning = sprintf(
+                /* translators: %d is the distance in kilometers */
+                __( 'This marker is %d km from the GPX track. Is this intentional?', 'pathway' ),
+                distanceCheck.distance
+            );
+        }
+    }
 
     return (
-        <div { ...blockProps }>
-            <div className="pathway-map-marker-placeholder">
-                { hasLocation ? (
-                    <p>
-                        📍 { title || __( 'Untitled Marker', 'pathway' ) } ({ lat.toFixed( 4 ) }, { lng.toFixed( 4 ) })
-                    </p>
-                ) : (
-                    <p>{ __( 'Map Marker block - Input functionality coming in Phase 3', 'pathway' ) }</p>
-                ) }
+        <>
+            <InspectorControls>
+                <PanelBody title={ __( 'Marker Settings', 'pathway' ) } initialOpen={ true }>
+                    <TextControl
+                        label={ __( 'Marker Title', 'pathway' ) }
+                        value={ title }
+                        onChange={ ( value ) => setAttributes( { title: value } ) }
+                        placeholder={ __( 'Enter marker title...', 'pathway' ) }
+                        help={ __( 'This will be displayed on the map pin', 'pathway' ) }
+                    />
+
+                    <NumberControl
+                        label={ __( 'Latitude', 'pathway' ) }
+                        value={ lat }
+                        onChange={ ( value ) => setAttributes( { lat: parseFloat( value ) || 0 } ) }
+                        placeholder="51.5074"
+                        help={ __( 'Decimal degrees (e.g., 51.5074)', 'pathway' ) }
+                        step={ 0.0001 }
+                    />
+
+                    <NumberControl
+                        label={ __( 'Longitude', 'pathway' ) }
+                        value={ lng }
+                        onChange={ ( value ) => setAttributes( { lng: parseFloat( value ) || 0 } ) }
+                        placeholder="-0.1278"
+                        help={ __( 'Decimal degrees (e.g., -0.1278)', 'pathway' ) }
+                        step={ 0.0001 }
+                    />
+
+                    <TextControl
+                        label={ __( 'Address (optional)', 'pathway' ) }
+                        value={ address }
+                        onChange={ ( value ) => setAttributes( { address: value } ) }
+                        placeholder={ __( 'e.g., London, UK', 'pathway' ) }
+                        help={ __( 'Helper note for reference only', 'pathway' ) }
+                    />
+
+                    <NumberControl
+                        label={ __( 'Zoom Level', 'pathway' ) }
+                        value={ zoom }
+                        onChange={ ( value ) => setAttributes( { zoom: parseInt( value ) || 14 } ) }
+                        min={ 1 }
+                        max={ 18 }
+                        help={ __( 'Map zoom when this marker is active (1-18, default: 14)', 'pathway' ) }
+                    />
+                </PanelBody>
+            </InspectorControls>
+
+            <div { ...blockProps }>
+                <div className="pathway-map-marker-editor">
+                    { ! hasGPXBlock && (
+                        <Notice status="warning" isDismissible={ false }>
+                            { __( 'No Map GPX block found on this page. Add a Map GPX block to display the route.', 'pathway' ) }
+                        </Notice>
+                    ) }
+
+                    { isMissingCoords && (
+                        <Notice status="error" isDismissible={ false }>
+                            { __( 'Please enter latitude and longitude in the block settings (sidebar).', 'pathway' ) }
+                        </Notice>
+                    ) }
+
+                    { distanceWarning && (
+                        <Notice status="warning" isDismissible={ true }>
+                            { distanceWarning }
+                        </Notice>
+                    ) }
+
+                    <div className="pathway-map-marker-display">
+                        <div className="pathway-map-marker-icon">
+                            <span className="dashicons dashicons-location"></span>
+                        </div>
+                        <div className="pathway-map-marker-info">
+                            { title ? (
+                                <strong className="pathway-map-marker-title">{ title }</strong>
+                            ) : (
+                                <em className="pathway-map-marker-title-empty">
+                                    { __( 'Untitled Marker', 'pathway' ) }
+                                </em>
+                            ) }
+                            <div className="pathway-map-marker-coords">
+                                { hasValidCoords ? (
+                                    <>
+                                        { Math.abs( lat ).toFixed( 4 ) }°{ lat >= 0 ? 'N' : 'S' },
+                                        { ' ' }
+                                        { Math.abs( lng ).toFixed( 4 ) }°{ lng >= 0 ? 'E' : 'W' }
+                                        { address && (
+                                            <>
+                                                { ' • ' }
+                                                <span className="pathway-map-marker-address">{ address }</span>
+                                            </>
+                                        ) }
+                                    </>
+                                ) : (
+                                    <em>{ __( 'No coordinates set', 'pathway' ) }</em>
+                                ) }
+                            </div>
+                        </div>
+                    </div>
+                </div>
             </div>
-        </div>
+        </>
     );
 }
