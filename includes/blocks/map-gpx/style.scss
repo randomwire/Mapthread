@@ -4,21 +4,58 @@
  * @package Pathway
  */
 
-// Editor placeholder styles
-.pathway-map-gpx-placeholder {
-    padding: 1rem;
-    background-color: #f0f0f0;
-    border: 1px dashed #ccc;
-    border-radius: 4px;
-    text-align: center;
+// Editor styles
+.wp-block-pathway-map-gpx {
+    .pathway-map-gpx-editor {
+        padding: 1.5rem;
+        border: 1px solid #ddd;
+        border-radius: 4px;
+        background: #f9f9f9;
+    }
 
-    p {
-        margin: 0;
-        color: #666;
+    .pathway-map-gpx-info {
+        display: flex;
+        align-items: flex-start;
+        gap: 1rem;
+        margin-bottom: 1rem;
+    }
+
+    .pathway-map-gpx-icon {
+        font-size: 2rem;
+        color: #2271b1;
+
+        .dashicons {
+            width: 2rem;
+            height: 2rem;
+            font-size: 2rem;
+        }
+    }
+
+    .pathway-map-gpx-details {
+        flex: 1;
+
+        strong {
+            font-weight: 600;
+        }
+    }
+
+    .pathway-map-gpx-meta {
+        font-size: 0.875rem;
+        color: #757575;
+    }
+
+    .pathway-map-gpx-actions {
+        display: flex;
+        gap: 0.5rem;
+    }
+
+    // Notices
+    .components-notice {
+        margin-bottom: 1rem;
     }
 }
 
-// Frontend styles - minimal, inherits from theme
+// Frontend styles (minimal - just structure)
 .pathway-map-gpx {
-    // Container for map - styles will be added in Phase 5
+    // Will be styled by frontend CSS in Phase 4-5
 }

@@ -21,6 +21,7 @@
   "license": "GPL-2.0-or-later",
   "devDependencies": {
     "@babel/runtime": "^7.28.6",
+    "@wordpress/icons": "^11.6.0",
     "@wordpress/scripts": "^28.0.0"
   },
   "dependencies": {
