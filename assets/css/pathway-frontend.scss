@@ -1,147 +1,371 @@
 /**
  * Pathway Frontend Styles
- *
- * Layout and map container styles for the frontend display.
- *
+ * 
  * @package Pathway
  */
 
-// CSS Custom Properties - can be overridden by theme
-:root {
-    --pathway-map-height: 100vh;
-    --pathway-map-height-mobile: 30vh;
-    --pathway-grid-gap: 2rem;
-    --pathway-track-color: #3388ff;
-    --pathway-track-width: 3px;
-    --pathway-marker-color: var(--wp--preset--color--primary, #e74c3c);
-}
+// ============================================================================
+// DESKTOP LAYOUT: Fixed Map on Right
+// ============================================================================
 
-// Map container
-#pathway-map,
-.pathway-map {
-    width: 100%;
-    height: 500px;
-    z-index: 1;
-    background: #f0f0f0;
+@media (min-width: 768px) {
+    body.has-pathway-blocks {
+        // Map: Fixed to right side of viewport
+        #pathway-map {
+            position: fixed !important;
+            top: 20px !important;
+            right: 20px !important;
+            bottom: 20px !important;
+            width: 38vw !important;
+            height: auto !important;
+            z-index: 999 !important;
+            border-radius: 8px;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.15);
+            overflow: hidden;
+        }
 
-    // Will be positioned properly in Phase 5
-    // For now, displays inline after GPX block
-}
+        // Content: Constrained to left side
+        .site-content,
+        main,
+        article,
+        .entry-content,
+        .wp-block-post-content {
+            max-width: 56vw;
+            margin-right: auto;
+            margin-left: max(2rem, calc((100vw - 1400px) / 2));
+            padding-right: 2rem;
+        }
 
-// Numbered marker pins
-.pathway-marker-icon {
-    background: transparent;
-    border: none;
-}
-
-.pathway-marker-pin {
-    position: relative;
-    width: 30px;
-    height: 40px;
-    background: var(--pathway-marker-color);
-    clip-path: polygon(
-        50% 100%,
-        0% 38%,
-        0% 15%,
-        15% 0%,
-        85% 0%,
-        100% 15%,
-        100% 38%
-    );
-    display: flex;
-    align-items: flex-start;
-    justify-content: center;
-    cursor: pointer;
-    transition: transform 0.2s ease, filter 0.2s ease;
-    filter: drop-shadow(0 2px 4px rgba(0, 0, 0, 0.3));
-
-    &:hover {
-        transform: scale(1.1);
-    }
-
-    // Active marker state
-    &--active {
-        transform: scale(1.15);
-        filter: drop-shadow(0 3px 6px rgba(0, 0, 0, 0.4));
-        z-index: 1000;
-    }
-}
-
-.pathway-marker-number {
-    position: absolute;
-    top: 6px;
-    left: 50%;
-    transform: translateX(-50%);
-    color: white;
-    font-size: 14px;
-    font-weight: 700;
-    line-height: 1;
-    text-shadow: 0 1px 2px rgba(0, 0, 0, 0.3);
-    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
-}
-
-// Leaflet tooltip overrides
-.leaflet-tooltip {
-    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen-Sans, Ubuntu, Cantarell, 'Helvetica Neue', sans-serif;
-    font-size: 14px;
-    font-weight: 500;
-    padding: 6px 10px;
-    background: rgba(0, 0, 0, 0.85);
-    color: white;
-    border: none;
-    border-radius: 4px;
-    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
-}
-
-.leaflet-tooltip-top:before {
-    border-top-color: rgba(0, 0, 0, 0.85);
-}
-
-// Map controls
-.leaflet-control-zoom {
-    border: 2px solid rgba(0, 0, 0, 0.1) !important;
-    border-radius: 4px !important;
-
-    a {
-        color: #333 !important;
-
-        &:hover {
-            background-color: #f4f4f4 !important;
+        // Hide the data-only GPX block
+        .pathway-map-gpx {
+            display: none;
         }
     }
 }
 
-// Attribution styling
-.leaflet-control-attribution {
-    font-size: 10px;
-    background: rgba(255, 255, 255, 0.8) !important;
-}
+// ============================================================================
+// MOBILE LAYOUT: Sticky Map at Top
+// ============================================================================
 
-// Hide GPX block on frontend (invisible, just holds data)
-.pathway-map-gpx {
-    display: none;
-}
+@media (max-width: 767px) {
+    body.has-pathway-blocks {
+        #pathway-map {
+            position: sticky;
+            top: 0;
+            left: 0;
+            width: 100vw;
+            height: 35vh;
+            min-height: 280px;
+            max-height: 450px;
+            z-index: 100;
+            margin: 0;
+            
+            // Break out of any content padding
+            margin-left: calc(-1 * max(var(--wp--style--root--padding-left, 1rem), 1rem));
+            margin-right: calc(-1 * max(var(--wp--style--root--padding-right, 1rem), 1rem));
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+        }
 
-// Hide marker blocks on frontend (invisible scroll triggers)
-.pathway-marker {
-    display: block;
-    height: 0;
-    overflow: hidden;
-    // Acts only as scroll position trigger
-}
+        .pathway-map-gpx {
+            display: none;
+        }
 
-// Main story container - placeholder for Phase 5
-// Full 2-column layout will be implemented there
-.pathway-story-container {
-    // Desktop: 2-column grid (3:2 ratio)
-    @media (min-width: 768px) {
-        display: grid;
-        grid-template-columns: 3fr 2fr;
-        gap: var(--pathway-grid-gap);
+        // Add spacing below map
+        .entry-content,
+        .wp-block-post-content {
+            margin-top: 1.5rem;
+        }
     }
 }
 
-// Story content wrapper
-.pathway-story-content {
-    // Inherits from theme - minimal custom styles
+// ============================================================================
+// MAP CONTAINER
+// ============================================================================
+
+#pathway-map {
+    background: #f8f9fa;
+    
+    // Leaflet attribution
+    .leaflet-control-attribution {
+        font-size: 10px;
+        background: rgba(255, 255, 255, 0.9);
+        padding: 2px 5px;
+    }
+}
+
+// ============================================================================
+// MARKER PINS (Refined Teardrop Design)
+// ============================================================================
+
+.pathway-marker-icon {
+    background: transparent;
+    border: none;
+    outline: none;
+}
+
+.pathway-marker-pin {
+    position: relative;
+    width: 34px;
+    height: 44px;
+    background: var(--wp--preset--color--primary, #e74c3c);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    
+    // Teardrop shape
+    border-radius: 50% 50% 50% 0;
+    transform: rotate(-45deg);
+    
+    // Shadow for depth
+    box-shadow: 
+        0 3px 8px rgba(0, 0, 0, 0.3),
+        inset 0 -2px 4px rgba(0, 0, 0, 0.1);
+    
+    // Smooth transitions
+    transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+
+    // Hover state
+    &:hover {
+        transform: rotate(-45deg) scale(1.12);
+        box-shadow: 
+            0 6px 16px rgba(0, 0, 0, 0.4),
+            inset 0 -2px 4px rgba(0, 0, 0, 0.15);
+        z-index: 1000;
+    }
+
+    // Active state (when marker is in viewport)
+    &.pathway-active {
+        background: var(--wp--preset--color--secondary, #3498db);
+        transform: rotate(-45deg) scale(1.18);
+        box-shadow: 
+            0 8px 20px rgba(0, 0, 0, 0.5),
+            0 0 0 3px rgba(255, 255, 255, 0.3),
+            inset 0 -3px 6px rgba(0, 0, 0, 0.2);
+        z-index: 1001;
+        
+        // Pulse animation
+        animation: pathway-pulse 2s ease-in-out infinite;
+    }
+}
+
+@keyframes pathway-pulse {
+    0%, 100% {
+        box-shadow: 
+            0 8px 20px rgba(0, 0, 0, 0.5),
+            0 0 0 3px rgba(255, 255, 255, 0.3),
+            inset 0 -3px 6px rgba(0, 0, 0, 0.2);
+    }
+    50% {
+        box-shadow: 
+            0 8px 20px rgba(0, 0, 0, 0.5),
+            0 0 0 6px rgba(255, 255, 255, 0.2),
+            inset 0 -3px 6px rgba(0, 0, 0, 0.2);
+    }
+}
+
+.pathway-marker-number {
+    // Counter-rotate to keep number upright
+    transform: rotate(45deg);
+    color: white;
+    font-size: 16px;
+    font-weight: 700;
+    line-height: 1;
+    text-shadow: 
+        0 1px 3px rgba(0, 0, 0, 0.6),
+        0 0 2px rgba(0, 0, 0, 0.3);
+    user-select: none;
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+}
+
+// ============================================================================
+// LEAFLET CUSTOMIZATION
+// ============================================================================
+
+// Map tooltips
+.leaflet-tooltip {
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 
+                 Oxygen-Sans, Ubuntu, Cantarell, 'Helvetica Neue', sans-serif;
+    font-size: 13px;
+    font-weight: 500;
+    padding: 8px 12px;
+    background: rgba(30, 30, 30, 0.92);
+    color: white;
+    border: none;
+    border-radius: 6px;
+    box-shadow: 0 3px 12px rgba(0, 0, 0, 0.4);
+    backdrop-filter: blur(4px);
+}
+
+.leaflet-tooltip-top:before {
+    border-top-color: rgba(30, 30, 30, 0.92);
+}
+
+// Zoom controls
+.leaflet-control-zoom {
+    border: 1px solid rgba(0, 0, 0, 0.08);
+    border-radius: 6px;
+    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
+    overflow: hidden;
+    
+    a {
+        color: #333;
+        border-bottom: 1px solid rgba(0, 0, 0, 0.08);
+        width: 32px;
+        height: 32px;
+        line-height: 32px;
+        font-size: 20px;
+        transition: all 0.15s ease;
+        
+        &:hover {
+            background: #f0f0f0;
+            color: #000;
+        }
+        
+        &:last-child {
+            border-bottom: none;
+        }
+    }
+}
+
+// GPX track polyline
+.leaflet-interactive[stroke="#3388ff"] {
+    stroke: var(--wp--preset--color--primary, #3388ff);
+    stroke-width: 3.5;
+    stroke-linecap: round;
+    stroke-linejoin: round;
+}
+
+// ============================================================================
+// CONTENT MARKERS (Hidden in Story)
+// ============================================================================
+
+.pathway-marker {
+    // Invisible scroll triggers
+    min-height: 0;
+    margin: 0;
+    padding: 0;
+    
+    // Optional: Uncomment for debugging to see marker positions
+    // border-left: 3px solid rgba(231, 76, 60, 0.3);
+    // padding-left: 1rem;
+    // margin: 1.5rem 0;
+}
+
+.pathway-map-gpx {
+    display: none; // Data-only block
+}
+
+// ============================================================================
+// RESPONSIVE TYPOGRAPHY ADJUSTMENTS
+// ============================================================================
+
+@media (max-width: 767px) {
+    // Slightly smaller pins on mobile
+    .pathway-marker-pin {
+        width: 30px;
+        height: 38px;
+    }
+    
+    .pathway-marker-number {
+        font-size: 14px;
+    }
+}
+
+// ============================================================================
+// THEME COMPATIBILITY
+// ============================================================================
+
+// Prevent theme max-widths from breaking our layout
+body.has-pathway-blocks {
+    // Allow content to use our constrained width
+    .entry-content > *,
+    .wp-block-post-content > * {
+        max-width: none !important;
+    }
+    
+    // But keep reasonable line length for readability
+    .entry-content > p,
+    .wp-block-post-content > p,
+    .entry-content > ul,
+    .wp-block-post-content > ul,
+    .entry-content > ol,
+    .wp-block-post-content > ol {
+        max-width: 70ch;
+    }
+}
+
+// ============================================================================
+// LOADING STATE
+// ============================================================================
+
+#pathway-map:empty::before {
+    content: '';
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    width: 40px;
+    height: 40px;
+    margin: -20px 0 0 -20px;
+    border: 4px solid #e0e0e0;
+    border-top-color: #666;
+    border-radius: 50%;
+    animation: pathway-spin 0.8s linear infinite;
+}
+
+@keyframes pathway-spin {
+    to { transform: rotate(360deg); }
+}
+
+// ============================================================================
+// PRINT STYLES
+// ============================================================================
+
+@media print {
+    #pathway-map {
+        position: static !important;
+        width: 100% !important;
+        height: 400px !important;
+        page-break-inside: avoid;
+        margin-bottom: 2rem;
+    }
+    
+    body.has-pathway-blocks {
+        .site-content,
+        main,
+        article,
+        .entry-content,
+        .wp-block-post-content {
+            max-width: 100% !important;
+            margin: 0 !important;
+            padding: 0 !important;
+        }
+    }
+}
+
+// ============================================================================
+// ACCESSIBILITY
+// ============================================================================
+
+// Focus states for keyboard navigation
+.pathway-marker-pin:focus {
+    outline: 3px solid #4A90E2;
+    outline-offset: 3px;
+}
+
+.leaflet-control-zoom a:focus {
+    outline: 2px solid #4A90E2;
+    outline-offset: -2px;
+}
+
+// Reduced motion support
+@media (prefers-reduced-motion: reduce) {
+    .pathway-marker-pin,
+    .leaflet-control-zoom a {
+        transition: none;
+    }
+    
+    .pathway-marker-pin.pathway-active {
+        animation: none;
+    }
 }
