@@ -42,5 +42,6 @@
         "customClassName": false
     },
     "editorScript": "file:../../../build/blocks/map-gpx/index.js",
-    "style": "file:../../../build/blocks/map-gpx/style-style.css"
+    "style": "file:../../../build/blocks/map-gpx/style-style.css",
+    "render": "file:./render.php"
 }
