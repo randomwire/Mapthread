@@ -26,15 +26,15 @@
             overflow: hidden;
         }
 
-        // Content: Constrained to left side
+        // Content: Constrained to left side, leaving room for map
         .site-content,
         main,
         article,
         .entry-content,
         .wp-block-post-content {
-            max-width: 56vw;
+            max-width: calc(100vw - 38vw - 4rem); // viewport - map width - gaps
             margin-right: auto;
-            margin-left: max(2rem, calc((100vw - 1400px) / 2));
+            margin-left: 2rem;
             padding-right: 2rem;
         }
 
