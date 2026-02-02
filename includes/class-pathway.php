@@ -71,22 +71,20 @@ class Pathway {
         if ( function_exists( 'register_block_pattern' ) ) {
             $pattern_file = PATHWAY_PLUGIN_DIR . 'patterns/two-column-layout.php';
             if ( file_exists( $pattern_file ) ) {
-                ob_start();
-                include $pattern_file;
-                $pattern_content = ob_get_clean();
+                $pattern_content = include $pattern_file;
 
-                register_block_pattern(
-                    'pathway/two-column-layout',
-                    array(
-                        'title'       => __( 'Pathway Two-Column Layout', 'pathway' ),
-                        'description' => __( 'Pre-configured two-column layout for Pathway stories with sticky map', 'pathway' ),
-                        'content'     => $pattern_content,
-                        'categories'  => array( 'pathway', 'featured' ),
-                        'keywords'    => array( 'pathway', 'map', 'columns', 'layout', 'story', 'gpx' ),
-                        'blockTypes'  => array( 'core/post-content' ),
-                        'postTypes'   => array( 'post', 'page' ),
-                    )
-                );
+                if ( is_string( $pattern_content ) && ! empty( $pattern_content ) ) {
+                    register_block_pattern(
+                        'pathway/two-column-layout',
+                        array(
+                            'title'       => __( 'Pathway Two-Column Layout', 'pathway' ),
+                            'description' => __( 'Two-column layout with sticky map for Pathway stories', 'pathway' ),
+                            'content'     => $pattern_content,
+                            'categories'  => array( 'pathway', 'featured' ),
+                            'keywords'    => array( 'pathway', 'map', 'columns', 'layout', 'story', 'gpx' ),
+                        )
+                    );
+                }
             }
         }
     }
