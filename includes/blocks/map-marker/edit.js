@@ -13,6 +13,7 @@ import {
     __experimentalNumberControl as NumberControl
 } from '@wordpress/components';
 import { useEffect } from '@wordpress/element';
+import { useSelect } from '@wordpress/data';
 
 /**
  * Generate a unique ID for the marker
@@ -80,13 +81,28 @@ function checkDistanceFromTrack( lat, lng, bounds ) {
 }
 
 /**
- * Find Map GPX block on the page
+ * Find Map GPX block in a list of blocks (searches nested blocks)
  *
+ * @param {Array} blocks - Blocks to search
  * @return {Object|null} GPX block or null
  */
-function findGPXBlock() {
-    const blocks = wp.data.select( 'core/block-editor' ).getBlocks();
-    return blocks.find( block => block.name === 'pathway/map-gpx' ) || null;
+function findGPXBlockInList( blocks ) {
+    if ( ! blocks || ! Array.isArray( blocks ) ) {
+        return null;
+    }
+    for ( const block of blocks ) {
+        if ( block.name === 'pathway/map-gpx' ) {
+            return block;
+        }
+        // Search nested blocks (innerBlocks)
+        if ( block.innerBlocks && block.innerBlocks.length > 0 ) {
+            const found = findGPXBlockInList( block.innerBlocks );
+            if ( found ) {
+                return found;
+            }
+        }
+    }
+    return null;
 }
 
 /**
@@ -106,8 +122,11 @@ export default function Edit( { attributes, setAttributes, clientId } ) {
         }
     }, [] );
 
-    // Find GPX block and check distance
-    const gpxBlock = findGPXBlock();
+    // Find GPX block reactively using useSelect
+    const gpxBlock = useSelect( ( select ) => {
+        const blocks = select( 'core/block-editor' ).getBlocks();
+        return findGPXBlockInList( blocks );
+    } );
     const hasGPXBlock = !! gpxBlock;
     const gpxBounds = gpxBlock?.attributes?.bounds;
 
@@ -179,12 +198,6 @@ export default function Edit( { attributes, setAttributes, clientId } ) {
 
             <div { ...blockProps }>
                 <div className="pathway-map-marker-editor">
-                    { ! hasGPXBlock && (
-                        <Notice status="warning" isDismissible={ false }>
-                            { __( 'No Map GPX block found on this page. Add a Map GPX block to display the route.', 'pathway' ) }
-                        </Notice>
-                    ) }
-
                     { isMissingCoords && (
                         <Notice status="error" isDismissible={ false }>
                             { __( 'Please enter latitude and longitude in the block settings (sidebar).', 'pathway' ) }

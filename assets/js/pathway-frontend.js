@@ -17,6 +17,7 @@
     let activeMarkerIndex = null;
     let isFollowMode = true;
     let lastScrollTime = 0;
+    let initialBounds = null;
 
     /**
      * Parse GPX content and extract track coordinates
@@ -96,22 +97,20 @@
     }
 
     /**
-     * Create numbered marker icon
+     * Create marker icon
      *
-     * @param {number} number - Marker number
+     * @param {number} number - Marker number (kept for API compatibility)
      * @param {boolean} isActive - Whether this marker is currently active
      * @return {L.DivIcon} Leaflet div icon
      */
     function createNumberedIcon( number, isActive = false ) {
-        const activeClass = isActive ? ' pathway-marker-pin--active' : '';
+        const activeClass = isActive ? ' pathway-active' : '';
         return L.divIcon( {
             className: 'pathway-marker-icon',
-            html: `<div class="pathway-marker-pin${activeClass}">
-                <span class="pathway-marker-number">${number}</span>
-            </div>`,
-            iconSize: [ 30, 40 ],
-            iconAnchor: [ 15, 40 ],
-            popupAnchor: [ 0, -40 ]
+            html: `<div class="pathway-marker-pin${activeClass}"></div>`,
+            iconSize: [ 14, 14 ],   // Total icon dimensions
+            iconAnchor: [ 7, 7 ],   // Point that sits on the lat/lng coordinate
+            popupAnchor: [ 0, -7 ]  // Where popups open relative to anchor
         } );
     }
 
@@ -130,7 +129,7 @@
     /**
      * Calculate which marker is currently active based on scroll position
      *
-     * @return {number|null} Index of active marker or null
+     * @return {number|null} Index of active marker or null (null = at top of page)
      */
     function calculateActiveMarker() {
         const markerElements = document.querySelectorAll( '.pathway-marker' );
@@ -157,8 +156,8 @@
             }
         }
 
-        // Default to first marker if none found
-        return 0;
+        // No markers in threshold or scrolled past - user is at top of page
+        return null;
     }
 
     /**
@@ -193,6 +192,41 @@
     }
 
     /**
+     * Reset map to initial view showing full GPX track
+     */
+    function resetToInitialView() {
+        if ( ! map || ! initialBounds || activeMarkerIndex === null ) {
+            return;
+        }
+
+        activeMarkerIndex = null;
+        updateMarkerIcons( -1 ); // No active marker
+
+        map.flyToBounds( initialBounds, {
+            padding: [ 50, 50 ],
+            duration: 0.8
+        } );
+    }
+
+    /**
+     * Check if user has scrolled past all markers (at bottom of content)
+     *
+     * @return {boolean} True if last marker is above viewport threshold
+     */
+    function isAtBottomOfPage() {
+        const markerElements = document.querySelectorAll( '.pathway-marker' );
+        if ( markerElements.length === 0 ) {
+            return false;
+        }
+
+        const lastMarker = markerElements[ markerElements.length - 1 ];
+        const rect = lastMarker.getBoundingClientRect();
+
+        // Consider "at bottom" when last marker has scrolled above viewport
+        return rect.top < 0;
+    }
+
+    /**
      * Handle scroll events
      */
     function handleScroll() {
@@ -210,7 +244,12 @@
         lastScrollTime = now;
 
         const newActiveMarker = calculateActiveMarker();
-        if ( newActiveMarker !== null && newActiveMarker !== activeMarkerIndex ) {
+        const atBottom = isAtBottomOfPage();
+
+        if ( ( newActiveMarker === null || atBottom ) && activeMarkerIndex !== null ) {
+            // User scrolled to top or bottom - reset to initial view
+            resetToInitialView();
+        } else if ( newActiveMarker !== null && newActiveMarker !== activeMarkerIndex && ! atBottom ) {
             updateMapView( newActiveMarker );
         }
     }
@@ -289,6 +328,7 @@
                 [ bounds.north, bounds.east ]
             ];
             leafletMap.fitBounds( leafletBounds, { padding: [ 50, 50 ] } );
+            initialBounds = leafletBounds;
         }
 
         // Listen for map interactions (pan/zoom by user)
@@ -372,8 +412,8 @@
             if ( title ) {
                 marker.bindTooltip( title, {
                     permanent: false,
-                    direction: 'top',
-                    offset: [ 0, -35 ]
+                    direction: 'top',   // Tooltip appears above marker
+                    offset: [ 2, -12 ]  // [x, y] offset from marker anchor
                 } );
             }
 

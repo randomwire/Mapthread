@@ -94,88 +94,55 @@
 }
 
 // ============================================================================
-// MARKER PINS (Refined Teardrop Design)
+// NUMBERED MARKER PINS
 // ============================================================================
 
 .pathway-marker-icon {
     background: transparent;
     border: none;
-    outline: none;
 }
 
 .pathway-marker-pin {
-    position: relative;
-    width: 34px;
-    height: 44px;
+    width: 16px;
+    height: 16px;
     background: var(--wp--preset--color--primary, #e74c3c);
-    display: flex;
-    align-items: center;
-    justify-content: center;
+    border: 2px solid white;
+    border-radius: 50%;
     cursor: pointer;
-    
-    // Teardrop shape
-    border-radius: 50% 50% 50% 0;
-    transform: rotate(-45deg);
-    
-    // Shadow for depth
-    box-shadow: 
-        0 3px 8px rgba(0, 0, 0, 0.3),
-        inset 0 -2px 4px rgba(0, 0, 0, 0.1);
-    
-    // Smooth transitions
+    box-shadow:
+        0 2px 6px rgba(0, 0, 0, 0.3),
+        0 0 0 1px rgba(0, 0, 0, 0.1);
     transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
 
-    // Hover state
     &:hover {
-        transform: rotate(-45deg) scale(1.12);
-        box-shadow: 
-            0 6px 16px rgba(0, 0, 0, 0.4),
-            inset 0 -2px 4px rgba(0, 0, 0, 0.15);
-        z-index: 1000;
+        transform: scale(1.3);
+        box-shadow:
+            0 3px 8px rgba(0, 0, 0, 0.35),
+            0 0 0 1px rgba(0, 0, 0, 0.1);
     }
 
-    // Active state (when marker is in viewport)
     &.pathway-active {
         background: var(--wp--preset--color--secondary, #3498db);
-        transform: rotate(-45deg) scale(1.18);
-        box-shadow: 
-            0 8px 20px rgba(0, 0, 0, 0.5),
-            0 0 0 3px rgba(255, 255, 255, 0.3),
-            inset 0 -3px 6px rgba(0, 0, 0, 0.2);
-        z-index: 1001;
-        
-        // Pulse animation
+        border-width: 3px;
+        transform: scale(1.4);
+        box-shadow:
+            0 3px 10px rgba(0, 0, 0, 0.4),
+            0 0 0 4px rgba(255, 255, 255, 0.4);
         animation: pathway-pulse 2s ease-in-out infinite;
     }
 }
 
 @keyframes pathway-pulse {
     0%, 100% {
-        box-shadow: 
-            0 8px 20px rgba(0, 0, 0, 0.5),
-            0 0 0 3px rgba(255, 255, 255, 0.3),
-            inset 0 -3px 6px rgba(0, 0, 0, 0.2);
+        box-shadow:
+            0 3px 10px rgba(0, 0, 0, 0.4),
+            0 0 0 4px rgba(255, 255, 255, 0.4);
     }
     50% {
-        box-shadow: 
-            0 8px 20px rgba(0, 0, 0, 0.5),
-            0 0 0 6px rgba(255, 255, 255, 0.2),
-            inset 0 -3px 6px rgba(0, 0, 0, 0.2);
+        box-shadow:
+            0 3px 10px rgba(0, 0, 0, 0.4),
+            0 0 0 6px rgba(255, 255, 255, 0.2);
     }
-}
-
-.pathway-marker-number {
-    // Counter-rotate to keep number upright
-    transform: rotate(45deg);
-    color: white;
-    font-size: 16px;
-    font-weight: 700;
-    line-height: 1;
-    text-shadow: 
-        0 1px 3px rgba(0, 0, 0, 0.6),
-        0 0 2px rgba(0, 0, 0, 0.3);
-    user-select: none;
-    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
 }
 
 // ============================================================================
@@ -184,7 +151,7 @@
 
 // Map tooltips
 .leaflet-tooltip {
-    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto,
                  Oxygen-Sans, Ubuntu, Cantarell, 'Helvetica Neue', sans-serif;
     font-size: 13px;
     font-weight: 500;
@@ -195,10 +162,14 @@
     border-radius: 6px;
     box-shadow: 0 3px 12px rgba(0, 0, 0, 0.4);
     backdrop-filter: blur(4px);
+    white-space: nowrap;
 }
 
-.leaflet-tooltip-top:before {
-    border-top-color: rgba(30, 30, 30, 0.92);
+.leaflet-tooltip-top {
+    // Hide the arrow pointer
+    &:before {
+        display: none;
+    }
 }
 
 // Zoom controls
@@ -263,12 +234,8 @@
 @media (max-width: 767px) {
     // Slightly smaller pins on mobile
     .pathway-marker-pin {
-        width: 30px;
-        height: 38px;
-    }
-    
-    .pathway-marker-number {
-        font-size: 14px;
+        width: 14px;
+        height: 14px;
     }
 }
 
