@@ -301,7 +301,7 @@
         mapContainer.id = 'pathway-map';
         mapContainer.className = 'pathway-map';
 
-        // Insert map into page (will be positioned by CSS in Phase 5)
+        // Insert map into page (positioned by CSS)
         const gpxBlock = document.querySelector( '.pathway-map-gpx' );
         if ( gpxBlock && gpxBlock.parentNode ) {
             gpxBlock.parentNode.insertBefore( mapContainer, gpxBlock.nextSibling );

@@ -127,17 +127,15 @@ Pathway offers two ways to integrate with your theme:
 
 ### Recommended: Use the Pattern
 
-The easiest way to get started:
+### Automatic Layout (Recommended)
 
-1. Create or edit a post
-2. Click the block inserter (+) > **Patterns** tab
-3. Search for "Pathway Layout"
-4. Insert the pattern
-5. Add your GPX file and content
+Just add your blocks and Pathway handles the layout automatically:
+- Desktop: Map fixed on the right side, content scrolls on the left
+- Mobile: Map fixed at top, content scrolls below
 
-The pattern sets up a proper two-column layout automatically.
+No additional setup needed!
 
-### Alternative: Manual Column Layout
+### Manual Column Layout (Optional)
 
 For full control over your layout:
 
@@ -145,16 +143,7 @@ For full control over your layout:
 2. Left column: Your story content and Map Marker blocks
 3. Right column: Add class `pathway-map-column` and insert Map GPX block
 
-The `pathway-map-column` class makes the map sticky as you scroll.
-
-### Automatic: CSS Fallback
-
-If you don't set up a manual layout, Pathway automatically positions the map on the right side using CSS. This works but gives you less control.
-
-**Which to choose?**
-- **New to block themes** > Use the pattern (easiest)
-- **Want customization** > Follow [Block Theme Setup Guide](docs/BLOCK-THEME-SETUP.md)
-- **Quick test** > Use automatic (no setup needed)
+The `pathway-map-column` class makes the map sticky as you scroll. See [Block Theme Setup Guide](docs/BLOCK-THEME-SETUP.md) for details.
 
 ---
 
@@ -275,10 +264,6 @@ pathway/
 │   │   └── pathway-frontend.js # Map behavior
 │   └── css/
 │       └── pathway-frontend.scss
-├── patterns/                   # Block patterns
-│   └── two-column-layout.php
-├── templates/                  # Theme templates
-│   └── twentytwentyfive-single.html
 ├── docs/                       # Documentation
 ├── build/                      # Compiled assets
 └── package.json

@@ -54,7 +54,6 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Multiple GPX files per post
 - Elevation profile display
 - Container block for theme-independent layout
-- Block patterns for quick setup
 
 ---
 

@@ -15,25 +15,7 @@ The manual approach gives you full control and works with any block theme.
 
 ---
 
-## Quick Setup (Recommended)
-
-### Method 1: Use the Pathway Layout Pattern
-
-**Easiest way to get started:**
-
-1. Create or edit a post
-2. Click the block inserter (+)
-3. Go to **Patterns** tab
-4. Search for "Pathway Layout"
-5. Insert the pattern
-6. Add your GPX file to the Map GPX block
-7. Add your content and markers to the left column
-
-**Done!** The pattern sets up everything for you.
-
----
-
-### Method 2: Manual Setup with Columns Block
+## Manual Setup with Columns Block
 
 **If you want to customize from scratch:**
 
