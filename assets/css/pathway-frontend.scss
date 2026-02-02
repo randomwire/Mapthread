@@ -5,13 +5,13 @@
  */
 
 // ============================================================================
-// AUTOMATIC LAYOUT: Fixed Map on Right (Fallback)
-// Only applies when user hasn't set up manual column layout
+// AUTOMATIC LAYOUT: Fixed Map on Right (Default)
+// Applied by default, overridden when using manual column layout
 // ============================================================================
 
 @media (min-width: 768px) {
-    // Only apply automatic layout if NOT using manual column layout
-    body.has-pathway-blocks:not(:has(.pathway-map-column)) {
+    // Automatic layout styles (applied by default)
+    body.has-pathway-blocks {
         // Map: Fixed to right side of viewport
         #pathway-map {
             position: fixed !important;
@@ -59,6 +59,44 @@
             max-width: 70ch;
         }
     }
+
+    // Override automatic layout when using manual column layout
+    body.has-pathway-blocks:has(.pathway-map-column) {
+        // Reset map to flow in column instead of fixed
+        #pathway-map {
+            position: static !important;
+            top: auto !important;
+            right: auto !important;
+            bottom: auto !important;
+            width: 100% !important;
+            height: calc(100vh - 40px) !important;
+            max-height: 900px;
+            z-index: auto !important;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+        }
+
+        // Reset content constraints completely
+        .site-content,
+        main,
+        article,
+        .entry-content,
+        .wp-block-post-content {
+            max-width: none !important;
+            margin-left: unset;
+            margin-right: unset;
+            padding-right: unset;
+        }
+
+        // Remove paragraph width constraint in column layout
+        .entry-content > p,
+        .wp-block-post-content > p,
+        .entry-content > ul,
+        .wp-block-post-content > ul,
+        .entry-content > ol,
+        .wp-block-post-content > ol {
+            max-width: none;
+        }
+    }
 }
 
 // ============================================================================
@@ -72,20 +110,6 @@
         top: 20px;
         align-self: start;
         height: fit-content;
-
-        #pathway-map {
-            height: calc(100vh - 40px);
-            max-height: 900px;
-            border-radius: 8px;
-            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
-        }
-    }
-
-    // When using manual layout, hide the GPX block placeholder
-    body.has-pathway-blocks:has(.pathway-map-column) {
-        .pathway-map-gpx {
-            display: none;
-        }
     }
 }
 
@@ -105,11 +129,11 @@
 }
 
 // ============================================================================
-// MOBILE LAYOUT: Sticky Map at Top (Both automatic and manual)
+// MOBILE LAYOUT: Sticky Map at Top (Default for automatic layout)
 // ============================================================================
 
 @media (max-width: 767px) {
-    body.has-pathway-blocks:not(:has(.pathway-map-column)) {
+    body.has-pathway-blocks {
         #pathway-map {
             position: sticky;
             top: 0;
