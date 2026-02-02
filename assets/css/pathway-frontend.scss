@@ -12,10 +12,13 @@
 @media (min-width: 768px) {
     // Automatic layout styles (applied by default)
     body.has-pathway-blocks {
+        // Reserve space for the fixed map on ALL page content (works across themes)
+        padding-right: calc(38vw + 10px);
+
         // Map: Fixed to right side of viewport
         #pathway-map {
             position: fixed !important;
-            top: 20px !important;
+            top: 10px !important;
             right: 10px !important;
             bottom: 10px !important;
             width: 38vw !important;
@@ -26,30 +29,12 @@
             overflow: hidden;
         }
 
-        // Content: Constrained to left side, leaving room for map
-        .site-content,
-        main,
-        article,
-        .entry-content,
-        .wp-block-post-content {
-            max-width: calc(100vw - 38vw - 4rem); // viewport - map width - gaps
-            margin-right: auto;
-            margin-left: 2rem;
-            padding-right: 2rem;
-        }
-
         // Hide the data-only GPX block
         .pathway-map-gpx {
             display: none;
         }
 
-        // Allow content to use our constrained width
-        .entry-content > *,
-        .wp-block-post-content > * {
-            max-width: none !important;
-        }
-
-        // But keep reasonable line length for readability
+        // Keep reasonable line length for readability
         .entry-content > p,
         .wp-block-post-content > p,
         .entry-content > ul,
@@ -62,6 +47,9 @@
 
     // Override automatic layout when using manual column layout
     body.has-pathway-blocks:has(.pathway-map-column) {
+        // Reset body padding since map is in-flow
+        padding-right: 0;
+
         // Reset map to flow in column instead of fixed
         #pathway-map {
             position: static !important;
