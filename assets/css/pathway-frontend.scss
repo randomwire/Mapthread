@@ -16,13 +16,13 @@
         #pathway-map {
             position: fixed !important;
             top: 20px !important;
-            right: 20px !important;
-            bottom: 20px !important;
+            right: 10px !important;
+            bottom: 10px !important;
             width: 38vw !important;
             height: auto !important;
             z-index: 999 !important;
             border-radius: 8px;
-            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.15);
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.15);
             overflow: hidden;
         }
 
@@ -134,31 +134,29 @@
 
 @media (max-width: 767px) {
     body.has-pathway-blocks {
+        // Add spacing at top to account for fixed map (on body to include title)
+        padding-top: 35vh;
+
         #pathway-map {
-            position: sticky;
+            position: fixed !important;
             top: 0;
             left: 0;
+            right: 0;
             width: 100vw;
             height: 35vh;
             min-height: 280px;
             max-height: 450px;
             z-index: 100;
             margin: 0;
-
-            // Break out of any content padding
-            margin-left: calc(-1 * max(var(--wp--style--root--padding-left, 1rem), 1rem));
-            margin-right: calc(-1 * max(var(--wp--style--root--padding-right, 1rem), 1rem));
             box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
         }
 
+        // Hide GPX block completely (no gap)
         .pathway-map-gpx {
-            display: none;
-        }
-
-        // Add spacing below map
-        .entry-content,
-        .wp-block-post-content {
-            margin-top: 1.5rem;
+            display: none !important;
+            margin: 0 !important;
+            padding: 0 !important;
+            height: 0 !important;
         }
     }
 }
