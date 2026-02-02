@@ -1,0 +1,167 @@
+=== Pathway ===
+Contributors: (your-wordpress-username)
+Donate link: https://yourwebsite.com/donate
+Tags: maps, gpx, travel, storytelling, leaflet, hiking, adventure
+Requires at least: 6.0
+Tested up to: 6.4
+Requires PHP: 7.4
+Stable tag: 1.0.0
+License: GPLv2 or later
+License URI: https://www.gnu.org/licenses/gpl-2.0.html
+
+Transform your travel stories into interactive map experiences. Upload GPX tracks, place markers, watch the map follow as readers scroll.
+
+== Description ==
+
+**Pathway** brings your adventures to life with interactive, auto-following maps.
+
+Perfect for travel bloggers, hiking enthusiasts, and anyone who wants to tell location-based stories that engage readers.
+
+= Core Features =
+
+* **Auto-Following Maps** - Map pans and zooms as readers scroll through your story
+* **GPX Track Upload** - Support for GPS tracks from any device or app
+* **Numbered Waypoints** - Place markers at key points in your narrative
+* **Smart Interactions** - Pause/resume following, click markers to jump to content
+* **Beautiful Design** - Modern numbered pins, smooth animations, theme color integration
+* **Mobile Responsive** - Optimized layouts for all screen sizes
+
+= Perfect For =
+
+* Hiking and backpacking blogs
+* Travel storytelling
+* Cycling route documentation
+* Race and event recaps
+* Historical narratives with geographic context
+
+= How It Works =
+
+1. Create a post and add the **Map GPX** block
+2. Upload your GPX file from the media library
+3. Write your story, inserting **Map Marker** blocks at key points
+4. Add coordinates and titles to each marker
+5. Publish - the map automatically follows as readers scroll!
+
+= Technical Details =
+
+* Uses Leaflet.js for fast, interactive maps
+* OpenStreetMap tile provider (free, no API key required)
+* Client-side rendering for optimal performance
+* sessionStorage caching for instant reloads
+* Lightweight JavaScript (~5KB minified)
+
+= Browser Support =
+
+Tested on Chrome 105+ and Safari 15.4+. Likely works on Firefox and Edge but not officially tested.
+
+= Theme Compatibility =
+
+Tested and working on:
+* Twenty Twenty-Four
+* Twenty Twenty-Five
+
+Should work on most block themes. Classic themes may require customization.
+
+== Installation ==
+
+= From WordPress.org =
+
+1. Go to Plugins > Add New in your WordPress admin
+2. Search for "Pathway"
+3. Click Install Now, then Activate
+
+= Manual Installation =
+
+1. Download the plugin ZIP file
+2. Go to Plugins > Add New > Upload Plugin
+3. Choose the ZIP file and click Install Now
+4. Activate the plugin
+
+= After Installation =
+
+1. Create or edit a post
+2. Add the "Map GPX" block and upload your GPX file
+3. Add "Map Marker" blocks throughout your content
+4. Publish and enjoy!
+
+== Frequently Asked Questions ==
+
+= What is a GPX file? =
+
+GPX (GPS Exchange Format) is a standard file format for GPS data. Most fitness trackers, hiking apps, and GPS devices can export GPX files.
+
+= Where do I get GPX files? =
+
+You can export GPX files from:
+* Fitness apps (Strava, Garmin Connect, etc.)
+* Hiking apps (AllTrails, Komoot, etc.)
+* GPS devices (Garmin, Suunto, etc.)
+* Google Maps (via third-party tools)
+
+= Can I use multiple GPX files in one post? =
+
+Not in v1.0. Only the first Map GPX block will be used. Multiple GPX support is planned for v1.1.
+
+= How do I get coordinates for markers? =
+
+* Right-click on Google Maps and select "What's here?"
+* Use coordinates from your GPS device
+* Extract waypoints from your GPX file
+
+= Does it work with my theme? =
+
+Pathway is designed for block themes and tested on Twenty Twenty-Four and Twenty Twenty-Five. It should work on most standard block themes. Classic themes may require customization.
+
+= Is there a file size limit for GPX? =
+
+We recommend GPX files under 10MB. Larger files will show a warning and may be slow to render.
+
+= Can I customize the marker colors? =
+
+Yes! Pathway automatically uses your theme's primary color. You can set this in your theme.json or WordPress Customizer.
+
+= Does this work offline? =
+
+No, Pathway requires an internet connection to load map tiles from OpenStreetMap.
+
+== Screenshots ==
+
+1. Editor view - Map GPX block with uploaded track
+2. Editor view - Map Marker block settings
+3. Frontend desktop layout - Story on left, sticky map on right
+4. Frontend mobile layout - Sticky map at top
+5. Map markers and tooltips
+
+== Changelog ==
+
+= 1.0.0 - 2026-02-01 =
+* Initial release
+* Map GPX block for track upload
+* Map Marker block for waypoints
+* Auto-following map behavior
+* Desktop and mobile responsive layouts
+* Theme color integration
+* Performance optimizations
+
+== Upgrade Notice ==
+
+= 1.0.0 =
+Initial release of Pathway. Install and start creating interactive map stories!
+
+== Additional Info ==
+
+= Support =
+
+For support, please visit:
+* Plugin support forum: https://wordpress.org/support/plugin/pathway/
+* GitHub issues: https://github.com/yourusername/pathway/issues
+
+= Contributing =
+
+Pathway is open source! Contributions welcome at:
+https://github.com/yourusername/pathway
+
+= Credits =
+
+* Maps powered by Leaflet.js
+* Tiles by OpenStreetMap contributors
