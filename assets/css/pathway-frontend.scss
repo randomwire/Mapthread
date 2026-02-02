@@ -1,15 +1,17 @@
 /**
  * Pathway Frontend Styles
- * 
+ *
  * @package Pathway
  */
 
 // ============================================================================
-// DESKTOP LAYOUT: Fixed Map on Right
+// AUTOMATIC LAYOUT: Fixed Map on Right (Fallback)
+// Only applies when user hasn't set up manual column layout
 // ============================================================================
 
 @media (min-width: 768px) {
-    body.has-pathway-blocks {
+    // Only apply automatic layout if NOT using manual column layout
+    body.has-pathway-blocks:not(:has(.pathway-map-column)) {
         // Map: Fixed to right side of viewport
         #pathway-map {
             position: fixed !important;
@@ -40,15 +42,74 @@
         .pathway-map-gpx {
             display: none;
         }
+
+        // Allow content to use our constrained width
+        .entry-content > *,
+        .wp-block-post-content > * {
+            max-width: none !important;
+        }
+
+        // But keep reasonable line length for readability
+        .entry-content > p,
+        .wp-block-post-content > p,
+        .entry-content > ul,
+        .wp-block-post-content > ul,
+        .entry-content > ol,
+        .wp-block-post-content > ol {
+            max-width: 70ch;
+        }
     }
 }
 
 // ============================================================================
-// MOBILE LAYOUT: Sticky Map at Top
+// MANUAL LAYOUT: Column-based with sticky map
+// Applies when user adds .pathway-map-column class to their column
+// ============================================================================
+
+@media (min-width: 768px) {
+    .pathway-map-column {
+        position: sticky;
+        top: 20px;
+        align-self: start;
+        height: fit-content;
+
+        #pathway-map {
+            height: calc(100vh - 40px);
+            max-height: 900px;
+            border-radius: 8px;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+        }
+    }
+
+    // When using manual layout, hide the GPX block placeholder
+    body.has-pathway-blocks:has(.pathway-map-column) {
+        .pathway-map-gpx {
+            display: none;
+        }
+    }
+}
+
+@media (max-width: 767px) {
+    .pathway-map-column {
+        position: sticky;
+        top: 0;
+        z-index: 100;
+
+        #pathway-map {
+            height: 35vh;
+            min-height: 280px;
+            max-height: 450px;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+        }
+    }
+}
+
+// ============================================================================
+// MOBILE LAYOUT: Sticky Map at Top (Both automatic and manual)
 // ============================================================================
 
 @media (max-width: 767px) {
-    body.has-pathway-blocks {
+    body.has-pathway-blocks:not(:has(.pathway-map-column)) {
         #pathway-map {
             position: sticky;
             top: 0;
@@ -59,7 +120,7 @@
             max-height: 450px;
             z-index: 100;
             margin: 0;
-            
+
             // Break out of any content padding
             margin-left: calc(-1 * max(var(--wp--style--root--padding-left, 1rem), 1rem));
             margin-right: calc(-1 * max(var(--wp--style--root--padding-right, 1rem), 1rem));
@@ -79,12 +140,12 @@
 }
 
 // ============================================================================
-// MAP CONTAINER
+// MAP CONTAINER (Common styles)
 // ============================================================================
 
 #pathway-map {
     background: #f8f9fa;
-    
+
     // Leaflet attribution
     .leaflet-control-attribution {
         font-size: 10px;
@@ -178,7 +239,7 @@
     border-radius: 6px;
     box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
     overflow: hidden;
-    
+
     a {
         color: #333;
         border-bottom: 1px solid rgba(0, 0, 0, 0.08);
@@ -187,12 +248,12 @@
         line-height: 32px;
         font-size: 20px;
         transition: all 0.15s ease;
-        
+
         &:hover {
             background: #f0f0f0;
             color: #000;
         }
-        
+
         &:last-child {
             border-bottom: none;
         }
@@ -216,7 +277,7 @@
     min-height: 0;
     margin: 0;
     padding: 0;
-    
+
     // Optional: Uncomment for debugging to see marker positions
     // border-left: 3px solid rgba(231, 76, 60, 0.3);
     // padding-left: 1rem;
@@ -236,29 +297,6 @@
     .pathway-marker-pin {
         width: 14px;
         height: 14px;
-    }
-}
-
-// ============================================================================
-// THEME COMPATIBILITY
-// ============================================================================
-
-// Prevent theme max-widths from breaking our layout
-body.has-pathway-blocks {
-    // Allow content to use our constrained width
-    .entry-content > *,
-    .wp-block-post-content > * {
-        max-width: none !important;
-    }
-    
-    // But keep reasonable line length for readability
-    .entry-content > p,
-    .wp-block-post-content > p,
-    .entry-content > ul,
-    .wp-block-post-content > ul,
-    .entry-content > ol,
-    .wp-block-post-content > ol {
-        max-width: 70ch;
     }
 }
 
@@ -296,7 +334,7 @@ body.has-pathway-blocks {
         page-break-inside: avoid;
         margin-bottom: 2rem;
     }
-    
+
     body.has-pathway-blocks {
         .site-content,
         main,
@@ -331,7 +369,7 @@ body.has-pathway-blocks {
     .leaflet-control-zoom a {
         transition: none;
     }
-    
+
     .pathway-marker-pin.pathway-active {
         animation: none;
     }

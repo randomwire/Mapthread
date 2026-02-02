@@ -30,6 +30,9 @@ class Pathway {
         // Register blocks
         add_action( 'init', array( $this, 'register_blocks' ) );
 
+        // Register block patterns
+        add_action( 'init', array( $this, 'register_patterns' ) );
+
         // Enqueue frontend assets
         add_action( 'wp_enqueue_scripts', array( $this, 'enqueue_frontend_assets' ) );
 
@@ -50,6 +53,42 @@ class Pathway {
 
         // Register Map Marker block
         register_block_type( PATHWAY_PLUGIN_DIR . 'includes/blocks/map-marker' );
+    }
+
+    /**
+     * Register block patterns
+     */
+    public function register_patterns() {
+        // Register pattern category
+        if ( function_exists( 'register_block_pattern_category' ) ) {
+            register_block_pattern_category(
+                'pathway',
+                array( 'label' => __( 'Pathway', 'pathway' ) )
+            );
+        }
+
+        // Register two-column layout pattern
+        if ( function_exists( 'register_block_pattern' ) ) {
+            $pattern_file = PATHWAY_PLUGIN_DIR . 'patterns/two-column-layout.php';
+            if ( file_exists( $pattern_file ) ) {
+                ob_start();
+                include $pattern_file;
+                $pattern_content = ob_get_clean();
+
+                register_block_pattern(
+                    'pathway/two-column-layout',
+                    array(
+                        'title'       => __( 'Pathway Two-Column Layout', 'pathway' ),
+                        'description' => __( 'Pre-configured two-column layout for Pathway stories with sticky map', 'pathway' ),
+                        'content'     => $pattern_content,
+                        'categories'  => array( 'pathway', 'featured' ),
+                        'keywords'    => array( 'pathway', 'map', 'columns', 'layout', 'story', 'gpx' ),
+                        'blockTypes'  => array( 'core/post-content' ),
+                        'postTypes'   => array( 'post', 'page' ),
+                    )
+                );
+            }
+        }
     }
 
     /**

@@ -121,6 +121,43 @@ npm run build
 
 ---
 
+## Layout Setup
+
+Pathway offers two ways to integrate with your theme:
+
+### Recommended: Use the Pattern
+
+The easiest way to get started:
+
+1. Create or edit a post
+2. Click the block inserter (+) > **Patterns** tab
+3. Search for "Pathway Layout"
+4. Insert the pattern
+5. Add your GPX file and content
+
+The pattern sets up a proper two-column layout automatically.
+
+### Alternative: Manual Column Layout
+
+For full control over your layout:
+
+1. Add a **Columns** block (2 columns, 60/40 split)
+2. Left column: Your story content and Map Marker blocks
+3. Right column: Add class `pathway-map-column` and insert Map GPX block
+
+The `pathway-map-column` class makes the map sticky as you scroll.
+
+### Automatic: CSS Fallback
+
+If you don't set up a manual layout, Pathway automatically positions the map on the right side using CSS. This works but gives you less control.
+
+**Which to choose?**
+- **New to block themes** > Use the pattern (easiest)
+- **Want customization** > Follow [Block Theme Setup Guide](docs/BLOCK-THEME-SETUP.md)
+- **Quick test** > Use automatic (no setup needed)
+
+---
+
 ## Requirements
 
 - **WordPress:** 6.0 or higher
@@ -238,6 +275,11 @@ pathway/
 │   │   └── pathway-frontend.js # Map behavior
 │   └── css/
 │       └── pathway-frontend.scss
+├── patterns/                   # Block patterns
+│   └── two-column-layout.php
+├── templates/                  # Theme templates
+│   └── twentytwentyfive-single.html
+├── docs/                       # Documentation
 ├── build/                      # Compiled assets
 └── package.json
 ```
