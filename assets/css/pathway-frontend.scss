@@ -27,6 +27,10 @@
             border-radius: 8px;
             box-shadow: 0 4px 10px rgba(0, 0, 0, 0.15);
             overflow: hidden;
+            // Explicit resets to prevent theme interference
+            margin: 0 !important;
+            padding: 0 !important;
+            transform: none !important;
         }
 
         // Hide the data-only GPX block
@@ -43,6 +47,12 @@
         .wp-block-post-content > ol {
             max-width: 70ch;
         }
+    }
+
+    // Adjust for WordPress admin bar when logged in
+    // Note: WordPress adds .admin-bar to body, not html
+    body.admin-bar.has-pathway-blocks #pathway-map {
+        top: 42px !important;  // 32px admin bar + 10px gap
     }
 
     // Override automatic layout when using manual column layout
