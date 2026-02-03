@@ -26,6 +26,8 @@ Perfect for:
 
 ### Core Functionality
 - **GPX Track Upload** - Upload your GPS tracks from any device or app
+- **Markers-Only Mode** - Display maps with just markers, no GPX track required
+- **Address Search** - Find locations by name with autocomplete suggestions
 - **Auto-Following Maps** - Map pans and zooms as readers scroll through your story
 - **Numbered Waypoints** - Place markers at key points in your narrative
 - **Smart Follow Mode** - Automatically pauses when readers interact with the map, resumes when they keep scrolling
@@ -104,17 +106,24 @@ npm run build
 
 **Settings:**
 - Title (optional) - Shows in tooltip on hover
-- Latitude (required) - Decimal degrees (e.g., 51.5074)
-- Longitude (required) - Decimal degrees (e.g., -0.1278)
-- Address (optional) - Note only, not displayed
+- Address (with search) - Type to search locations via OpenStreetMap
+- Latitude (auto-filled) - Decimal degrees (e.g., 51.5074)
+- Longitude (auto-filled) - Decimal degrees (e.g., -0.1278)
 - Zoom Level (optional) - Default: 14
+
+**Address Search:**
+- Type any address, landmark, or place name
+- Autocomplete suggestions appear as you type
+- Click a result to auto-fill coordinates
+- Mini map preview shows selected location
 
 **Validation:**
 - Missing coordinates: Error
-- No GPX block found: Warning
+- No GPX block found: Info (markers-only mode supported)
 - >50km from track: Warning (may be incorrect)
 
 **Getting Coordinates:**
+- **Recommended:** Use the built-in address search
 - Right-click on Google Maps > "What's here?"
 - Use your GPS device/app
 - Extract from GPX waypoints
@@ -187,6 +196,9 @@ The `pathway-map-column` class makes the map sticky as you scroll. See [Block Th
 ---
 
 ## FAQ
+
+**Q: Do I need a GPX file to use Pathway?**
+A: No! You can create map stories with just Map Marker blocks. The map will automatically fit to show all your markers.
 
 **Q: Can I use multiple GPX files in one post?**
 A: Not in v1.0. Only the first Map GPX block will be used.

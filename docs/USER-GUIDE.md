@@ -10,9 +10,10 @@ A comprehensive guide to creating interactive map-based stories with Pathway.
 2. [Creating Your First Map Story](#creating-your-first-map-story)
 3. [Working with GPX Files](#working-with-gpx-files)
 4. [Adding Map Markers](#adding-map-markers)
-5. [Understanding the Layout](#understanding-the-layout)
-6. [Tips for Great Map Stories](#tips-for-great-map-stories)
-7. [Troubleshooting](#troubleshooting)
+5. [Using Address Search](#using-address-search)
+6. [Understanding the Layout](#understanding-the-layout)
+7. [Tips for Great Map Stories](#tips-for-great-map-stories)
+8. [Troubleshooting](#troubleshooting)
 
 ---
 
@@ -24,8 +25,8 @@ Before creating your first map story, ensure you have:
 
 1. **Pathway plugin installed and activated**
 2. **A block theme** (Twenty Twenty-Four or Twenty Twenty-Five recommended)
-3. **A GPX file** from your adventure (see [Working with GPX Files](#working-with-gpx-files))
-4. **Coordinates** for key locations in your story
+3. **A GPX file** from your adventure (optional - see [Working with GPX Files](#working-with-gpx-files))
+4. **Locations** for your story (use the built-in address search or your own coordinates)
 
 ### Quick Terminology
 
@@ -45,13 +46,17 @@ Before creating your first map story, ensure you have:
 1. Go to **Posts > Add New** in WordPress admin
 2. Give your post a title (e.g., "My Hiking Adventure")
 
-### Step 2: Add the Map GPX Block
+### Step 2: Add the Map GPX Block (Optional)
+
+If you have a GPX track to display:
 
 1. Click the block inserter (+) or type `/map`
 2. Select **Map GPX** from the block list
 3. You'll see an empty block with an upload prompt
 
-### Step 3: Upload Your GPX File
+**Note:** The Map GPX block is optional! You can create map stories with just Map Marker blocks. The map will automatically show all your markers without needing a GPX track.
+
+### Step 3: Upload Your GPX File (If Using)
 
 1. Click **Media Library** in the Map GPX block
 2. Upload your GPX file or select an existing one
@@ -77,10 +82,12 @@ Now add your narrative content with Map Marker blocks at key locations:
 2. **Insert a Map Marker block** (type `/map marker`)
 3. **Configure the marker:**
    - Title: "Starting Point - Tower Bridge"
-   - Latitude: 51.5055
-   - Longitude: -0.0754
+   - Address: Type "Tower Bridge, London" and select from suggestions
+   - (Latitude/Longitude auto-fill from search)
    - Zoom Level: 15 (optional)
 4. Continue writing and adding markers throughout your story
+
+**Tip:** Use the Address field to search for any location - it will automatically fill in the coordinates for you!
 
 ### Step 5: Preview and Publish
 
@@ -144,18 +151,23 @@ Before uploading, you can validate your GPX file:
 
 ### Finding Coordinates
 
-**Method 1: Google Maps**
+**Method 1: Address Search (Recommended)**
+1. Type a location name in the Address field
+2. Select from autocomplete suggestions
+3. Coordinates auto-fill automatically!
+
+**Method 2: Google Maps**
 1. Go to Google Maps
 2. Right-click on the location
 3. Click the coordinates to copy them
 4. Format: `51.5074, -0.1278` (Latitude, Longitude)
 
-**Method 2: Your GPX File**
+**Method 3: Your GPX File**
 1. Open GPX file in a text editor
 2. Find `<trkpt>` elements
 3. Copy lat/lon attributes
 
-**Method 3: GPS Apps**
+**Method 4: GPS Apps**
 1. Open your hiking/GPS app
 2. Navigate to saved waypoints
 3. Copy coordinates
@@ -165,9 +177,9 @@ Before uploading, you can validate your GPX file:
 | Setting | Required | Description |
 |---------|----------|-------------|
 | Title | No | Tooltip text shown on hover |
-| Latitude | Yes | Decimal degrees (e.g., 51.5074) |
-| Longitude | Yes | Decimal degrees (e.g., -0.1278) |
-| Address | No | For your reference only (not displayed) |
+| Address | No | Search field - type to find locations and auto-fill coordinates |
+| Latitude | Yes | Decimal degrees - auto-filled from address search |
+| Longitude | Yes | Decimal degrees - auto-filled from address search |
 | Zoom Level | No | Default: 14. Range: 1-18 |
 
 ### Coordinate Format
@@ -196,6 +208,58 @@ If a marker is more than 50km from your GPX track, you'll see a warning. This us
 - Coordinates are incorrect (typo or wrong format)
 - The location isn't on this route
 - You may have the coordinates reversed (lat/lon swapped)
+
+---
+
+## Using Address Search
+
+The easiest way to add markers is using the built-in address search.
+
+### How It Works
+
+1. **Open the Map Marker block settings** (sidebar)
+2. **Type in the Address field** - e.g., "Eiffel Tower, Paris"
+3. **Wait for suggestions** - autocomplete appears after typing
+4. **Click a result** - coordinates auto-fill and a map preview appears
+5. **Done!** - The marker is ready to use
+
+### What You Can Search
+
+The address search uses OpenStreetMap data, so you can find:
+
+- **Landmarks**: "Big Ben", "Statue of Liberty", "Sydney Opera House"
+- **Addresses**: "221B Baker Street, London"
+- **Cities/Towns**: "Edinburgh, Scotland"
+- **Natural Features**: "Mount Fuji", "Grand Canyon"
+- **Businesses**: "Starbucks Times Square" (when specific enough)
+
+### Tips for Better Results
+
+**Be specific:**
+- "Tower Bridge, London" (good)
+- "Tower Bridge" (may return multiple results)
+
+**Include city/country for common names:**
+- "Springfield, Illinois, USA"
+- "Paris, France" vs "Paris, Texas"
+
+**Use landmarks near your location:**
+- If searching for a trailhead, try the nearby town name
+
+### Map Preview
+
+After selecting a location:
+- A small map preview appears below the address field
+- Shows a marker at the selected coordinates
+- Helps verify you've selected the right place
+- Preview uses OpenStreetMap tiles
+
+### Manual Override
+
+Even after using address search, you can:
+- Edit the latitude/longitude manually
+- Fine-tune coordinates for precision
+- The address field keeps your search text for reference
 
 ---
 
@@ -425,6 +489,15 @@ If you can't solve the issue:
 |--------|----------|
 | Add Map GPX | `/map gpx` |
 | Add Map Marker | `/map marker` |
+
+### Address Search Tips
+
+| Search | Example |
+|--------|---------|
+| Landmark | "Eiffel Tower, Paris" |
+| Address | "1600 Pennsylvania Ave, Washington DC" |
+| City | "Tokyo, Japan" |
+| Natural feature | "Yosemite Valley" |
 
 ### Coordinate Quick Reference
 

@@ -48,13 +48,37 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ---
 
+## [1.1.0] - 2026-02-03
+
+### Added
+- **Address Search with Geocoding** - Search for locations by name in the Map Marker block
+  - Autocomplete suggestions powered by OpenStreetMap Nominatim
+  - Mini map preview shows selected location before confirming
+  - Auto-fills latitude, longitude, and address fields
+- **Markers-Only Mode** - Display maps with just markers, no GPX track required
+  - Map bounds automatically calculated from marker positions
+  - Full scroll-following behavior works without GPX
+- **GPX Bounds Fallback** - If Map GPX block has no file uploaded, map falls back to marker bounds
+
+### Changed
+- Map Marker "Address" field now doubles as search input
+- Improved map initialization to handle various content configurations
+
+### Technical
+- Added `AddressSearch` React component with debounced API calls
+- Nominatim API integration with proper User-Agent headers
+- `calculateBoundsFromMarkers()` function for marker-only bounds
+
+---
+
 ## [Unreleased]
 
-### Planned for v1.1
+### Planned for v1.2
 - Multiple GPX files per post
 - Elevation profile display
 - Container block for theme-independent layout
 
 ---
 
+[1.1.0]: https://github.com/yourusername/pathway/releases/tag/v1.1.0
 [1.0.0]: https://github.com/yourusername/pathway/releases/tag/v1.0.0
