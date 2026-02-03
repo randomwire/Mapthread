@@ -149,12 +149,9 @@
             box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
         }
 
-        // Hide GPX block completely (no gap)
+        // Hide GPX block
         .pathway-map-gpx {
             display: none !important;
-            margin: 0 !important;
-            padding: 0 !important;
-            height: 0 !important;
         }
     }
 }
@@ -305,7 +302,7 @@
 }
 
 .pathway-map-gpx {
-    display: none; // Data-only block
+    display: none;
 }
 
 // ============================================================================

@@ -78,6 +78,112 @@
     }
 }
 
+// Address Search Component Styles
+.pathway-address-search {
+    position: relative;
+    margin-bottom: 16px;
+
+    &__loading {
+        display: flex;
+        justify-content: center;
+        padding: 8px;
+    }
+
+    &__results {
+        position: absolute;
+        top: 100%;
+        left: 0;
+        right: 0;
+        z-index: 100;
+        margin: 0;
+        padding: 0;
+        list-style: none;
+        background: #fff;
+        border: 1px solid #ddd;
+        border-radius: 4px;
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+        max-height: 250px;
+        overflow-y: auto;
+    }
+
+    &__result {
+        padding: 10px 12px;
+        cursor: pointer;
+        border-bottom: 1px solid #eee;
+        transition: background-color 0.15s ease;
+
+        &:last-child {
+            border-bottom: none;
+        }
+
+        &:hover,
+        &:focus {
+            background: #f0f0f0;
+            outline: none;
+        }
+    }
+
+    &__result-name {
+        display: block;
+        font-size: 13px;
+        color: #1e1e1e;
+        line-height: 1.4;
+    }
+
+    &__result-type {
+        display: block;
+        font-size: 11px;
+        color: #757575;
+        text-transform: capitalize;
+        margin-top: 2px;
+    }
+
+    &__no-results {
+        padding: 12px;
+        text-align: center;
+        color: #757575;
+        font-size: 13px;
+        background: #f9f9f9;
+        border: 1px solid #ddd;
+        border-radius: 4px;
+        margin-top: 4px;
+    }
+
+    &__preview {
+        margin-top: 12px;
+        border-radius: 6px;
+        overflow: hidden;
+        border: 1px solid #ddd;
+    }
+
+    &__map {
+        position: relative;
+        width: 256px;
+        height: 180px;
+        overflow: hidden;
+        background: #f0f0f0;
+    }
+
+    &__tile {
+        width: 256px;
+        height: 256px;
+        display: block;
+        margin-top: -38px; // Center the tile vertically in preview
+    }
+
+    &__marker {
+        position: absolute;
+        width: 12px;
+        height: 12px;
+        background: #e74c3c;
+        border: 2px solid #fff;
+        border-radius: 50%;
+        box-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
+        transform: translate(-50%, -50%);
+        pointer-events: none;
+    }
+}
+
 // Frontend styles (minimal - just structure)
 .pathway-marker {
     // Invisible anchor point - theme can optionally style as visible

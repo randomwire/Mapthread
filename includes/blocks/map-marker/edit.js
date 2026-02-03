@@ -12,8 +12,9 @@ import {
     Notice,
     __experimentalNumberControl as NumberControl
 } from '@wordpress/components';
-import { useEffect } from '@wordpress/element';
+import { useEffect, useCallback } from '@wordpress/element';
 import { useSelect } from '@wordpress/data';
+import AddressSearch from './components/AddressSearch';
 
 /**
  * Generate a unique ID for the marker
@@ -122,6 +123,15 @@ export default function Edit( { attributes, setAttributes, clientId } ) {
         }
     }, [] );
 
+    // Handle address search selection
+    const handleAddressSelect = useCallback( ( location ) => {
+        setAttributes( {
+            lat: location.lat,
+            lng: location.lng,
+            address: location.address
+        } );
+    }, [ setAttributes ] );
+
     // Find GPX block reactively using useSelect
     const gpxBlock = useSelect( ( select ) => {
         const blocks = select( 'core/block-editor' ).getBlocks();
@@ -159,6 +169,13 @@ export default function Edit( { attributes, setAttributes, clientId } ) {
                         help={ __( 'This will be displayed on the map pin', 'pathway' ) }
                     />
 
+                    <AddressSearch
+                        onSelect={ handleAddressSelect }
+                        currentLat={ lat }
+                        currentLng={ lng }
+                        currentAddress={ address }
+                    />
+
                     <NumberControl
                         label={ __( 'Latitude', 'pathway' ) }
                         value={ lat }
@@ -175,14 +192,6 @@ export default function Edit( { attributes, setAttributes, clientId } ) {
                         placeholder="-0.1278"
                         help={ __( 'Decimal degrees (e.g., -0.1278)', 'pathway' ) }
                         step={ 0.0001 }
-                    />
-
-                    <TextControl
-                        label={ __( 'Address (optional)', 'pathway' ) }
-                        value={ address }
-                        onChange={ ( value ) => setAttributes( { address: value } ) }
-                        placeholder={ __( 'e.g., London, UK', 'pathway' ) }
-                        help={ __( 'Helper note for reference only', 'pathway' ) }
                     />
 
                     <NumberControl
