@@ -55,6 +55,36 @@
     }
 
     /**
+     * Calculate map bounds from marker elements
+     *
+     * @return {Object} Bounds object {north, south, east, west}
+     */
+    function calculateBoundsFromMarkers() {
+        const markerElements = document.querySelectorAll( '.pathway-marker' );
+        let north = -90, south = 90, east = -180, west = 180;
+        let hasValidMarkers = false;
+
+        markerElements.forEach( ( element ) => {
+            const lat = parseFloat( element.dataset.lat );
+            const lng = parseFloat( element.dataset.lng );
+
+            if ( ! isNaN( lat ) && ! isNaN( lng ) && ! ( lat === 0 && lng === 0 ) ) {
+                hasValidMarkers = true;
+                north = Math.max( north, lat );
+                south = Math.min( south, lat );
+                east = Math.max( east, lng );
+                west = Math.min( west, lng );
+            }
+        } );
+
+        if ( ! hasValidMarkers ) {
+            return { north: 0, south: 0, east: 0, west: 0 };
+        }
+
+        return { north, south, east, west };
+    }
+
+    /**
      * Fetch GPX file from URL with caching
      *
      * @param {number} attachmentId - WordPress attachment ID
@@ -436,38 +466,49 @@
     async function initPathway() {
         // Check if we have Pathway blocks on this page
         const gpxBlock = document.querySelector( '.pathway-map-gpx' );
-        if ( ! gpxBlock ) {
-            return; // No GPX block, nothing to do
-        }
+        const markerElements = document.querySelectorAll( '.pathway-marker' );
 
-        // Get GPX data from block attributes
-        const attachmentId = parseInt( gpxBlock.dataset.attachmentId );
-        const gpxUrl = gpxBlock.dataset.gpxUrl;
-        const boundsData = gpxBlock.dataset.bounds;
-
-        if ( ! gpxUrl ) {
-            console.warn( 'Pathway: Missing GPX URL' );
+        // Exit if no Pathway content at all
+        if ( ! gpxBlock && markerElements.length === 0 ) {
             return;
         }
 
+        // Determine bounds - from GPX block (if valid) or markers
         let bounds = { north: 0, south: 0, east: 0, west: 0 };
-        if ( boundsData ) {
-            try {
-                bounds = JSON.parse( boundsData );
-            } catch ( e ) {
-                console.warn( 'Pathway: Failed to parse bounds', e );
+        let hasValidGpxBounds = false;
+
+        if ( gpxBlock ) {
+            const boundsData = gpxBlock.dataset.bounds;
+            if ( boundsData ) {
+                try {
+                    bounds = JSON.parse( boundsData );
+                    // Check if bounds are valid (not all zeros)
+                    hasValidGpxBounds = bounds.north !== 0 || bounds.south !== 0 ||
+                                        bounds.east !== 0 || bounds.west !== 0;
+                } catch ( e ) {
+                    console.warn( 'Pathway: Failed to parse bounds', e );
+                }
             }
+        }
+
+        // Fall back to marker bounds if no valid GPX bounds
+        if ( ! hasValidGpxBounds && markerElements.length > 0 ) {
+            bounds = calculateBoundsFromMarkers();
         }
 
         // Initialize map
         map = initializeMap( bounds );
 
-        // Fetch and render GPX track
-        const coords = await fetchGPX( attachmentId, gpxUrl );
-        if ( coords.length > 0 ) {
-            addGPXTrack( coords );
-        } else {
-            console.warn( 'Pathway: No track coordinates found in GPX' );
+        // Only fetch GPX if block exists with valid URL
+        if ( gpxBlock ) {
+            const attachmentId = parseInt( gpxBlock.dataset.attachmentId );
+            const gpxUrl = gpxBlock.dataset.gpxUrl;
+            if ( gpxUrl ) {
+                const coords = await fetchGPX( attachmentId, gpxUrl );
+                if ( coords.length > 0 ) {
+                    addGPXTrack( coords );
+                }
+            }
         }
 
         // Add marker pins
