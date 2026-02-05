@@ -5,12 +5,14 @@
  */
 
 import { __ } from '@wordpress/i18n';
-import { useBlockProps, MediaUpload, MediaUploadCheck } from '@wordpress/block-editor';
+import { useBlockProps, MediaUpload, MediaUploadCheck, InspectorControls } from '@wordpress/block-editor';
 import {
     Button,
     Placeholder,
     Notice,
-    Spinner
+    Spinner,
+    PanelBody,
+    ToggleControl
 } from '@wordpress/components';
 import { useSelect } from '@wordpress/data';
 import { useState, useEffect } from '@wordpress/element';
@@ -89,7 +91,7 @@ function hasMultipleGPXBlocks( clientId ) {
  */
 export default function Edit( { attributes, setAttributes, clientId } ) {
     const blockProps = useBlockProps();
-    const { attachmentId, fileName, pointCount, bounds } = attributes;
+    const { attachmentId, fileName, pointCount, bounds, showProgressIndicator } = attributes;
 
     const [ isProcessing, setIsProcessing ] = useState( false );
     const [ validationError, setValidationError ] = useState( '' );
@@ -242,8 +244,19 @@ export default function Edit( { attributes, setAttributes, clientId } ) {
 
     // Show GPX info with replace/remove options
     return (
-        <div { ...blockProps }>
-            <div className="pathway-map-gpx-editor">
+        <>
+            <InspectorControls>
+                <PanelBody title={ __( 'Map Settings', 'pathway' ) }>
+                    <ToggleControl
+                        label={ __( 'Show progress indicator', 'pathway' ) }
+                        checked={ showProgressIndicator }
+                        onChange={ ( value ) => setAttributes( { showProgressIndicator: value } ) }
+                        help={ __( 'Animate position along track as readers scroll', 'pathway' ) }
+                    />
+                </PanelBody>
+            </InspectorControls>
+            <div { ...blockProps }>
+                <div className="pathway-map-gpx-editor">
                 { multipleBlockWarning && (
                     <Notice status="warning" isDismissible={ false }>
                         { __( 'Multiple Map GPX blocks detected. Only the first block will be used on the frontend.', 'pathway' ) }
@@ -297,5 +310,6 @@ export default function Edit( { attributes, setAttributes, clientId } ) {
                 </div>
             </div>
         </div>
+        </>
     );
 }

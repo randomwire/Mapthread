@@ -19,6 +19,395 @@
     let lastScrollTime = 0;
     let initialBounds = null;
 
+    // Progress indicator state
+    let trackCoords = [];               // Full coordinate array
+    let trackDistances = [];            // Cumulative distance at each point
+    let totalTrackDistance = 0;         // Total track length
+    let markerTrackPositions = [];      // Each marker's position ratio (0-1) along track
+    let walkedPolyline = null;          // Polyline for walked portion
+    let remainingPolyline = null;       // Polyline for remaining portion
+    let showProgressIndicator = true;   // Setting from block
+    let lastSmoothedProgress = null;    // For smooth interpolation
+
+    // Camera smoothing constant
+    const CAMERA_SMOOTHING = 0.2;       // Smoothing factor (0.15-0.3 range)
+
+    /**
+     * Calculate distance between two points using Haversine formula
+     *
+     * @param {number} lat1 - First latitude
+     * @param {number} lon1 - First longitude
+     * @param {number} lat2 - Second latitude
+     * @param {number} lon2 - Second longitude
+     * @return {number} Distance in meters
+     */
+    function calculateDistance( lat1, lon1, lat2, lon2 ) {
+        const R = 6371000; // Earth's radius in meters
+        const dLat = ( lat2 - lat1 ) * Math.PI / 180;
+        const dLon = ( lon2 - lon1 ) * Math.PI / 180;
+        const a = Math.sin( dLat / 2 ) * Math.sin( dLat / 2 ) +
+                  Math.cos( lat1 * Math.PI / 180 ) * Math.cos( lat2 * Math.PI / 180 ) *
+                  Math.sin( dLon / 2 ) * Math.sin( dLon / 2 );
+        const c = 2 * Math.atan2( Math.sqrt( a ), Math.sqrt( 1 - a ) );
+        return R * c;
+    }
+
+    /**
+     * Linear interpolation between two coordinates
+     *
+     * @param {Array} coord1 - Starting [lat, lng]
+     * @param {Array} coord2 - Target [lat, lng]
+     * @param {number} t - Interpolation factor (0-1)
+     * @return {Array} Interpolated [lat, lng]
+     */
+    function lerpCoordinate( coord1, coord2, t ) {
+        if ( ! coord1 || ! coord2 ) {
+            return coord2 || coord1;
+        }
+        return [
+            coord1[ 0 ] + ( coord2[ 0 ] - coord1[ 0 ] ) * t,
+            coord1[ 1 ] + ( coord2[ 1 ] - coord1[ 1 ] ) * t
+        ];
+    }
+
+    /**
+     * Linear interpolation between two numbers
+     *
+     * @param {number} a - Starting value
+     * @param {number} b - Target value
+     * @param {number} t - Interpolation factor (0-1)
+     * @return {number} Interpolated value
+     */
+    function lerp( a, b, t ) {
+        return a + ( b - a ) * t;
+    }
+
+    /**
+     * Calculate cumulative distances along track
+     *
+     * @param {Array} coords - Array of [lat, lng] coordinates
+     * @return {Object} Object with distances array and total distance
+     */
+    function calculateTrackDistances( coords ) {
+        const distances = [ 0 ];
+        let totalDist = 0;
+
+        for ( let i = 1; i < coords.length; i++ ) {
+            const dist = calculateDistance(
+                coords[ i - 1 ][ 0 ], coords[ i - 1 ][ 1 ],
+                coords[ i ][ 0 ], coords[ i ][ 1 ]
+            );
+            totalDist += dist;
+            distances.push( totalDist );
+        }
+
+        return { distances, totalDistance: totalDist };
+    }
+
+    /**
+     * Find the index of the nearest track point to a given coordinate
+     *
+     * @param {number} lat - Latitude
+     * @param {number} lng - Longitude
+     * @param {Array} coords - Array of [lat, lng] coordinates
+     * @return {number} Index of nearest point
+     */
+    function findNearestTrackPoint( lat, lng, coords ) {
+        let minDist = Infinity;
+        let nearestIndex = 0;
+
+        for ( let i = 0; i < coords.length; i++ ) {
+            const dist = calculateDistance( lat, lng, coords[ i ][ 0 ], coords[ i ][ 1 ] );
+            if ( dist < minDist ) {
+                minDist = dist;
+                nearestIndex = i;
+            }
+        }
+
+        return nearestIndex;
+    }
+
+    /**
+     * Calculate each marker's position ratio (0-1) along the track
+     */
+    function calculateMarkerTrackPositions() {
+        if ( trackCoords.length === 0 || totalTrackDistance === 0 ) {
+            markerTrackPositions = markers.map( () => 0 );
+            return;
+        }
+
+        markerTrackPositions = markers.map( ( marker ) => {
+            const nearestIndex = findNearestTrackPoint( marker.lat, marker.lng, trackCoords );
+            return trackDistances[ nearestIndex ] / totalTrackDistance;
+        } );
+    }
+
+    /**
+     * Get interpolated coordinate at a given progress point
+     *
+     * @param {number} progress - Progress ratio (0-1)
+     * @return {Array} [lat, lng] coordinate
+     */
+    function getCoordinateAtProgress( progress ) {
+        if ( trackCoords.length === 0 ) {
+            return null;
+        }
+
+        const targetDistance = progress * totalTrackDistance;
+
+        // Find the segment containing this distance
+        let segmentIndex = 0;
+        for ( let i = 1; i < trackDistances.length; i++ ) {
+            if ( trackDistances[ i ] >= targetDistance ) {
+                segmentIndex = i - 1;
+                break;
+            }
+            segmentIndex = i - 1;
+        }
+
+        // If at the very end
+        if ( segmentIndex >= trackCoords.length - 1 ) {
+            return trackCoords[ trackCoords.length - 1 ];
+        }
+
+        // Interpolate within segment
+        const segmentStart = trackDistances[ segmentIndex ];
+        const segmentEnd = trackDistances[ segmentIndex + 1 ];
+        const segmentLength = segmentEnd - segmentStart;
+
+        if ( segmentLength === 0 ) {
+            return trackCoords[ segmentIndex ];
+        }
+
+        const t = ( targetDistance - segmentStart ) / segmentLength;
+        const lat = trackCoords[ segmentIndex ][ 0 ] + t * ( trackCoords[ segmentIndex + 1 ][ 0 ] - trackCoords[ segmentIndex ][ 0 ] );
+        const lng = trackCoords[ segmentIndex ][ 1 ] + t * ( trackCoords[ segmentIndex + 1 ][ 1 ] - trackCoords[ segmentIndex ][ 1 ] );
+
+        return [ lat, lng ];
+    }
+
+    /**
+     * Get track coordinates up to a given progress point
+     *
+     * @param {number} progress - Progress ratio (0-1)
+     * @return {Array} Array of [lat, lng] coordinates
+     */
+    function getTrackUpToProgress( progress ) {
+        if ( trackCoords.length === 0 ) {
+            return [];
+        }
+
+        const targetDistance = progress * totalTrackDistance;
+
+        // Find all points up to this distance
+        const points = [];
+        for ( let i = 0; i < trackDistances.length; i++ ) {
+            if ( trackDistances[ i ] <= targetDistance ) {
+                points.push( trackCoords[ i ] );
+            } else {
+                break;
+            }
+        }
+
+        // Add interpolated end point
+        const endPoint = getCoordinateAtProgress( progress );
+        if ( endPoint ) {
+            points.push( endPoint );
+        }
+
+        return points;
+    }
+
+    /**
+     * Get track coordinates from a given progress point to the end
+     *
+     * @param {number} progress - Progress ratio (0-1)
+     * @return {Array} Array of [lat, lng] coordinates
+     */
+    function getTrackFromProgress( progress ) {
+        if ( trackCoords.length === 0 ) {
+            return [];
+        }
+
+        const targetDistance = progress * totalTrackDistance;
+
+        // Start with interpolated point
+        const points = [];
+        const startPoint = getCoordinateAtProgress( progress );
+        if ( startPoint ) {
+            points.push( startPoint );
+        }
+
+        // Add all points after this distance
+        for ( let i = 0; i < trackDistances.length; i++ ) {
+            if ( trackDistances[ i ] > targetDistance ) {
+                points.push( trackCoords[ i ] );
+            }
+        }
+
+        return points;
+    }
+
+    /**
+     * Initialize progress indicator visualization
+     */
+    function initProgressIndicator() {
+        if ( ! showProgressIndicator || trackCoords.length === 0 || ! map ) {
+            return;
+        }
+
+        // Track colors
+        const walkedColor = '#5d6d7e';     // Slate blue-grey
+        const remainingColor = '#a8b8c8';  // Light blue-grey
+
+        // Create walked polyline (starts at first point only)
+        walkedPolyline = L.polyline( [ trackCoords[ 0 ] ], {
+            color: walkedColor,
+            weight: 4,
+            opacity: 1,
+            className: 'pathway-track-walked'
+        } ).addTo( map );
+
+        // Create remaining polyline (full track initially)
+        remainingPolyline = L.polyline( trackCoords, {
+            color: remainingColor,
+            weight: 3,
+            opacity: 0.5,
+            className: 'pathway-track-remaining'
+        } ).addTo( map );
+
+        // Remove original gpxLayer (replaced by split polylines)
+        if ( gpxLayer ) {
+            map.removeLayer( gpxLayer );
+            gpxLayer = null;
+        }
+    }
+
+    /**
+     * Calculate scroll progress between current and next marker
+     *
+     * @param {number} activeIndex - Index of currently active marker
+     * @return {number} Progress ratio (0-1) between markers
+     */
+    function calculateScrollProgress( activeIndex ) {
+        if ( activeIndex === null || markers.length === 0 ) {
+            return 0;
+        }
+
+        const markerElements = document.querySelectorAll( '.pathway-marker' );
+        const currentEl = markerElements[ activeIndex ];
+        const nextEl = markerElements[ activeIndex + 1 ];
+
+        if ( ! currentEl ) {
+            return 0;
+        }
+
+        const viewportHeight = window.innerHeight;
+        const threshold = viewportHeight * 0.25;
+
+        const currentRect = currentEl.getBoundingClientRect();
+
+        // If no next marker, progress to 1 as we scroll past the last marker
+        if ( ! nextEl ) {
+            // Progress from 0 to 1 as current marker goes from threshold to top of viewport
+            const progress = ( threshold - currentRect.top ) / threshold;
+            return Math.max( 0, Math.min( 1, progress ) );
+        }
+
+        const nextRect = nextEl.getBoundingClientRect();
+
+        // Calculate progress from current marker to next marker
+        // nextRect.top > currentRect.top since next marker is further down the page
+        const totalDistance = nextRect.top - currentRect.top;
+        if ( totalDistance <= 0 ) {
+            return 0;
+        }
+
+        const currentProgress = threshold - currentRect.top;
+        return Math.max( 0, Math.min( 1, currentProgress / totalDistance ) );
+    }
+
+    /**
+     * Update progress indicator position based on scroll
+     *
+     * @param {number} activeIndex - Index of currently active marker
+     * @param {number} scrollProgress - Progress ratio (0-1) between markers
+     */
+    function updateProgressPosition( activeIndex, scrollProgress ) {
+        if ( ! showProgressIndicator || trackCoords.length === 0 ) {
+            return;
+        }
+
+        // Calculate overall progress (0-1) along track
+        let progress = 0;
+        let currentZoom = 14;
+        let nextZoom = 14;
+
+        if ( activeIndex !== null && markerTrackPositions.length > 0 ) {
+            const currentPos = markerTrackPositions[ activeIndex ] || 0;
+            const nextPos = markerTrackPositions[ activeIndex + 1 ];
+
+            // Get zoom levels from marker data
+            currentZoom = markers[ activeIndex ]?.zoom || 14;
+            nextZoom = markers[ activeIndex + 1 ]?.zoom || currentZoom;
+
+            if ( nextPos !== undefined ) {
+                // Interpolate between current and next marker
+                progress = currentPos + ( nextPos - currentPos ) * scrollProgress;
+            } else {
+                // Last marker - progress from current to end
+                progress = currentPos + ( 1 - currentPos ) * scrollProgress;
+            }
+        }
+
+        // Clamp progress
+        progress = Math.max( 0, Math.min( 1, progress ) );
+
+        // Initialize smoothed progress on first update
+        if ( lastSmoothedProgress === null ) {
+            lastSmoothedProgress = progress;
+        }
+
+        // Apply exponential smoothing to progress for synchronized camera and polylines
+        const smoothedProgress = lerp( lastSmoothedProgress, progress, CAMERA_SMOOTHING );
+
+        // Get position from smoothed progress (NO additional coordinate smoothing)
+        const smoothedCoord = getCoordinateAtProgress( smoothedProgress );
+        const smoothedZoom = currentZoom + ( nextZoom - currentZoom ) * scrollProgress;
+
+        if ( smoothedCoord && map && isFollowMode ) {
+            // Update map with position from smoothed progress
+            map.setView( smoothedCoord, smoothedZoom, { animate: false } );
+        }
+
+        // Store smoothed progress for next frame
+        lastSmoothedProgress = smoothedProgress;
+
+        // Update polyline split using same smoothed progress
+        const walkedCoords = getTrackUpToProgress( smoothedProgress );
+        const remainingCoords = getTrackFromProgress( smoothedProgress );
+
+        if ( walkedCoords.length > 0 ) {
+            walkedPolyline.setLatLngs( walkedCoords );
+        }
+        if ( remainingCoords.length > 0 ) {
+            remainingPolyline.setLatLngs( remainingCoords );
+        }
+    }
+
+    /**
+     * Reset progress indicator to start
+     */
+    function resetProgressIndicator() {
+        if ( ! showProgressIndicator || trackCoords.length === 0 ) {
+            return;
+        }
+
+        walkedPolyline.setLatLngs( [ trackCoords[ 0 ] ] );
+        remainingPolyline.setLatLngs( trackCoords );
+        lastSmoothedProgress = null;
+    }
+
     /**
      * Parse GPX content and extract track coordinates
      *
@@ -236,6 +625,9 @@
             padding: [ 50, 50 ],
             duration: 0.8
         } );
+
+        // Reset progress smoothing
+        lastSmoothedProgress = null;
     }
 
     /**
@@ -279,8 +671,24 @@
         if ( ( newActiveMarker === null || atBottom ) && activeMarkerIndex !== null ) {
             // User scrolled to top or bottom - reset to initial view
             resetToInitialView();
-        } else if ( newActiveMarker !== null && newActiveMarker !== activeMarkerIndex && ! atBottom ) {
-            updateMapView( newActiveMarker );
+            resetProgressIndicator();
+        } else if ( newActiveMarker !== null && ! atBottom ) {
+            // Update progress indicator (handles map panning when enabled)
+            if ( showProgressIndicator && trackCoords.length > 0 ) {
+                const scrollProgress = calculateScrollProgress( newActiveMarker );
+                updateProgressPosition( newActiveMarker, scrollProgress );
+
+                // Still update marker icons and activeMarkerIndex
+                if ( newActiveMarker !== activeMarkerIndex ) {
+                    activeMarkerIndex = newActiveMarker;
+                    updateMarkerIcons( newActiveMarker );
+                }
+            } else {
+                // No progress indicator - use standard marker-based panning
+                if ( newActiveMarker !== activeMarkerIndex ) {
+                    updateMapView( newActiveMarker );
+                }
+            }
         }
     }
 
@@ -289,6 +697,9 @@
      * Suspends follow mode until next scroll event changes active marker
      */
     function handleMapInteraction() {
+        // Reset progress smoothing when user manually pans/zooms
+        lastSmoothedProgress = null;
+
         const previousActive = activeMarkerIndex;
         isFollowMode = false;
 
@@ -405,7 +816,7 @@
 
         // Add polyline
         gpxLayer = L.polyline( coords, {
-            color: '#3388ff',
+            color: '#a8b8c8',
             weight: 3,
             opacity: 0.8
         } ).addTo( map );
@@ -499,6 +910,11 @@
         // Initialize map
         map = initializeMap( bounds );
 
+        // Read progress indicator setting
+        if ( gpxBlock ) {
+            showProgressIndicator = gpxBlock.dataset.showProgress !== 'false';
+        }
+
         // Only fetch GPX if block exists with valid URL
         if ( gpxBlock ) {
             const attachmentId = parseInt( gpxBlock.dataset.attachmentId );
@@ -506,6 +922,15 @@
             if ( gpxUrl ) {
                 const coords = await fetchGPX( attachmentId, gpxUrl );
                 if ( coords.length > 0 ) {
+                    // Store track coordinates for progress indicator
+                    trackCoords = coords;
+
+                    // Calculate distances along track
+                    const distanceData = calculateTrackDistances( coords );
+                    trackDistances = distanceData.distances;
+                    totalTrackDistance = distanceData.totalDistance;
+
+                    // Add GPX track (will be replaced by progress indicator if enabled)
                     addGPXTrack( coords );
                 }
             }
@@ -513,6 +938,12 @@
 
         // Add marker pins
         addMarkerPins();
+
+        // Initialize progress indicator (after markers are added)
+        if ( showProgressIndicator && trackCoords.length > 0 ) {
+            calculateMarkerTrackPositions();
+            initProgressIndicator();
+        }
 
         // Set up scroll handling
         window.addEventListener( 'scroll', handleScroll, { passive: true } );

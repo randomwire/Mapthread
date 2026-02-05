@@ -181,10 +181,10 @@
 }
 
 .pathway-marker-pin {
-    width: 16px;
-    height: 16px;
+    width: 10px;
+    height: 10px;
     background: var(--wp--preset--color--primary, #e74c3c);
-    border: 2px solid white;
+    border: none;
     border-radius: 50%;
     cursor: pointer;
     box-shadow:
@@ -200,8 +200,7 @@
     }
 
     &.pathway-active {
-        background: var(--wp--preset--color--secondary, #3498db);
-        border-width: 3px;
+        background: #1a1a1a;
         transform: scale(1.4);
         box-shadow:
             0 3px 10px rgba(0, 0, 0, 0.4),
@@ -221,6 +220,33 @@
             0 3px 10px rgba(0, 0, 0, 0.4),
             0 0 0 6px rgba(255, 255, 255, 0.2);
     }
+}
+
+// ============================================================================
+// PROGRESS INDICATOR
+// ============================================================================
+
+// Position marker (current location on track)
+.pathway-progress-marker {
+    filter: drop-shadow(0 2px 4px rgba(0, 0, 0, 0.3));
+    transition: none; // Disable transition for smooth tracking
+}
+
+// Walked portion of track (already traveled)
+.pathway-track-walked {
+    stroke: #5d6d7e;
+    stroke-width: 4;
+    stroke-linecap: round;
+    stroke-linejoin: round;
+}
+
+// Remaining portion of track (yet to travel)
+.pathway-track-remaining {
+    stroke: #a8b8c8;
+    stroke-width: 3;
+    stroke-linecap: round;
+    stroke-linejoin: round;
+    opacity: 0.5;
 }
 
 // ============================================================================
@@ -279,7 +305,7 @@
 
 // GPX track polyline
 .leaflet-interactive[stroke="#3388ff"] {
-    stroke: var(--wp--preset--color--primary, #3388ff);
+    stroke: #a8b8c8;
     stroke-width: 3.5;
     stroke-linecap: round;
     stroke-linejoin: round;
@@ -312,8 +338,8 @@
 @media (max-width: 767px) {
     // Slightly smaller pins on mobile
     .pathway-marker-pin {
-        width: 14px;
-        height: 14px;
+        width: 8px;
+        height: 8px;
     }
 }
 
