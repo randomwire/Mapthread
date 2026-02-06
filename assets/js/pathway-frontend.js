@@ -461,8 +461,8 @@
             if ( activeIndex + 1 < markers.length ) {
                 nextZoom = markers[ activeIndex + 1 ]?.zoom || DEFAULT_ZOOM;
             } else {
-                // Transitioning to virtual end point - zoom out slightly
-                nextZoom = currentZoom - 1;
+                // Transitioning to virtual end point - maintain last marker's zoom
+                nextZoom = currentZoom;
             }
 
             // Interpolate between current and next position
