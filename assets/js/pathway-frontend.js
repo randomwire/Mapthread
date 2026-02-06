@@ -20,6 +20,7 @@
     let initialBounds = null;
     let initialZoom = 14;               // Initial zoom level from fitBounds
     let fitBoundsCenter = null;         // Center coordinate of fitBounds view
+    let cachedMarkerElements = null;    // Cached DOM query results
 
     // Progress indicator state
     let trackCoords = [];               // Full coordinate array
@@ -33,6 +34,14 @@
 
     // Camera smoothing constant
     const CAMERA_SMOOTHING = 0.2;       // Smoothing factor (0.15-0.3 range)
+
+    // Configuration constants
+    const ACTIVATION_THRESHOLD = 0.25;   // Marker activation position (25% from top)
+    const SCROLL_THROTTLE_MS = 100;      // Scroll event throttle
+    const RESET_ANIMATION_DURATION = 0.8; // flyToBounds duration for reset
+    const MAX_SCROLL_DISTANCE = 1.0;     // Viewport height multiplier for progress
+    const DEFAULT_ZOOM = 14;             // Default zoom level
+    const BOUNDS_PADDING = [50, 50];     // Padding for fitBounds operations
 
     /**
      * Calculate distance between two points using Haversine formula
@@ -303,21 +312,21 @@
                 return 0;
             }
 
-            const markerElements = document.querySelectorAll( '.pathway-marker' );
+            const markerElements = getMarkerElements();
             const firstMarker = markerElements[ 0 ];
             if ( ! firstMarker ) {
                 return 0;
             }
 
             const viewportHeight = window.innerHeight;
-            const threshold = viewportHeight * 0.25;
+            const threshold = viewportHeight * ACTIVATION_THRESHOLD;
             const firstMarkerRect = firstMarker.getBoundingClientRect();
 
             // Calculate how far we've scrolled from top toward the first marker
             // When marker is far below (rect.top > threshold), progress = 0
             // As marker approaches threshold, progress increases toward 1
             const distanceFromThreshold = firstMarkerRect.top - threshold;
-            const maxDistance = viewportHeight; // Assume one viewport height as maximum
+            const maxDistance = viewportHeight * MAX_SCROLL_DISTANCE; // Assume one viewport height as maximum
 
             if ( distanceFromThreshold >= maxDistance ) {
                 return 0; // Haven't started scrolling yet
@@ -332,7 +341,7 @@
             return 0;
         }
 
-        const markerElements = document.querySelectorAll( '.pathway-marker' );
+        const markerElements = getMarkerElements();
         const currentEl = markerElements[ activeIndex ];
         const nextEl = markerElements[ activeIndex + 1 ];
 
@@ -378,8 +387,8 @@
 
         // Calculate overall progress (0-1) along track
         let progress = 0;
-        let currentZoom = 14;
-        let nextZoom = 14;
+        let currentZoom = DEFAULT_ZOOM;
+        let nextZoom = DEFAULT_ZOOM;
 
         if ( markerTrackPositions.length === 0 ) {
             return;
@@ -393,7 +402,7 @@
 
                 // Interpolate zoom from initial to first marker zoom
                 currentZoom = initialZoom;
-                nextZoom = markers[ 0 ]?.zoom || 14;
+                nextZoom = markers[ 0 ]?.zoom || DEFAULT_ZOOM;
 
                 // Store the blended camera position for later use
                 // We'll handle the actual camera positioning after this block
@@ -401,7 +410,7 @@
                 // No markers case
                 progress = scrollProgress;
                 currentZoom = initialZoom;
-                nextZoom = 14;
+                nextZoom = DEFAULT_ZOOM;
             } else {
                 return; // No track data
             }
@@ -415,10 +424,10 @@
 
             // Get zoom levels from marker data (or defaults for virtual endpoints)
             if ( activeIndex < markers.length ) {
-                currentZoom = markers[ activeIndex ]?.zoom || 14;
+                currentZoom = markers[ activeIndex ]?.zoom || DEFAULT_ZOOM;
             }
             if ( activeIndex + 1 < markers.length ) {
-                nextZoom = markers[ activeIndex + 1 ]?.zoom || 14;
+                nextZoom = markers[ activeIndex + 1 ]?.zoom || DEFAULT_ZOOM;
             } else {
                 // Transitioning to virtual end point - zoom out slightly
                 nextZoom = currentZoom - 1;
@@ -527,7 +536,7 @@
      * @return {Object} Bounds object {north, south, east, west}
      */
     function calculateBoundsFromMarkers() {
-        const markerElements = document.querySelectorAll( '.pathway-marker' );
+        const markerElements = getMarkerElements();
         let north = -90, south = 90, east = -180, west = 180;
         let hasValidMarkers = false;
 
@@ -629,13 +638,13 @@
      * @return {number|null} Index of active marker or null (null = at top of page)
      */
     function calculateActiveMarker() {
-        const markerElements = document.querySelectorAll( '.pathway-marker' );
+        const markerElements = getMarkerElements();
         if ( markerElements.length === 0 ) {
             return null;
         }
 
         const viewportHeight = window.innerHeight;
-        const threshold = viewportHeight * 0.25; // 25% from top
+        const threshold = viewportHeight * ACTIVATION_THRESHOLD; // 25% from top
 
         // Find first marker whose top edge is at or above the 25% threshold
         for ( let i = 0; i < markerElements.length; i++ ) {
@@ -655,6 +664,25 @@
 
         // No markers in threshold or scrolled past - user is at top of page
         return null;
+    }
+
+    /**
+     * Get marker elements (cached for performance)
+     *
+     * @return {NodeList} Marker DOM elements
+     */
+    function getMarkerElements() {
+        if ( ! cachedMarkerElements ) {
+            cachedMarkerElements = document.querySelectorAll( '.pathway-marker' );
+        }
+        return cachedMarkerElements;
+    }
+
+    /**
+     * Invalidate marker cache (call when markers change)
+     */
+    function invalidateMarkerCache() {
+        cachedMarkerElements = null;
     }
 
     /**
@@ -682,7 +710,7 @@
             [ markerData.lat, markerData.lng ],
             markerData.zoom,
             {
-                duration: 0.8, // 800ms
+                duration: RESET_ANIMATION_DURATION, // 800ms
                 easeLinearity: 0.25
             }
         );
@@ -699,9 +727,10 @@
         activeMarkerIndex = null;
         updateMarkerIcons( -1 ); // No active marker
 
-        map.flyToBounds( initialBounds, {
-            padding: [ 50, 50 ],
-            duration: 0.8
+        // Use instant fitBounds instead of flyToBounds to avoid animation conflicts
+        map.fitBounds( initialBounds, {
+            padding: BOUNDS_PADDING,
+            animate: false
         } );
 
         // Reset progress smoothing
@@ -714,7 +743,7 @@
      * @return {boolean} True if last marker is above viewport threshold
      */
     function isAtBottomOfPage() {
-        const markerElements = document.querySelectorAll( '.pathway-marker' );
+        const markerElements = getMarkerElements();
         if ( markerElements.length === 0 ) {
             return false;
         }
@@ -737,7 +766,7 @@
         const now = Date.now();
 
         // Throttle scroll events (max once per 100ms)
-        if ( now - lastScrollTime < 100 ) {
+        if ( now - lastScrollTime < SCROLL_THROTTLE_MS ) {
             return;
         }
 
@@ -799,7 +828,7 @@
      * @param {number} markerIndex - Index of marker to scroll to
      */
     function scrollToMarker( markerIndex ) {
-        const markerElements = document.querySelectorAll( '.pathway-marker' );
+        const markerElements = getMarkerElements();
         if ( markerElements[ markerIndex ] ) {
             markerElements[ markerIndex ].scrollIntoView( {
                 behavior: 'smooth',
@@ -846,7 +875,7 @@
                 [ bounds.south, bounds.west ],
                 [ bounds.north, bounds.east ]
             ];
-            leafletMap.fitBounds( leafletBounds, { padding: [ 50, 50 ] } );
+            leafletMap.fitBounds( leafletBounds, { padding: BOUNDS_PADDING } );
             initialBounds = leafletBounds;
 
             // Store initial zoom for smooth transition on first scroll
@@ -918,13 +947,13 @@
             return;
         }
 
-        const markerElements = document.querySelectorAll( '.pathway-marker' );
+        const markerElements = getMarkerElements();
 
         markerElements.forEach( ( element, index ) => {
             const lat = parseFloat( element.dataset.lat );
             const lng = parseFloat( element.dataset.lng );
             const title = element.dataset.title || '';
-            const zoom = parseInt( element.dataset.zoom ) || 14;
+            const zoom = parseInt( element.dataset.zoom ) || DEFAULT_ZOOM;
 
             if ( isNaN( lat ) || isNaN( lng ) || ( lat === 0 && lng === 0 ) ) {
                 return;
@@ -965,7 +994,7 @@
     async function initPathway() {
         // Check if we have Pathway blocks on this page
         const gpxBlock = document.querySelector( '.pathway-map-gpx' );
-        const markerElements = document.querySelectorAll( '.pathway-marker' );
+        const markerElements = getMarkerElements();
 
         // Exit if no Pathway content at all
         if ( ! gpxBlock && markerElements.length === 0 ) {
