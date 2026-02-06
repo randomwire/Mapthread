@@ -132,14 +132,19 @@
      */
     function calculateMarkerTrackPositions() {
         if ( trackCoords.length === 0 || totalTrackDistance === 0 ) {
-            markerTrackPositions = markers.map( () => 0 );
+            // Maintain structure: [0, ...marker positions, 1]
+            markerTrackPositions = [ 0, ...markers.map( () => 0 ), 1 ];
             return;
         }
 
-        markerTrackPositions = markers.map( ( marker ) => {
+        // Calculate positions for actual markers
+        const actualMarkerPositions = markers.map( ( marker ) => {
             const nearestIndex = findNearestTrackPoint( marker.lat, marker.lng, trackCoords );
             return trackDistances[ nearestIndex ] / totalTrackDistance;
         } );
+
+        // Add virtual endpoints: [0, marker1, marker2, ..., markerN, 1]
+        markerTrackPositions = [ 0, ...actualMarkerPositions, 1 ];
     }
 
     /**
@@ -343,21 +348,42 @@
         let currentZoom = 14;
         let nextZoom = 14;
 
-        if ( activeIndex !== null && markerTrackPositions.length > 0 ) {
-            const currentPos = markerTrackPositions[ activeIndex ] || 0;
-            const nextPos = markerTrackPositions[ activeIndex + 1 ];
+        if ( markerTrackPositions.length === 0 ) {
+            return;
+        }
 
-            // Get zoom levels from marker data
-            currentZoom = markers[ activeIndex ]?.zoom || 14;
-            nextZoom = markers[ activeIndex + 1 ]?.zoom || currentZoom;
-
-            if ( nextPos !== undefined ) {
-                // Interpolate between current and next marker
-                progress = currentPos + ( nextPos - currentPos ) * scrollProgress;
+        if ( activeIndex === null ) {
+            // At top of page - progress from track start (0) to first marker
+            if ( markers.length > 0 ) {
+                const firstMarkerPos = markerTrackPositions[ 1 ]; // First actual marker
+                progress = firstMarkerPos * scrollProgress;
+                currentZoom = 13; // Slightly zoomed out for overview
+                nextZoom = markers[ 0 ]?.zoom || 14;
             } else {
-                // Last marker - progress from current to end
-                progress = currentPos + ( 1 - currentPos ) * scrollProgress;
+                // No markers at all - use scroll progress along full track
+                progress = scrollProgress;
             }
+        } else if ( activeIndex !== null && markerTrackPositions.length > 0 ) {
+            // Active marker index maps to markerTrackPositions[activeIndex + 1]
+            const currentPosIndex = activeIndex + 1;
+            const nextPosIndex = activeIndex + 2;
+
+            const currentPos = markerTrackPositions[ currentPosIndex ];
+            const nextPos = markerTrackPositions[ nextPosIndex ];
+
+            // Get zoom levels from marker data (or defaults for virtual endpoints)
+            if ( activeIndex < markers.length ) {
+                currentZoom = markers[ activeIndex ]?.zoom || 14;
+            }
+            if ( activeIndex + 1 < markers.length ) {
+                nextZoom = markers[ activeIndex + 1 ]?.zoom || 14;
+            } else {
+                // Transitioning to virtual end point - zoom out slightly
+                nextZoom = currentZoom - 1;
+            }
+
+            // Interpolate between current and next position
+            progress = currentPos + ( nextPos - currentPos ) * scrollProgress;
         }
 
         // Clamp progress
