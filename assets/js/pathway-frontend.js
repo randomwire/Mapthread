@@ -16,7 +16,7 @@
     let markerLayers = [];
     let activeMarkerIndex = null;
     let isFollowMode = true;
-    let lastScrollTime = 0;
+    let scrollRafId = null;             // Track requestAnimationFrame ID
     let initialBounds = null;
     let initialZoom = 14;               // Initial zoom level from fitBounds
     let fitBoundsCenter = null;         // Center coordinate of fitBounds view
@@ -37,11 +37,34 @@
 
     // Configuration constants
     const ACTIVATION_THRESHOLD = 0.25;   // Marker activation position (25% from top)
-    const SCROLL_THROTTLE_MS = 100;      // Scroll event throttle
     const RESET_ANIMATION_DURATION = 0.8; // flyToBounds duration for reset
     const MAX_SCROLL_DISTANCE = 1.0;     // Viewport height multiplier for progress
     const DEFAULT_ZOOM = 14;             // Default zoom level
     const BOUNDS_PADDING = [50, 50];     // Padding for fitBounds operations
+
+    // Scroll states for state machine
+    const ScrollState = {
+        AT_BOTTOM: 'bottom',
+        PRE_FIRST_MARKER: 'pre_first',
+        FOLLOWING_MARKER: 'following',
+    };
+
+    /**
+     * Determine current scroll state
+     *
+     * @param {number|null} activeMarker - Currently active marker index
+     * @param {boolean} atBottom - Whether scrolled to bottom
+     * @return {string} Current scroll state
+     */
+    function getScrollState( activeMarker, atBottom ) {
+        if ( atBottom ) {
+            return ScrollState.AT_BOTTOM;
+        }
+        if ( activeMarker === null ) {
+            return ScrollState.PRE_FIRST_MARKER;
+        }
+        return ScrollState.FOLLOWING_MARKER;
+    }
 
     /**
      * Calculate distance between two points using Haversine formula
@@ -300,43 +323,45 @@
     }
 
     /**
-     * Calculate scroll progress between current and next marker
+     * Calculate scroll progress before first marker is reached
      *
-     * @param {number} activeIndex - Index of currently active marker
-     * @return {number} Progress ratio (0-1) between markers
+     * @return {number} Progress ratio (0-1)
      */
-    function calculateScrollProgress( activeIndex ) {
-        if ( activeIndex === null ) {
-            // At page top - calculate progress based on scroll position before first marker
-            if ( markers.length === 0 ) {
-                return 0;
-            }
-
-            const markerElements = getMarkerElements();
-            const firstMarker = markerElements[ 0 ];
-            if ( ! firstMarker ) {
-                return 0;
-            }
-
-            const viewportHeight = window.innerHeight;
-            const threshold = viewportHeight * ACTIVATION_THRESHOLD;
-            const firstMarkerRect = firstMarker.getBoundingClientRect();
-
-            // Calculate how far we've scrolled from top toward the first marker
-            // When marker is far below (rect.top > threshold), progress = 0
-            // As marker approaches threshold, progress increases toward 1
-            const distanceFromThreshold = firstMarkerRect.top - threshold;
-            const maxDistance = viewportHeight * MAX_SCROLL_DISTANCE; // Assume one viewport height as maximum
-
-            if ( distanceFromThreshold >= maxDistance ) {
-                return 0; // Haven't started scrolling yet
-            }
-
-            // Progress from 0 to 1 as marker moves from bottom of screen to threshold
-            const progress = 1 - ( distanceFromThreshold / maxDistance );
-            return Math.max( 0, Math.min( 1, progress ) );
+    function calculatePreMarkerProgress() {
+        if ( markers.length === 0 ) {
+            return 0;
         }
 
+        const markerElements = getMarkerElements();
+        const firstMarker = markerElements[ 0 ];
+        if ( ! firstMarker ) {
+            return 0;
+        }
+
+        const viewportHeight = window.innerHeight;
+        const threshold = viewportHeight * ACTIVATION_THRESHOLD;
+        const firstMarkerRect = firstMarker.getBoundingClientRect();
+
+        // Calculate how far we've scrolled from top toward the first marker
+        const distanceFromThreshold = firstMarkerRect.top - threshold;
+        const maxDistance = viewportHeight * MAX_SCROLL_DISTANCE;
+
+        if ( distanceFromThreshold >= maxDistance ) {
+            return 0; // Haven't started scrolling yet
+        }
+
+        // Progress from 0 to 1 as marker moves from bottom of screen to threshold
+        const progress = 1 - ( distanceFromThreshold / maxDistance );
+        return Math.max( 0, Math.min( 1, progress ) );
+    }
+
+    /**
+     * Calculate scroll progress between two markers
+     *
+     * @param {number} activeIndex - Index of currently active marker
+     * @return {number} Progress ratio (0-1)
+     */
+    function calculateBetweenMarkerProgress( activeIndex ) {
         if ( markers.length === 0 ) {
             return 0;
         }
@@ -350,13 +375,11 @@
         }
 
         const viewportHeight = window.innerHeight;
-        const threshold = viewportHeight * 0.25;
-
+        const threshold = viewportHeight * ACTIVATION_THRESHOLD;
         const currentRect = currentEl.getBoundingClientRect();
 
         // If no next marker, progress to 1 as we scroll past the last marker
         if ( ! nextEl ) {
-            // Progress from 0 to 1 as current marker goes from threshold to top of viewport
             const progress = ( threshold - currentRect.top ) / threshold;
             return Math.max( 0, Math.min( 1, progress ) );
         }
@@ -364,7 +387,6 @@
         const nextRect = nextEl.getBoundingClientRect();
 
         // Calculate progress from current marker to next marker
-        // nextRect.top > currentRect.top since next marker is further down the page
         const totalDistance = nextRect.top - currentRect.top;
         if ( totalDistance <= 0 ) {
             return 0;
@@ -372,6 +394,20 @@
 
         const currentProgress = threshold - currentRect.top;
         return Math.max( 0, Math.min( 1, currentProgress / totalDistance ) );
+    }
+
+    /**
+     * Calculate scroll progress between current and next marker
+     *
+     * @param {number} activeIndex - Index of currently active marker
+     * @return {number} Progress ratio (0-1) between markers
+     */
+    function calculateScrollProgress( activeIndex ) {
+        if ( activeIndex === null ) {
+            return calculatePreMarkerProgress();
+        }
+
+        return calculateBetweenMarkerProgress( activeIndex );
     }
 
     /**
@@ -756,46 +792,90 @@
     }
 
     /**
-     * Handle scroll events
+     * Handle scroll events (throttled via requestAnimationFrame)
      */
     function handleScroll() {
         if ( ! isFollowMode ) {
             return;
         }
 
-        const now = Date.now();
-
-        // Throttle scroll events (max once per 100ms)
-        if ( now - lastScrollTime < SCROLL_THROTTLE_MS ) {
+        // If RAF already scheduled, skip
+        if ( scrollRafId !== null ) {
             return;
         }
 
-        lastScrollTime = now;
+        // Schedule update on next animation frame
+        scrollRafId = requestAnimationFrame( () => {
+            scrollRafId = null;
+            updateMapPosition();
+        } );
+    }
 
-        const newActiveMarker = calculateActiveMarker();
-        const atBottom = isAtBottomOfPage();
-
-        if ( atBottom && activeMarkerIndex !== null ) {
-            // User scrolled to bottom - reset to initial view
+    /**
+     * Handle scroll when at bottom of page
+     */
+    function handleBottomScroll() {
+        if ( activeMarkerIndex !== null ) {
             resetToInitialView();
             resetProgressIndicator();
-        } else if ( ! atBottom ) {
-            // Update progress indicator (handles map panning when enabled)
-            if ( showProgressIndicator && trackCoords.length > 0 ) {
-                const scrollProgress = calculateScrollProgress( newActiveMarker );
-                updateProgressPosition( newActiveMarker, scrollProgress );
+        }
+    }
 
-                // Update marker icons and activeMarkerIndex (only when not at page top)
-                if ( newActiveMarker !== null && newActiveMarker !== activeMarkerIndex ) {
-                    activeMarkerIndex = newActiveMarker;
-                    updateMarkerIcons( newActiveMarker );
-                }
-            } else {
-                // No progress indicator - use standard marker-based panning
-                if ( newActiveMarker !== null && newActiveMarker !== activeMarkerIndex ) {
-                    updateMapView( newActiveMarker );
-                }
+    /**
+     * Handle scroll before first marker is active
+     */
+    function handlePreMarkerScroll() {
+        if ( ! showProgressIndicator || trackCoords.length === 0 ) {
+            return;
+        }
+
+        const scrollProgress = calculateScrollProgress( null );
+        updateProgressPosition( null, scrollProgress );
+    }
+
+    /**
+     * Handle scroll when following an active marker
+     *
+     * @param {number} activeMarker - Currently active marker index
+     */
+    function handleMarkerFollowScroll( activeMarker ) {
+        if ( showProgressIndicator && trackCoords.length > 0 ) {
+            const scrollProgress = calculateScrollProgress( activeMarker );
+            updateProgressPosition( activeMarker, scrollProgress );
+
+            if ( activeMarker !== activeMarkerIndex ) {
+                activeMarkerIndex = activeMarker;
+                updateMarkerIcons( activeMarker );
             }
+        } else {
+            // No progress indicator - use standard marker-based panning
+            if ( activeMarker !== activeMarkerIndex ) {
+                updateMapView( activeMarker );
+            }
+        }
+    }
+
+    /**
+     * Update map position based on current scroll position
+     * Called via RAF from handleScroll
+     */
+    function updateMapPosition() {
+        const newActiveMarker = calculateActiveMarker();
+        const atBottom = isAtBottomOfPage();
+        const state = getScrollState( newActiveMarker, atBottom );
+
+        switch ( state ) {
+            case ScrollState.AT_BOTTOM:
+                handleBottomScroll();
+                break;
+
+            case ScrollState.PRE_FIRST_MARKER:
+                handlePreMarkerScroll();
+                break;
+
+            case ScrollState.FOLLOWING_MARKER:
+                handleMarkerFollowScroll( newActiveMarker );
+                break;
         }
     }
 
@@ -1064,6 +1144,13 @@
 
         // Set up scroll handling
         window.addEventListener( 'scroll', handleScroll, { passive: true } );
+
+        // Cancel any pending RAF on page unload
+        window.addEventListener( 'beforeunload', () => {
+            if ( scrollRafId !== null ) {
+                cancelAnimationFrame( scrollRafId );
+            }
+        } );
 
         // Initial marker activation (after a brief delay to let page settle)
         setTimeout( () => {
