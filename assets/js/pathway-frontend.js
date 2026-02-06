@@ -19,7 +19,6 @@
     let scrollRafId = null;             // Track requestAnimationFrame ID
     let initialBounds = null;
     let initialZoom = 14;               // Initial zoom level from fitBounds
-    let fitBoundsCenter = null;         // Center coordinate of fitBounds view
     let cachedMarkerElements = null;    // Cached DOM query results
 
     // Progress indicator state
@@ -431,17 +430,14 @@
         }
 
         if ( activeIndex === null ) {
-            // At top of page - smoothly blend from fitBounds center to track start
-            if ( markers.length > 0 && fitBoundsCenter && trackCoords.length > 0 ) {
+            // Before first marker - progress from track start to first marker
+            if ( markers.length > 0 && trackCoords.length > 0 ) {
                 const firstMarkerPos = markerTrackPositions[ 1 ]; // First actual marker
                 progress = firstMarkerPos * scrollProgress;
 
                 // Interpolate zoom from initial to first marker zoom
                 currentZoom = initialZoom;
                 nextZoom = markers[ 0 ]?.zoom || DEFAULT_ZOOM;
-
-                // Store the blended camera position for later use
-                // We'll handle the actual camera positioning after this block
             } else if ( trackCoords.length > 0 ) {
                 // No markers case
                 progress = scrollProgress;
@@ -485,15 +481,7 @@
         const smoothedProgress = lerp( lastSmoothedProgress, progress, CAMERA_SMOOTHING );
 
         // Get coordinate at smoothed progress along track
-        const trackTargetCoord = getCoordinateAtProgress( smoothedProgress );
-        let targetCoord = trackTargetCoord;
-
-        // Special handling at page top: blend from fitBounds center to track position
-        if ( activeIndex === null && fitBoundsCenter && scrollProgress < 1 ) {
-            // Interpolate from fitBounds center toward track position
-            // Use scrollProgress as the blend factor (0 = center, 1 = track position)
-            targetCoord = lerpCoordinate( fitBoundsCenter, trackTargetCoord, scrollProgress );
-        }
+        const targetCoord = getCoordinateAtProgress( smoothedProgress );
 
         // Apply zoom interpolation
         const targetZoom = lerp( currentZoom, nextZoom, smoothedProgress );
@@ -815,7 +803,8 @@
      * Handle scroll when at bottom of page
      */
     function handleBottomScroll() {
-        if ( activeMarkerIndex !== null ) {
+        // With progress indicator, stay at last marker (no reset)
+        if ( ! showProgressIndicator && activeMarkerIndex !== null ) {
             resetToInitialView();
             resetProgressIndicator();
         }
@@ -949,24 +938,18 @@
             maxZoom: 19
         } ).addTo( leafletMap );
 
-        // Fit to GPX bounds
+        // Initialize map view based on progress indicator setting
         if ( bounds && bounds.north !== 0 ) {
             const leafletBounds = [
                 [ bounds.south, bounds.west ],
                 [ bounds.north, bounds.east ]
             ];
-            leafletMap.fitBounds( leafletBounds, { padding: BOUNDS_PADDING } );
             initialBounds = leafletBounds;
 
-            // Store initial zoom for smooth transition on first scroll
+            // Set initial view to full track overview
+            // (Will be updated to track start after GPX loads if progress indicator enabled)
+            leafletMap.fitBounds( leafletBounds, { padding: BOUNDS_PADDING } );
             initialZoom = leafletMap.getZoom();
-
-            // Calculate and store the center point that fitBounds used
-            // This will be our starting point for smooth interpolation to track start
-            fitBoundsCenter = [
-                ( bounds.south + bounds.north ) / 2,
-                ( bounds.west + bounds.east ) / 2
-            ];
         }
 
         // Listen for map interactions (pan/zoom by user)
@@ -1140,6 +1123,15 @@
         if ( showProgressIndicator && trackCoords.length > 0 ) {
             calculateMarkerTrackPositions();
             initProgressIndicator();
+
+            // Set initial view to track start (now that we have the data)
+            const startCoord = trackCoords[ 0 ];
+            const startZoom = markers.length > 0 && markers[ 0 ]
+                ? ( markers[ 0 ].zoom || DEFAULT_ZOOM )
+                : DEFAULT_ZOOM;
+
+            map.setView( startCoord, startZoom );
+            initialZoom = startZoom;
         }
 
         // Set up scroll handling
