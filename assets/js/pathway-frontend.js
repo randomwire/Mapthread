@@ -818,6 +818,13 @@
             return;
         }
 
+        // Check if scrolled to top of page (or very close)
+        // Use window.scrollY to bypass progress calculation issues
+        if ( window.scrollY < 10 ) {
+            resetProgressIndicator();
+            return;
+        }
+
         const scrollProgress = calculateScrollProgress( null );
         updateProgressPosition( null, scrollProgress );
     }
