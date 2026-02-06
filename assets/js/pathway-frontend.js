@@ -18,6 +18,8 @@
     let isFollowMode = true;
     let lastScrollTime = 0;
     let initialBounds = null;
+    let initialZoom = 14;               // Initial zoom level from fitBounds
+    let fitBoundsCenter = null;         // Center coordinate of fitBounds view
 
     // Progress indicator state
     let trackCoords = [];               // Full coordinate array
@@ -295,7 +297,38 @@
      * @return {number} Progress ratio (0-1) between markers
      */
     function calculateScrollProgress( activeIndex ) {
-        if ( activeIndex === null || markers.length === 0 ) {
+        if ( activeIndex === null ) {
+            // At page top - calculate progress based on scroll position before first marker
+            if ( markers.length === 0 ) {
+                return 0;
+            }
+
+            const markerElements = document.querySelectorAll( '.pathway-marker' );
+            const firstMarker = markerElements[ 0 ];
+            if ( ! firstMarker ) {
+                return 0;
+            }
+
+            const viewportHeight = window.innerHeight;
+            const threshold = viewportHeight * 0.25;
+            const firstMarkerRect = firstMarker.getBoundingClientRect();
+
+            // Calculate how far we've scrolled from top toward the first marker
+            // When marker is far below (rect.top > threshold), progress = 0
+            // As marker approaches threshold, progress increases toward 1
+            const distanceFromThreshold = firstMarkerRect.top - threshold;
+            const maxDistance = viewportHeight; // Assume one viewport height as maximum
+
+            if ( distanceFromThreshold >= maxDistance ) {
+                return 0; // Haven't started scrolling yet
+            }
+
+            // Progress from 0 to 1 as marker moves from bottom of screen to threshold
+            const progress = 1 - ( distanceFromThreshold / maxDistance );
+            return Math.max( 0, Math.min( 1, progress ) );
+        }
+
+        if ( markers.length === 0 ) {
             return 0;
         }
 
@@ -353,15 +386,24 @@
         }
 
         if ( activeIndex === null ) {
-            // At top of page - progress from track start (0) to first marker
-            if ( markers.length > 0 ) {
+            // At top of page - smoothly blend from fitBounds center to track start
+            if ( markers.length > 0 && fitBoundsCenter && trackCoords.length > 0 ) {
                 const firstMarkerPos = markerTrackPositions[ 1 ]; // First actual marker
                 progress = firstMarkerPos * scrollProgress;
-                currentZoom = 13; // Slightly zoomed out for overview
+
+                // Interpolate zoom from initial to first marker zoom
+                currentZoom = initialZoom;
                 nextZoom = markers[ 0 ]?.zoom || 14;
-            } else {
-                // No markers at all - use scroll progress along full track
+
+                // Store the blended camera position for later use
+                // We'll handle the actual camera positioning after this block
+            } else if ( trackCoords.length > 0 ) {
+                // No markers case
                 progress = scrollProgress;
+                currentZoom = initialZoom;
+                nextZoom = 14;
+            } else {
+                return; // No track data
             }
         } else if ( activeIndex !== null && markerTrackPositions.length > 0 ) {
             // Active marker index maps to markerTrackPositions[activeIndex + 1]
@@ -397,13 +439,23 @@
         // Apply exponential smoothing to progress for synchronized camera and polylines
         const smoothedProgress = lerp( lastSmoothedProgress, progress, CAMERA_SMOOTHING );
 
-        // Get position from smoothed progress (NO additional coordinate smoothing)
-        const smoothedCoord = getCoordinateAtProgress( smoothedProgress );
-        const smoothedZoom = currentZoom + ( nextZoom - currentZoom ) * scrollProgress;
+        // Get coordinate at smoothed progress along track
+        const trackTargetCoord = getCoordinateAtProgress( smoothedProgress );
+        let targetCoord = trackTargetCoord;
 
-        if ( smoothedCoord && map && isFollowMode ) {
-            // Update map with position from smoothed progress
-            map.setView( smoothedCoord, smoothedZoom, { animate: false } );
+        // Special handling at page top: blend from fitBounds center to track position
+        if ( activeIndex === null && fitBoundsCenter && scrollProgress < 1 ) {
+            // Interpolate from fitBounds center toward track position
+            // Use scrollProgress as the blend factor (0 = center, 1 = track position)
+            targetCoord = lerpCoordinate( fitBoundsCenter, trackTargetCoord, scrollProgress );
+        }
+
+        // Apply zoom interpolation
+        const targetZoom = lerp( currentZoom, nextZoom, smoothedProgress );
+
+        if ( targetCoord && map && isFollowMode ) {
+            // Update camera position
+            map.setView( targetCoord, targetZoom, { animate: false } );
         }
 
         // Store smoothed progress for next frame
@@ -694,24 +746,24 @@
         const newActiveMarker = calculateActiveMarker();
         const atBottom = isAtBottomOfPage();
 
-        if ( ( newActiveMarker === null || atBottom ) && activeMarkerIndex !== null ) {
-            // User scrolled to top or bottom - reset to initial view
+        if ( atBottom && activeMarkerIndex !== null ) {
+            // User scrolled to bottom - reset to initial view
             resetToInitialView();
             resetProgressIndicator();
-        } else if ( newActiveMarker !== null && ! atBottom ) {
+        } else if ( ! atBottom ) {
             // Update progress indicator (handles map panning when enabled)
             if ( showProgressIndicator && trackCoords.length > 0 ) {
                 const scrollProgress = calculateScrollProgress( newActiveMarker );
                 updateProgressPosition( newActiveMarker, scrollProgress );
 
-                // Still update marker icons and activeMarkerIndex
-                if ( newActiveMarker !== activeMarkerIndex ) {
+                // Update marker icons and activeMarkerIndex (only when not at page top)
+                if ( newActiveMarker !== null && newActiveMarker !== activeMarkerIndex ) {
                     activeMarkerIndex = newActiveMarker;
                     updateMarkerIcons( newActiveMarker );
                 }
             } else {
                 // No progress indicator - use standard marker-based panning
-                if ( newActiveMarker !== activeMarkerIndex ) {
+                if ( newActiveMarker !== null && newActiveMarker !== activeMarkerIndex ) {
                     updateMapView( newActiveMarker );
                 }
             }
@@ -796,6 +848,16 @@
             ];
             leafletMap.fitBounds( leafletBounds, { padding: [ 50, 50 ] } );
             initialBounds = leafletBounds;
+
+            // Store initial zoom for smooth transition on first scroll
+            initialZoom = leafletMap.getZoom();
+
+            // Calculate and store the center point that fitBounds used
+            // This will be our starting point for smooth interpolation to track start
+            fitBoundsCenter = [
+                ( bounds.south + bounds.north ) / 2,
+                ( bounds.west + bounds.east ) / 2
+            ];
         }
 
         // Listen for map interactions (pan/zoom by user)
