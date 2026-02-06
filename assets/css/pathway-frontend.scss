@@ -234,7 +234,7 @@
 
 // Walked portion of track (already traveled)
 .pathway-track-walked {
-    stroke: #5d6d7e;
+    stroke: #E4572E;  // Vermilion
     stroke-width: 4;
     stroke-linecap: round;
     stroke-linejoin: round;
@@ -242,11 +242,11 @@
 
 // Remaining portion of track (yet to travel)
 .pathway-track-remaining {
-    stroke: #a8b8c8;
+    stroke: #4F7CAC;  // Muted cool blue
     stroke-width: 3;
     stroke-linecap: round;
     stroke-linejoin: round;
-    opacity: 0.5;
+    opacity: 0.7;
 }
 
 // ============================================================================

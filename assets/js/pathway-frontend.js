@@ -257,8 +257,8 @@
         }
 
         // Track colors
-        const walkedColor = '#5d6d7e';     // Slate blue-grey
-        const remainingColor = '#a8b8c8';  // Light blue-grey
+        const walkedColor = '#E4572E';     // Vermilion
+        const remainingColor = '#4F7CAC';  // Muted cool blue
 
         // Create walked polyline (starts at first point only)
         walkedPolyline = L.polyline( [ trackCoords[ 0 ] ], {
@@ -272,7 +272,7 @@
         remainingPolyline = L.polyline( trackCoords, {
             color: remainingColor,
             weight: 3,
-            opacity: 0.5,
+            opacity: 0.7,
             className: 'pathway-track-remaining'
         } ).addTo( map );
 
