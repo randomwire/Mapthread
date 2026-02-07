@@ -814,19 +814,23 @@
      * Handle scroll before first marker is active
      */
     function handlePreMarkerScroll() {
-        if ( ! showProgressIndicator || trackCoords.length === 0 ) {
-            return;
-        }
-
         // Check if scrolled to top of page (or very close)
-        // Use window.scrollY to bypass progress calculation issues
         if ( window.scrollY < 10 ) {
-            resetProgressIndicator();
+            if ( showProgressIndicator && trackCoords.length > 0 ) {
+                // Progress indicator ON: Reset walked path
+                resetProgressIndicator();
+            } else if ( ! showProgressIndicator && activeMarkerIndex !== null ) {
+                // Progress indicator OFF: Smooth animate back to overview
+                resetToInitialView();
+            }
             return;
         }
 
-        const scrollProgress = calculateScrollProgress( null );
-        updateProgressPosition( null, scrollProgress );
+        // Progress indicator ON: Update position along track
+        if ( showProgressIndicator && trackCoords.length > 0 ) {
+            const scrollProgress = calculateScrollProgress( null );
+            updateProgressPosition( null, scrollProgress );
+        }
     }
 
     /**
