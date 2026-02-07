@@ -30,6 +30,7 @@
     let remainingPolyline = null;       // Polyline for remaining portion
     let showProgressIndicator = true;   // Setting from block
     let lastSmoothedProgress = null;    // For smooth interpolation
+    let mapInteractionScrollListener = null; // Listener for re-enabling follow mode
 
     // Camera smoothing constant
     const CAMERA_SMOOTHING = 0.2;       // Smoothing factor (0.15-0.3 range)
@@ -40,6 +41,17 @@
     const MAX_SCROLL_DISTANCE = 1.0;     // Viewport height multiplier for progress
     const DEFAULT_ZOOM = 14;             // Default zoom level
     const BOUNDS_PADDING = [50, 50];     // Padding for fitBounds operations
+
+    // Scroll detection thresholds
+    const SCROLL_TOP_THRESHOLD = 10;     // Pixels from top to trigger reset
+
+    // Timing and animation
+    const MAP_INTERACTION_TIMEOUT = 100; // Delay for initial marker activation (ms)
+
+    // Marker icon dimensions
+    const ICON_SIZE = 14;                // Width and height of marker icon (pixels)
+    const ICON_ANCHOR = 7;               // Horizontal and vertical anchor point (center)
+    const POPUP_ANCHOR_Y = -7;           // Popup offset above marker
 
     // Scroll states for state machine
     const ScrollState = {
@@ -83,24 +95,6 @@
                   Math.sin( dLon / 2 ) * Math.sin( dLon / 2 );
         const c = 2 * Math.atan2( Math.sqrt( a ), Math.sqrt( 1 - a ) );
         return R * c;
-    }
-
-    /**
-     * Linear interpolation between two coordinates
-     *
-     * @param {Array} coord1 - Starting [lat, lng]
-     * @param {Array} coord2 - Target [lat, lng]
-     * @param {number} t - Interpolation factor (0-1)
-     * @return {Array} Interpolated [lat, lng]
-     */
-    function lerpCoordinate( coord1, coord2, t ) {
-        if ( ! coord1 || ! coord2 ) {
-            return coord2 || coord1;
-        }
-        return [
-            coord1[ 0 ] + ( coord2[ 0 ] - coord1[ 0 ] ) * t,
-            coord1[ 1 ] + ( coord2[ 1 ] - coord1[ 1 ] ) * t
-        ];
     }
 
     /**
@@ -161,7 +155,24 @@
     }
 
     /**
-     * Calculate each marker's position ratio (0-1) along the track
+     * Calculates fractional positions (0-1) of each marker along the track.
+     *
+     * Creates markerTrackPositions array with normalized positions:
+     * - Index 0: Virtual start point (position 0.0)
+     * - Index 1-N: Actual marker positions (calculated by nearest track point)
+     * - Index N+1: Virtual end point (position 1.0)
+     *
+     * @modifies {markerTrackPositions} - Populates global array
+     * @requires {markers} - Global markers array must be populated
+     * @requires {trackCoords} - Global track coordinates array must be populated
+     *
+     * @description
+     * For each marker:
+     * 1. Finds nearest track coordinate using Haversine distance
+     * 2. Calculates cumulative distance along track to that point
+     * 3. Normalizes to fractional position (0-1)
+     *
+     * Virtual endpoints ensure smooth transitions before first and after last marker.
      */
     function calculateMarkerTrackPositions() {
         if ( trackCoords.length === 0 || totalTrackDistance === 0 ) {
@@ -181,10 +192,18 @@
     }
 
     /**
-     * Get interpolated coordinate at a given progress point
+     * Gets the coordinate at a specific progress position along the track.
      *
-     * @param {number} progress - Progress ratio (0-1)
-     * @return {Array} [lat, lng] coordinate
+     * Uses linear interpolation between track segments to find the exact coordinate
+     * at the given fractional position (0 = start, 1 = end).
+     *
+     * @param {number} progress - Fractional position along track (0 to 1)
+     * @returns {[number, number]|null} Latitude/longitude pair, or null if track empty
+     *
+     * @example
+     * // Get coordinate at 50% along the track
+     * const midpoint = getCoordinateAtProgress(0.5);
+     * // Returns: [latitude, longitude]
      */
     function getCoordinateAtProgress( progress ) {
         if ( trackCoords.length === 0 ) {
@@ -225,10 +244,18 @@
     }
 
     /**
-     * Get track coordinates up to a given progress point
+     * Gets all track coordinates from start up to a specific progress position.
      *
-     * @param {number} progress - Progress ratio (0-1)
-     * @return {Array} Array of [lat, lng] coordinates
+     * Returns the "walked" portion of the track as an array of coordinates.
+     * If progress falls between segments, includes the interpolated coordinate.
+     *
+     * @param {number} progress - Fractional position along track (0 to 1)
+     * @returns {Array<[number, number]>} Array of [lat, lng] coordinates
+     *
+     * @example
+     * // Get first half of track
+     * const walkedPath = getTrackUpToProgress(0.5);
+     * // Returns: [[lat1, lng1], [lat2, lng2], ...]
      */
     function getTrackUpToProgress( progress ) {
         if ( trackCoords.length === 0 ) {
@@ -396,10 +423,22 @@
     }
 
     /**
-     * Calculate scroll progress between current and next marker
+     * Calculates scroll progress (0-1) for a given marker's section of the page.
      *
-     * @param {number} activeIndex - Index of currently active marker
-     * @return {number} Progress ratio (0-1) between markers
+     * Determines how far the user has scrolled through the marker's content section
+     * based on viewport position relative to marker's top and next marker's top.
+     *
+     * @param {number|null} activeIndex - Index of current marker, or null for pre-first-marker
+     * @returns {number} Scroll progress from 0 (at marker top) to 1 (at next marker top)
+     *
+     * @description
+     * Special cases:
+     * - activeIndex = null: Uses calculatePreMarkerProgress() for before-first-marker
+     * - Last marker: Progress from last marker to bottom of page
+     * - Clamps result to [0, 1] range
+     *
+     * @see {calculatePreMarkerProgress} - Handles scroll before first marker
+     * @see {calculateBetweenMarkerProgress} - Handles scroll between markers
      */
     function calculateScrollProgress( activeIndex ) {
         if ( activeIndex === null ) {
@@ -498,10 +537,10 @@
         const walkedCoords = getTrackUpToProgress( smoothedProgress );
         const remainingCoords = getTrackFromProgress( smoothedProgress );
 
-        if ( walkedCoords.length > 0 ) {
+        if ( walkedPolyline && walkedCoords.length > 0 ) {
             walkedPolyline.setLatLngs( walkedCoords );
         }
-        if ( remainingCoords.length > 0 ) {
+        if ( remainingPolyline && remainingCoords.length > 0 ) {
             remainingPolyline.setLatLngs( remainingCoords );
         }
     }
@@ -514,8 +553,12 @@
             return;
         }
 
-        walkedPolyline.setLatLngs( [ trackCoords[ 0 ] ] );
-        remainingPolyline.setLatLngs( trackCoords );
+        if ( walkedPolyline ) {
+            walkedPolyline.setLatLngs( [ trackCoords[ 0 ] ] );
+        }
+        if ( remainingPolyline ) {
+            remainingPolyline.setLatLngs( trackCoords );
+        }
         lastSmoothedProgress = null;
     }
 
@@ -638,9 +681,9 @@
         return L.divIcon( {
             className: 'pathway-marker-icon',
             html: `<div class="pathway-marker-pin${activeClass}"></div>`,
-            iconSize: [ 14, 14 ],   // Total icon dimensions
-            iconAnchor: [ 7, 7 ],   // Point that sits on the lat/lng coordinate
-            popupAnchor: [ 0, -7 ]  // Where popups open relative to anchor
+            iconSize: [ ICON_SIZE, ICON_SIZE ],   // Total icon dimensions
+            iconAnchor: [ ICON_ANCHOR, ICON_ANCHOR ],   // Point that sits on the lat/lng coordinate
+            popupAnchor: [ 0, POPUP_ANCHOR_Y ]  // Where popups open relative to anchor
         } );
     }
 
@@ -815,7 +858,7 @@
      */
     function handlePreMarkerScroll() {
         // Check if scrolled to top of page (or very close)
-        if ( window.scrollY < 10 ) {
+        if ( window.scrollY < SCROLL_TOP_THRESHOLD ) {
             if ( showProgressIndicator && trackCoords.length > 0 ) {
                 // Progress indicator ON: Reset walked path
                 resetProgressIndicator();
@@ -856,8 +899,26 @@
     }
 
     /**
-     * Update map position based on current scroll position
-     * Called via RAF from handleScroll
+     * Updates map view based on current scroll position using state machine pattern.
+     *
+     * Dispatches to appropriate handler based on scroll state:
+     * - AT_BOTTOM: User scrolled past all markers (handles bottom reset)
+     * - PRE_FIRST_MARKER: User before first marker (handles pre-marker tracking)
+     * - FOLLOWING_MARKER: User at a specific marker (handles marker following)
+     *
+     * Called via requestAnimationFrame from handleScroll for smooth 60fps updates.
+     *
+     * @description
+     * Flow:
+     * 1. Calculate active marker from scroll position
+     * 2. Determine if at bottom of page
+     * 3. Get scroll state from state machine
+     * 4. Dispatch to appropriate handler
+     *
+     * @see {ScrollState} - Enum of possible scroll states
+     * @see {handleBottomScroll} - Handler for bottom of page
+     * @see {handlePreMarkerScroll} - Handler for before first marker
+     * @see {handleMarkerFollowScroll} - Handler for marker following
      */
     function updateMapPosition() {
         const newActiveMarker = calculateActiveMarker();
@@ -880,26 +941,48 @@
     }
 
     /**
-     * Handle map interaction (pan/zoom)
-     * Suspends follow mode until next scroll event changes active marker
+     * Handles user interaction with the map by pausing auto-follow mode.
+     *
+     * When user manually pans or zooms the map, disables follow mode to prevent
+     * fighting with user input. Follow mode is automatically re-enabled when
+     * user scrolls to a different marker.
+     *
+     * @description
+     * Flow:
+     * 1. User pans/zooms map → triggers this handler
+     * 2. Resets progress smoothing (lastSmoothedProgress = null)
+     * 3. Sets isFollowMode = false (disables auto-follow)
+     * 4. Remembers current active marker index
+     * 5. Adds scroll listener that waits for marker change
+     * 6. When marker changes, re-enables follow mode and removes listener
+     *
+     * This allows users to explore the map freely while maintaining the ability
+     * to resume following by simply scrolling to the next marker.
      */
     function handleMapInteraction() {
         // Reset progress smoothing when user manually pans/zooms
         lastSmoothedProgress = null;
 
+        // Remove any existing scroll listener to prevent memory leaks
+        if ( mapInteractionScrollListener ) {
+            window.removeEventListener( 'scroll', mapInteractionScrollListener );
+            mapInteractionScrollListener = null;
+        }
+
         const previousActive = activeMarkerIndex;
         isFollowMode = false;
 
         // Re-enable follow mode on next scroll that changes active marker
-        const checkScroll = () => {
+        mapInteractionScrollListener = () => {
             const newActive = calculateActiveMarker();
             if ( newActive !== previousActive ) {
                 isFollowMode = true;
-                window.removeEventListener( 'scroll', checkScroll );
+                window.removeEventListener( 'scroll', mapInteractionScrollListener );
+                mapInteractionScrollListener = null;
             }
         };
 
-        window.addEventListener( 'scroll', checkScroll );
+        window.addEventListener( 'scroll', mapInteractionScrollListener );
     }
 
     /**
@@ -1024,41 +1107,46 @@
         const markerElements = getMarkerElements();
 
         markerElements.forEach( ( element, index ) => {
-            const lat = parseFloat( element.dataset.lat );
-            const lng = parseFloat( element.dataset.lng );
-            const title = element.dataset.title || '';
-            const zoom = parseInt( element.dataset.zoom ) || DEFAULT_ZOOM;
+            try {
+                const lat = parseFloat( element.dataset.lat );
+                const lng = parseFloat( element.dataset.lng );
+                const title = element.dataset.title || '';
+                const zoom = parseInt( element.dataset.zoom ) || DEFAULT_ZOOM;
 
-            if ( isNaN( lat ) || isNaN( lng ) || ( lat === 0 && lng === 0 ) ) {
-                return;
-            }
-
-            // Store marker data
-            markers.push( { lat, lng, title, zoom, element } );
-
-            // Create numbered marker
-            const icon = createNumberedIcon( markers.length, false );
-            const marker = L.marker( [ lat, lng ], { icon } );
-
-            // Add tooltip
-            if ( title ) {
-                marker.bindTooltip( title, {
-                    permanent: false,
-                    direction: 'top',   // Tooltip appears above marker
-                    offset: [ 2, -12 ]  // [x, y] offset from marker anchor
-                } );
-            }
-
-            // Click to scroll to marker in content
-            marker.on( 'click', () => {
-                const markerIdx = markers.findIndex( m => m.lat === lat && m.lng === lng );
-                if ( markerIdx !== -1 ) {
-                    scrollToMarker( markerIdx );
+                if ( isNaN( lat ) || isNaN( lng ) || ( lat === 0 && lng === 0 ) ) {
+                    return;
                 }
-            } );
 
-            marker.addTo( map );
-            markerLayers.push( marker );
+                // Store marker data
+                markers.push( { lat, lng, title, zoom, element } );
+
+                // Create numbered marker
+                const icon = createNumberedIcon( markers.length, false );
+                const marker = L.marker( [ lat, lng ], { icon } );
+
+                // Add tooltip
+                if ( title ) {
+                    marker.bindTooltip( title, {
+                        permanent: false,
+                        direction: 'top',   // Tooltip appears above marker
+                        offset: [ 2, -12 ]  // [x, y] offset from marker anchor
+                    } );
+                }
+
+                // Click to scroll to marker in content
+                marker.on( 'click', () => {
+                    const markerIdx = markers.findIndex( m => m.lat === lat && m.lng === lng );
+                    if ( markerIdx !== -1 ) {
+                        scrollToMarker( markerIdx );
+                    }
+                } );
+
+                marker.addTo( map );
+                markerLayers.push( marker );
+            } catch ( error ) {
+                console.error( `Failed to create marker pin ${index}:`, error );
+                // Continue with other markers even if one fails
+            }
         } );
     }
 
@@ -1162,7 +1250,7 @@
                 activeMarkerIndex = initialMarker;
                 updateMarkerIcons( initialMarker );
             }
-        }, 100 );
+        }, MAP_INTERACTION_TIMEOUT );
     }
 
     // Initialize when DOM is ready
