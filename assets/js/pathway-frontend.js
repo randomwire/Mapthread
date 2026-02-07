@@ -696,6 +696,15 @@
         markerLayers.forEach( ( marker, index ) => {
             const icon = createNumberedIcon( index + 1, index === activeIndex );
             marker.setIcon( icon );
+
+            // Automatically show/hide tooltip based on active state
+            if ( marker.getTooltip() ) {
+                if ( index === activeIndex ) {
+                    marker.openTooltip();
+                } else {
+                    marker.closeTooltip();
+                }
+            }
         } );
     }
 
