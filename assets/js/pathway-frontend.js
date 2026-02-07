@@ -751,10 +751,10 @@
         activeMarkerIndex = null;
         updateMarkerIcons( -1 ); // No active marker
 
-        // Use instant fitBounds instead of flyToBounds to avoid animation conflicts
-        map.fitBounds( initialBounds, {
+        // Smoothly animate back to full track overview
+        map.flyToBounds( initialBounds, {
             padding: BOUNDS_PADDING,
-            animate: false
+            duration: RESET_ANIMATION_DURATION
         } );
 
         // Reset progress smoothing
