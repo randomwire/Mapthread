@@ -9,10 +9,14 @@ import { useBlockProps, InspectorControls } from '@wordpress/block-editor';
 import {
     PanelBody,
     TextControl,
+    BaseControl,
+    Button,
+    Popover,
     Notice,
     __experimentalNumberControl as NumberControl
 } from '@wordpress/components';
-import { useEffect, useCallback } from '@wordpress/element';
+import { useEffect, useCallback, useState, useRef } from '@wordpress/element';
+import 'emoji-picker-element';
 import { useSelect } from '@wordpress/data';
 import AddressSearch from './components/AddressSearch';
 
@@ -114,7 +118,23 @@ function findGPXBlockInList( blocks ) {
  */
 export default function Edit( { attributes, setAttributes, clientId } ) {
     const blockProps = useBlockProps();
-    const { id, title, lat, lng, address, zoom } = attributes;
+    const { id, title, lat, lng, address, zoom, emoji } = attributes;
+    const [ showEmojiPicker, setShowEmojiPicker ] = useState( false );
+    const emojiPickerRef = useRef();
+
+    // Attach emoji-click listener when picker mounts
+    useEffect( () => {
+        const picker = emojiPickerRef.current;
+        if ( ! picker ) {
+            return;
+        }
+        const handleEmojiClick = ( event ) => {
+            setAttributes( { emoji: event.detail.unicode } );
+            setShowEmojiPicker( false );
+        };
+        picker.addEventListener( 'emoji-click', handleEmojiClick );
+        return () => picker.removeEventListener( 'emoji-click', handleEmojiClick );
+    }, [ showEmojiPicker ] );
 
     // Auto-generate ID on mount if not set
     useEffect( () => {
@@ -162,12 +182,41 @@ export default function Edit( { attributes, setAttributes, clientId } ) {
             <InspectorControls>
                 <PanelBody title={ __( 'Marker Settings', 'pathway' ) } initialOpen={ true }>
                     <TextControl
-                        label={ __( 'Marker Title', 'pathway' ) }
+                        label={ __( 'Title', 'pathway' ) }
                         value={ title }
                         onChange={ ( value ) => setAttributes( { title: value } ) }
                         placeholder={ __( 'Enter marker title...', 'pathway' ) }
                         help={ __( 'This will be displayed on the map pin', 'pathway' ) }
                     />
+
+                    <BaseControl label={ __( 'Pin Design', 'pathway' ) }>
+                        <div style={ { display: 'flex', alignItems: 'center', gap: '8px' } }>
+                            <Button
+                                variant="secondary"
+                                onClick={ () => setShowEmojiPicker( ! showEmojiPicker ) }
+                                style={ { fontSize: emoji ? '20px' : '13px', minWidth: '36px', height: '36px' } }
+                            >
+                                { emoji || __( 'Pick Emoji', 'pathway' ) }
+                            </Button>
+                            { emoji && (
+                                <Button
+                                    variant="link"
+                                    isDestructive
+                                    onClick={ () => setAttributes( { emoji: '' } ) }
+                                >
+                                    { __( 'Clear', 'pathway' ) }
+                                </Button>
+                            ) }
+                        </div>
+                        { showEmojiPicker && (
+                            <Popover
+                                onClose={ () => setShowEmojiPicker( false ) }
+                                placement="left-start"
+                            >
+                                <emoji-picker ref={ emojiPickerRef }></emoji-picker>
+                            </Popover>
+                        ) }
+                    </BaseControl>
 
                     <AddressSearch
                         onSelect={ handleAddressSelect }
@@ -221,7 +270,11 @@ export default function Edit( { attributes, setAttributes, clientId } ) {
 
                     <div className="pathway-map-marker-display">
                         <div className="pathway-map-marker-icon">
-                            <span className="dashicons dashicons-location"></span>
+                            { emoji ? (
+                                <span style={ { fontSize: '24px' } }>{ emoji }</span>
+                            ) : (
+                                <span className="dashicons dashicons-location"></span>
+                            ) }
                         </div>
                         <div className="pathway-map-marker-info">
                             { title ? (

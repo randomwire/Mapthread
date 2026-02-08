@@ -53,6 +53,11 @@
     const ICON_ANCHOR = 7;               // Horizontal and vertical anchor point (center)
     const POPUP_ANCHOR_Y = -7;           // Popup offset above marker
 
+    // Emoji marker icon dimensions
+    const EMOJI_ICON_SIZE = 24;              // Width and height of emoji icon (pixels)
+    const EMOJI_ICON_ANCHOR = 14;            // Center anchor point
+    const EMOJI_POPUP_ANCHOR_Y = -14;        // Popup offset above emoji
+
     // Scroll states for state machine
     const ScrollState = {
         AT_BOTTOM: 'bottom',
@@ -688,13 +693,35 @@
     }
 
     /**
+     * Create emoji marker icon
+     *
+     * @param {string} emoji - Emoji character to display
+     * @param {boolean} isActive - Whether this marker is currently active
+     * @return {L.DivIcon} Leaflet div icon
+     */
+    function createEmojiIcon( emoji, isActive = false ) {
+        const activeClass = isActive ? ' pathway-active' : '';
+        return L.divIcon( {
+            className: 'pathway-marker-icon',
+            html: `<span class="pathway-marker-emoji${activeClass}">${emoji}</span>`,
+            iconSize: [ EMOJI_ICON_SIZE, EMOJI_ICON_SIZE ],
+            iconAnchor: [ EMOJI_ICON_ANCHOR, EMOJI_ICON_ANCHOR ],
+            popupAnchor: [ 0, EMOJI_POPUP_ANCHOR_Y ]
+        } );
+    }
+
+    /**
      * Update marker icons to show active state
      *
      * @param {number} activeIndex - Index of active marker
      */
     function updateMarkerIcons( activeIndex ) {
         markerLayers.forEach( ( marker, index ) => {
-            const icon = createNumberedIcon( index + 1, index === activeIndex );
+            const isActive = index === activeIndex;
+            const markerData = markers[ index ];
+            const icon = markerData && markerData.emoji
+                ? createEmojiIcon( markerData.emoji, isActive )
+                : createNumberedIcon( index + 1, isActive );
             marker.setIcon( icon );
 
             // Automatically show/hide tooltip based on active state
@@ -1121,16 +1148,19 @@
                 const lng = parseFloat( element.dataset.lng );
                 const title = element.dataset.title || '';
                 const zoom = parseInt( element.dataset.zoom ) || DEFAULT_ZOOM;
+                const emoji = element.dataset.emoji || '';
 
                 if ( isNaN( lat ) || isNaN( lng ) || ( lat === 0 && lng === 0 ) ) {
                     return;
                 }
 
                 // Store marker data
-                markers.push( { lat, lng, title, zoom, element } );
+                markers.push( { lat, lng, title, zoom, emoji, element } );
 
-                // Create numbered marker
-                const icon = createNumberedIcon( markers.length, false );
+                // Create marker icon (emoji or default circle)
+                const icon = emoji
+                    ? createEmojiIcon( emoji, false )
+                    : createNumberedIcon( markers.length, false );
                 const marker = L.marker( [ lat, lng ], { icon } );
 
                 // Add tooltip

@@ -33,6 +33,10 @@
         "zoom": {
             "type": "integer",
             "default": 14
+        },
+        "emoji": {
+            "type": "string",
+            "default": ""
         }
     },
     "supports": {

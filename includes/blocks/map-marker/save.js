@@ -14,7 +14,7 @@ import { useBlockProps } from '@wordpress/block-editor';
  */
 export default function save( { attributes } ) {
     const blockProps = useBlockProps.save();
-    const { id, title, lat, lng, zoom } = attributes;
+    const { id, title, lat, lng, zoom, emoji } = attributes;
 
     return (
         <div
@@ -25,6 +25,7 @@ export default function save( { attributes } ) {
             data-lng={ lng }
             data-title={ title }
             data-zoom={ zoom }
+            data-emoji={ emoji || undefined }
         />
     );
 }
