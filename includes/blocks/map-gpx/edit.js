@@ -210,35 +210,47 @@ export default function Edit( { attributes, setAttributes, clientId } ) {
     // Show upload interface if no GPX selected
     if ( ! attachmentId || ! fileName ) {
         return (
-            <div { ...blockProps }>
-                <Placeholder
-                    icon="location-alt"
-                    label={ __( 'Map GPX', 'pathway' ) }
-                    instructions={ __( 'Upload a GPX file to display your route or track on an interactive map.', 'pathway' ) }
-                >
-                    { validationError && (
-                        <Notice status="error" isDismissible={ false }>
-                            { validationError }
-                        </Notice>
-                    ) }
-                    <MediaUploadCheck>
-                        <MediaUpload
-                            onSelect={ onSelectGPX }
-                            allowedTypes={ [ 'application/gpx+xml' ] }
-                            value={ attachmentId }
-                            render={ ( { open } ) => (
-                                <Button
-                                    onClick={ open }
-                                    variant="primary"
-                                    icon={ upload }
-                                >
-                                    { __( 'Upload GPX File', 'pathway' ) }
-                                </Button>
-                            ) }
+            <>
+                <InspectorControls>
+                    <PanelBody title={ __( 'Map Settings', 'pathway' ) }>
+                        <ToggleControl
+                            label={ __( 'Show progress indicator', 'pathway' ) }
+                            checked={ showProgressIndicator }
+                            onChange={ ( value ) => setAttributes( { showProgressIndicator: value } ) }
+                            help={ __( 'Animate position along track as readers scroll', 'pathway' ) }
                         />
-                    </MediaUploadCheck>
-                </Placeholder>
-            </div>
+                    </PanelBody>
+                </InspectorControls>
+                <div { ...blockProps }>
+                    <Placeholder
+                        icon="location-alt"
+                        label={ __( 'Map GPX', 'pathway' ) }
+                        instructions={ __( 'Upload a GPX file to display your route or track on an interactive map.', 'pathway' ) }
+                    >
+                        { validationError && (
+                            <Notice status="error" isDismissible={ false }>
+                                { validationError }
+                            </Notice>
+                        ) }
+                        <MediaUploadCheck>
+                            <MediaUpload
+                                onSelect={ onSelectGPX }
+                                allowedTypes={ [ 'application/gpx+xml' ] }
+                                value={ attachmentId }
+                                render={ ( { open } ) => (
+                                    <Button
+                                        onClick={ open }
+                                        variant="primary"
+                                        icon={ upload }
+                                    >
+                                        { __( 'Upload GPX File', 'pathway' ) }
+                                    </Button>
+                                ) }
+                            />
+                        </MediaUploadCheck>
+                    </Placeholder>
+                </div>
+            </>
         );
     }
 

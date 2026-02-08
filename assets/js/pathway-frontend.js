@@ -1227,6 +1227,26 @@
         // Add marker pins
         addMarkerPins();
 
+        // If no GPX track but markers exist, create path from markers
+        if ( trackCoords.length === 0 && markers.length >= 2 ) {
+            trackCoords = markers.map( m => [ m.lat, m.lng ] );
+
+            // Calculate distances along marker path
+            const distanceData = calculateTrackDistances( trackCoords );
+            trackDistances = distanceData.distances;
+            totalTrackDistance = distanceData.totalDistance;
+
+            // If progress indicator is OFF, show a static connecting line
+            if ( ! showProgressIndicator ) {
+                L.polyline( trackCoords, {
+                    color: '#4F7CAC',
+                    weight: 3,
+                    opacity: 0.7,
+                    className: 'pathway-track-remaining'
+                } ).addTo( map );
+            }
+        }
+
         // Initialize progress indicator (after markers are added)
         if ( showProgressIndicator && trackCoords.length > 0 ) {
             calculateMarkerTrackPositions();
