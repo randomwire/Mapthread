@@ -91,7 +91,7 @@ function hasMultipleGPXBlocks( clientId ) {
  */
 export default function Edit( { attributes, setAttributes, clientId } ) {
     const blockProps = useBlockProps();
-    const { attachmentId, fileName, pointCount, bounds, showProgressIndicator } = attributes;
+    const { attachmentId, fileName, pointCount, bounds, showProgressIndicator, showElevationProfile } = attributes;
 
     const [ isProcessing, setIsProcessing ] = useState( false );
     const [ validationError, setValidationError ] = useState( '' );
@@ -219,6 +219,12 @@ export default function Edit( { attributes, setAttributes, clientId } ) {
                             onChange={ ( value ) => setAttributes( { showProgressIndicator: value } ) }
                             help={ __( 'Animate position along track as readers scroll', 'pathway' ) }
                         />
+                        <ToggleControl
+                            label={ __( 'Show elevation profile', 'pathway' ) }
+                            checked={ showElevationProfile }
+                            onChange={ ( value ) => setAttributes( { showElevationProfile: value } ) }
+                            help={ __( 'Display elevation chart at bottom of map', 'pathway' ) }
+                        />
                     </PanelBody>
                 </InspectorControls>
                 <div { ...blockProps }>
@@ -264,6 +270,12 @@ export default function Edit( { attributes, setAttributes, clientId } ) {
                         checked={ showProgressIndicator }
                         onChange={ ( value ) => setAttributes( { showProgressIndicator: value } ) }
                         help={ __( 'Animate position along track as readers scroll', 'pathway' ) }
+                    />
+                    <ToggleControl
+                        label={ __( 'Show elevation profile', 'pathway' ) }
+                        checked={ showElevationProfile }
+                        onChange={ ( value ) => setAttributes( { showElevationProfile: value } ) }
+                        help={ __( 'Display elevation chart at bottom of map', 'pathway' ) }
                     />
                 </PanelBody>
             </InspectorControls>

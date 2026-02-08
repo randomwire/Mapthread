@@ -14,7 +14,7 @@ import { useBlockProps } from '@wordpress/block-editor';
  */
 export default function save( { attributes } ) {
     const blockProps = useBlockProps.save();
-    const { attachmentId, gpxUrl, bounds } = attributes;
+    const { attachmentId, gpxUrl, bounds, showElevationProfile } = attributes;
 
     return (
         <div
@@ -23,6 +23,7 @@ export default function save( { attributes } ) {
             data-attachment-id={ attachmentId }
             data-gpx-url={ gpxUrl }
             data-bounds={ JSON.stringify( bounds ) }
+            data-show-elevation={ showElevationProfile }
         />
     );
 }

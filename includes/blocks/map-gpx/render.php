@@ -18,6 +18,7 @@ $bounds                  = isset( $attributes['bounds'] ) ? $attributes['bounds'
 	'west'  => 0,
 );
 $show_progress_indicator = isset( $attributes['showProgressIndicator'] ) ? $attributes['showProgressIndicator'] : true;
+$show_elevation_profile  = isset( $attributes['showElevationProfile'] ) ? $attributes['showElevationProfile'] : true;
 
 // Get the GPX URL from the attachment ID (more reliable than stored URL).
 $gpx_url = '';
@@ -33,6 +34,7 @@ $wrapper_attributes = get_block_wrapper_attributes(
 		'data-gpx-url'         => esc_url( $gpx_url ),
 		'data-bounds'          => esc_attr( wp_json_encode( $bounds ) ),
 		'data-show-progress'   => $show_progress_indicator ? 'true' : 'false',
+		'data-show-elevation'  => $show_elevation_profile ? 'true' : 'false',
 	)
 );
 

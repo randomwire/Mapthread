@@ -38,6 +38,10 @@
         "showProgressIndicator": {
             "type": "boolean",
             "default": true
+        },
+        "showElevationProfile": {
+            "type": "boolean",
+            "default": true
         }
     },
     "supports": {

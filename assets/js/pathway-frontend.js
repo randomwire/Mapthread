@@ -32,6 +32,7 @@ Chart.register( LineController, LineElement, PointElement, LinearScale, Filler, 
     let walkedPolyline = null;          // Polyline for walked portion
     let remainingPolyline = null;       // Polyline for remaining portion
     let showProgressIndicator = true;   // Setting from block
+    let showElevationProfile = true;    // Setting from block
     let lastSmoothedProgress = null;    // For smooth interpolation
     let mapInteractionScrollListener = null; // Listener for re-enabling follow mode
 
@@ -1615,6 +1616,7 @@ Chart.register( LineController, LineElement, PointElement, LinearScale, Filler, 
         // Read progress indicator setting
         if ( gpxBlock ) {
             showProgressIndicator = gpxBlock.dataset.showProgress !== 'false';
+            showElevationProfile = gpxBlock.dataset.showElevation !== 'false';
         }
 
         // Only fetch GPX if block exists with valid URL
@@ -1696,8 +1698,10 @@ Chart.register( LineController, LineElement, PointElement, LinearScale, Filler, 
             initialZoom = startZoom;
         }
 
-        // Initialize elevation profile (if elevation data available)
-        initElevationProfile();
+        // Initialize elevation profile (if enabled and elevation data available)
+        if ( showElevationProfile && trackElevations.length > 0 ) {
+            initElevationProfile();
+        }
 
         // Set up scroll handling
         window.addEventListener( 'scroll', handleScroll, { passive: true } );
