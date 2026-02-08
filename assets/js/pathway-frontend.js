@@ -55,8 +55,8 @@
 
     // Emoji marker icon dimensions
     const EMOJI_ICON_SIZE = 24;              // Width and height of emoji icon (pixels)
-    const EMOJI_ICON_ANCHOR = 14;            // Center anchor point
-    const EMOJI_POPUP_ANCHOR_Y = -14;        // Popup offset above emoji
+    const EMOJI_ICON_ANCHOR = 10;            // Center anchor point
+    const EMOJI_POPUP_ANCHOR_Y = -10;        // Popup offset above emoji
 
     // Scroll states for state machine
     const ScrollState = {
@@ -1257,8 +1257,8 @@
         // Add marker pins
         addMarkerPins();
 
-        // If no GPX track but markers exist, create path from markers
-        if ( trackCoords.length === 0 && markers.length >= 2 ) {
+        // If GPX block exists but has no GPX track, create path from markers
+        if ( gpxBlock && trackCoords.length === 0 && markers.length >= 2 ) {
             trackCoords = markers.map( m => [ m.lat, m.lng ] );
 
             // Calculate distances along marker path
