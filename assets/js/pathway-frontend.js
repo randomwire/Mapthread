@@ -1190,6 +1190,9 @@ Chart.register( LineController, LineElement, PointElement, LinearScale, Filler, 
         // Update marker icons to show active state
         updateMarkerIcons( markerIndex );
 
+        // Update elevation chart to reflect active marker
+        updateElevationChart();
+
         // Pan and zoom to marker
         map.flyTo(
             [ markerData.lat, markerData.lng ],
@@ -1683,9 +1686,13 @@ Chart.register( LineController, LineElement, PointElement, LinearScale, Filler, 
             }
         }
 
+        // Always calculate marker positions for elevation chart
+        if ( trackCoords.length > 0 ) {
+            calculateMarkerTrackPositions();
+        }
+
         // Initialize progress indicator (after markers are added)
         if ( showProgressIndicator && trackCoords.length > 0 ) {
-            calculateMarkerTrackPositions();
             initProgressIndicator();
 
             // Set initial view to track start (now that we have the data)
