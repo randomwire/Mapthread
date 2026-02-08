@@ -219,12 +219,6 @@ export default function Edit( { attributes, setAttributes, clientId } ) {
                             onChange={ ( value ) => setAttributes( { showProgressIndicator: value } ) }
                             help={ __( 'Animate position along track as readers scroll', 'pathway' ) }
                         />
-                        <ToggleControl
-                            label={ __( 'Show elevation profile', 'pathway' ) }
-                            checked={ showElevationProfile }
-                            onChange={ ( value ) => setAttributes( { showElevationProfile: value } ) }
-                            help={ __( 'Display elevation chart at bottom of map', 'pathway' ) }
-                        />
                     </PanelBody>
                 </InspectorControls>
                 <div { ...blockProps }>
