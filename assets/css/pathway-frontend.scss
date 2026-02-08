@@ -274,6 +274,39 @@
 }
 
 // ============================================================================
+// ELEVATION PROFILE
+// ============================================================================
+
+.pathway-elevation-profile {
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    height: 100px;
+    z-index: 1000;
+    background: linear-gradient(
+        to top,
+        rgba(255, 255, 255, 0.95) 0%,
+        rgba(255, 255, 255, 0.85) 70%,
+        rgba(255, 255, 255, 0) 100%
+    );
+    padding: 0 8px 4px 8px;
+    pointer-events: auto;
+
+    canvas {
+        width: 100% !important;
+        height: 100% !important;
+    }
+}
+
+// Hide elevation profile on mobile
+@media (max-width: 767px) {
+    .pathway-elevation-profile {
+        display: none;
+    }
+}
+
+// ============================================================================
 // LEAFLET CUSTOMIZATION
 // ============================================================================
 

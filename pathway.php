@@ -27,6 +27,7 @@ define( 'PATHWAY_PLUGIN_BASENAME', plugin_basename( __FILE__ ) );
 
 // Include the main plugin class
 require_once PATHWAY_PLUGIN_DIR . 'includes/class-pathway.php';
+require_once PATHWAY_PLUGIN_DIR . 'includes/class-pathway-elevation-api.php';
 
 /**
  * Initialize the plugin
@@ -34,6 +35,8 @@ require_once PATHWAY_PLUGIN_DIR . 'includes/class-pathway.php';
 function pathway_init() {
     $pathway = new Pathway();
     $pathway->run();
+
+    $pathway_elevation_api = new Pathway_Elevation_API();
 }
 add_action( 'plugins_loaded', 'pathway_init' );
 

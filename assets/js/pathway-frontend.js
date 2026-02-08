@@ -6,6 +6,9 @@
  * @package Pathway
  */
 
+import { Chart, LineController, LineElement, PointElement, LinearScale, Filler, Tooltip } from 'chart.js';
+Chart.register( LineController, LineElement, PointElement, LinearScale, Filler, Tooltip );
+
 ( function() {
     'use strict';
 
@@ -31,6 +34,10 @@
     let showProgressIndicator = true;   // Setting from block
     let lastSmoothedProgress = null;    // For smooth interpolation
     let mapInteractionScrollListener = null; // Listener for re-enabling follow mode
+
+    // Elevation profile state
+    let trackElevations = [];           // Elevation in meters at each track point
+    let elevationChart = null;          // Chart.js instance
 
     // Camera smoothing constant
     const CAMERA_SMOOTHING = 0.2;       // Smoothing factor (0.15-0.3 range)
@@ -548,6 +555,9 @@
         if ( remainingPolyline && remainingCoords.length > 0 ) {
             remainingPolyline.setLatLngs( remainingCoords );
         }
+
+        // Update elevation chart
+        updateElevationChart();
     }
 
     /**
@@ -565,13 +575,329 @@
             remainingPolyline.setLatLngs( trackCoords );
         }
         lastSmoothedProgress = null;
+
+        // Update elevation chart
+        updateElevationChart();
+    }
+
+    // =========================================================================
+    // ELEVATION PROFILE
+    // =========================================================================
+
+    /**
+     * Get elevation at a specific progress position along the track
+     *
+     * @param {number} progress - Fractional position (0 to 1)
+     * @return {number|null} Elevation in meters or null
+     */
+    function getElevationAtProgress( progress ) {
+        if ( trackElevations.length === 0 || trackCoords.length === 0 ) {
+            return null;
+        }
+
+        const targetDistance = progress * totalTrackDistance;
+
+        let segmentIndex = 0;
+        for ( let i = 1; i < trackDistances.length; i++ ) {
+            if ( trackDistances[ i ] >= targetDistance ) {
+                segmentIndex = i - 1;
+                break;
+            }
+            segmentIndex = i - 1;
+        }
+
+        if ( segmentIndex >= trackElevations.length - 1 ) {
+            return trackElevations[ trackElevations.length - 1 ];
+        }
+
+        const segmentStart = trackDistances[ segmentIndex ];
+        const segmentEnd = trackDistances[ segmentIndex + 1 ];
+        const segmentLength = segmentEnd - segmentStart;
+
+        if ( segmentLength === 0 ) {
+            return trackElevations[ segmentIndex ];
+        }
+
+        const t = ( targetDistance - segmentStart ) / segmentLength;
+        const eleStart = trackElevations[ segmentIndex ] ?? 0;
+        const eleEnd = trackElevations[ segmentIndex + 1 ] ?? 0;
+        return eleStart + t * ( eleEnd - eleStart );
     }
 
     /**
-     * Parse GPX content and extract track coordinates
+     * Downsample elevation data for chart rendering
+     *
+     * @param {Array} distancesKm - Distance array in km
+     * @param {Array} elevations - Elevation array in meters
+     * @param {number} maxPoints - Maximum data points
+     * @return {Array} Array of {x, y} objects
+     */
+    function downsampleElevation( distancesKm, elevations, maxPoints = 500 ) {
+        if ( distancesKm.length <= maxPoints ) {
+            return distancesKm.map( ( d, i ) => ( { x: d, y: elevations[ i ] ?? 0 } ) );
+        }
+
+        const step = distancesKm.length / maxPoints;
+        const result = [];
+        for ( let i = 0; i < maxPoints; i++ ) {
+            const idx = Math.min( Math.floor( i * step ), distancesKm.length - 1 );
+            result.push( { x: distancesKm[ idx ], y: elevations[ idx ] ?? 0 } );
+        }
+        // Always include last point
+        const last = distancesKm.length - 1;
+        result.push( { x: distancesKm[ last ], y: elevations[ last ] ?? 0 } );
+        return result;
+    }
+
+    /**
+     * Chart.js plugin: draw marker lines and progress indicator on elevation chart
+     */
+    const elevationOverlayPlugin = {
+        id: 'elevationOverlay',
+        afterDraw( chart ) {
+            const { ctx, chartArea, scales } = chart;
+            if ( ! scales.x || ! scales.y ) {
+                return;
+            }
+
+            // Draw marker position lines
+            if ( markerTrackPositions.length > 0 ) {
+                markerTrackPositions.forEach( ( pos, index ) => {
+                    // Skip virtual start/end markers
+                    if ( index === 0 || index === markerTrackPositions.length - 1 ) {
+                        return;
+                    }
+                    const markerIndex = index - 1;
+                    const distanceKm = ( pos * totalTrackDistance ) / 1000;
+                    const x = scales.x.getPixelForValue( distanceKm );
+
+                    if ( x < chartArea.left || x > chartArea.right ) {
+                        return;
+                    }
+
+                    const isActive = markerIndex === activeMarkerIndex;
+                    ctx.save();
+                    ctx.beginPath();
+                    ctx.setLineDash( [ 3, 3 ] );
+                    ctx.strokeStyle = isActive
+                        ? 'rgba(0, 0, 0, 0.5)'
+                        : 'rgba(0, 0, 0, 0.15)';
+                    ctx.lineWidth = isActive ? 1.5 : 1;
+                    ctx.moveTo( x, chartArea.top );
+                    ctx.lineTo( x, chartArea.bottom );
+                    ctx.stroke();
+                    ctx.restore();
+                } );
+            }
+
+            // Draw walker progress line
+            if ( showProgressIndicator && lastSmoothedProgress !== null ) {
+                const progressKm = ( lastSmoothedProgress * totalTrackDistance ) / 1000;
+                const px = scales.x.getPixelForValue( progressKm );
+
+                if ( px >= chartArea.left && px <= chartArea.right ) {
+                    ctx.save();
+                    ctx.beginPath();
+                    ctx.setLineDash( [] );
+                    ctx.strokeStyle = '#E4572E';
+                    ctx.lineWidth = 2;
+                    ctx.moveTo( px, chartArea.top );
+                    ctx.lineTo( px, chartArea.bottom );
+                    ctx.stroke();
+
+                    // Circle at elevation point
+                    const ele = getElevationAtProgress( lastSmoothedProgress );
+                    if ( ele !== null ) {
+                        const y = scales.y.getPixelForValue( ele );
+                        ctx.beginPath();
+                        ctx.arc( px, y, 4, 0, Math.PI * 2 );
+                        ctx.fillStyle = '#E4572E';
+                        ctx.fill();
+                        ctx.strokeStyle = '#fff';
+                        ctx.lineWidth = 1.5;
+                        ctx.stroke();
+                    }
+                    ctx.restore();
+                }
+            }
+        }
+    };
+
+    /**
+     * Chart.js plugin: crosshair on hover
+     */
+    const elevationCrosshairPlugin = {
+        id: 'elevationCrosshair',
+        afterEvent( chart, args ) {
+            const { event } = args;
+            if ( event.type === 'mousemove' ) {
+                chart._crosshairX = event.x;
+            } else if ( event.type === 'mouseout' ) {
+                chart._crosshairX = null;
+            }
+        },
+        afterDraw( chart ) {
+            if ( ! chart._crosshairX ) {
+                return;
+            }
+
+            const { ctx, chartArea } = chart;
+            const x = chart._crosshairX;
+
+            if ( x < chartArea.left || x > chartArea.right ) {
+                return;
+            }
+
+            ctx.save();
+            ctx.beginPath();
+            ctx.setLineDash( [ 4, 4 ] );
+            ctx.strokeStyle = 'rgba(0, 0, 0, 0.25)';
+            ctx.lineWidth = 1;
+            ctx.moveTo( x, chartArea.top );
+            ctx.lineTo( x, chartArea.bottom );
+            ctx.stroke();
+            ctx.restore();
+        }
+    };
+
+    /**
+     * Get Chart.js configuration for elevation profile
+     *
+     * @param {Array} data - Array of {x, y} points
+     * @return {Object} Chart.js config
+     */
+    function getElevationChartConfig( data ) {
+        return {
+            type: 'line',
+            data: {
+                datasets: [ {
+                    data: data,
+                    fill: true,
+                    backgroundColor: 'rgba(79, 124, 172, 0.15)',
+                    borderColor: 'rgba(79, 124, 172, 0.6)',
+                    borderWidth: 1.5,
+                    pointRadius: 0,
+                    pointHitRadius: 10,
+                    tension: 0.3,
+                } ]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                animation: false,
+                layout: {
+                    padding: { top: 10, bottom: 0, left: 0, right: 0 }
+                },
+                scales: {
+                    x: {
+                        type: 'linear',
+                        display: true,
+                        ticks: {
+                            font: { size: 9 },
+                            color: 'rgba(0, 0, 0, 0.4)',
+                            maxTicksLimit: 6,
+                            callback: ( value ) => `${ value.toFixed( 0 ) } km`
+                        },
+                        grid: { display: false },
+                        border: { display: false },
+                    },
+                    y: {
+                        display: true,
+                        ticks: {
+                            font: { size: 9 },
+                            color: 'rgba(0, 0, 0, 0.4)',
+                            maxTicksLimit: 4,
+                            callback: ( value ) => `${ Math.round( value ) } m`
+                        },
+                        grid: {
+                            color: 'rgba(0, 0, 0, 0.05)',
+                        },
+                        border: { display: false },
+                    }
+                },
+                interaction: {
+                    mode: 'index',
+                    intersect: false,
+                },
+                plugins: {
+                    legend: { display: false },
+                    tooltip: {
+                        mode: 'index',
+                        intersect: false,
+                        callbacks: {
+                            title: ( items ) => {
+                                if ( items.length > 0 ) {
+                                    return `${ items[ 0 ].parsed.x.toFixed( 1 ) } km`;
+                                }
+                                return '';
+                            },
+                            label: ( item ) => {
+                                return `${ Math.round( item.parsed.y ) } m`;
+                            }
+                        },
+                        displayColors: false,
+                        backgroundColor: 'rgba(30, 30, 30, 0.92)',
+                        titleFont: { size: 11, weight: 'normal' },
+                        bodyFont: { size: 13, weight: '600' },
+                        padding: { top: 6, bottom: 6, left: 10, right: 10 },
+                        cornerRadius: 6,
+                    }
+                }
+            },
+            plugins: [ elevationOverlayPlugin, elevationCrosshairPlugin ]
+        };
+    }
+
+    /**
+     * Initialize the elevation profile chart
+     */
+    function initElevationProfile() {
+        if ( trackElevations.length === 0 || ! map ) {
+            return;
+        }
+
+        const mapContainer = document.getElementById( 'pathway-map' );
+        if ( ! mapContainer ) {
+            return;
+        }
+
+        // Create chart container
+        const chartWrapper = document.createElement( 'div' );
+        chartWrapper.className = 'pathway-elevation-profile';
+
+        const canvas = document.createElement( 'canvas' );
+        chartWrapper.appendChild( canvas );
+        mapContainer.appendChild( chartWrapper );
+
+        // Build chart data
+        const distancesKm = trackDistances.map( ( d ) => d / 1000 );
+        const data = downsampleElevation( distancesKm, trackElevations );
+
+        // Create chart
+        elevationChart = new Chart( canvas, getElevationChartConfig( data ) );
+
+        // Resize chart when map resizes
+        map.on( 'resize', () => {
+            if ( elevationChart ) {
+                elevationChart.resize();
+            }
+        } );
+    }
+
+    /**
+     * Update the elevation profile chart (called after progress/marker changes)
+     */
+    function updateElevationChart() {
+        if ( elevationChart ) {
+            elevationChart.update( 'none' );
+        }
+    }
+
+    /**
+     * Parse GPX content and extract track coordinates and elevation
      *
      * @param {string} gpxContent - GPX XML content
-     * @return {Array} Array of [lat, lng] coordinates
+     * @return {Object} Object with coords and elevations arrays
      */
     function parseGPXTrack( gpxContent ) {
         try {
@@ -581,24 +907,37 @@
             const parserError = xmlDoc.querySelector( 'parsererror' );
             if ( parserError ) {
                 console.error( 'Pathway: GPX parsing error', parserError );
-                return [];
+                return { coords: [], elevations: [] };
             }
 
             const trkpts = xmlDoc.querySelectorAll( 'trkpt' );
             const coords = [];
+            const elevations = [];
+            let hasElevation = false;
 
             trkpts.forEach( ( trkpt ) => {
                 const lat = parseFloat( trkpt.getAttribute( 'lat' ) );
                 const lon = parseFloat( trkpt.getAttribute( 'lon' ) );
                 if ( ! isNaN( lat ) && ! isNaN( lon ) ) {
                     coords.push( [ lat, lon ] );
+
+                    const eleNode = trkpt.querySelector( 'ele' );
+                    if ( eleNode ) {
+                        const ele = parseFloat( eleNode.textContent );
+                        elevations.push( isNaN( ele ) ? null : ele );
+                        if ( ! isNaN( ele ) ) {
+                            hasElevation = true;
+                        }
+                    } else {
+                        elevations.push( null );
+                    }
                 }
             } );
 
-            return coords;
+            return { coords, elevations: hasElevation ? elevations : [] };
         } catch ( error ) {
             console.error( 'Pathway: Failed to parse GPX', error );
-            return [];
+            return { coords: [], elevations: [] };
         }
     }
 
@@ -646,7 +985,12 @@
         const cached = sessionStorage.getItem( cacheKey );
         if ( cached ) {
             try {
-                return JSON.parse( cached );
+                const parsed = JSON.parse( cached );
+                // Backward compat: old cache is plain array of coords
+                if ( Array.isArray( parsed ) ) {
+                    return { coords: parsed, elevations: [] };
+                }
+                return parsed;
             } catch ( e ) {
                 // Cache corrupted, continue to fetch
             }
@@ -660,16 +1004,53 @@
             }
 
             const gpxContent = await response.text();
-            const coords = parseGPXTrack( gpxContent );
+            const gpxData = parseGPXTrack( gpxContent );
 
-            // Cache the parsed coordinates
-            if ( coords.length > 0 ) {
-                sessionStorage.setItem( cacheKey, JSON.stringify( coords ) );
+            // Cache the parsed data
+            if ( gpxData.coords.length > 0 ) {
+                sessionStorage.setItem( cacheKey, JSON.stringify( gpxData ) );
             }
 
-            return coords;
+            return gpxData;
         } catch ( error ) {
             console.error( 'Pathway: Failed to fetch GPX', error );
+            return { coords: [], elevations: [] };
+        }
+    }
+
+    /**
+     * Fetch elevation data from WordPress REST API
+     *
+     * @param {number} attachmentId - WordPress attachment ID
+     * @param {Array} coords - Array of [lat, lng] coordinates
+     * @return {Promise<Array>} Array of elevations in meters
+     */
+    async function fetchElevationFromAPI( attachmentId, coords ) {
+        try {
+            const response = await fetch( '/wp-json/pathway/v1/elevation', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify( {
+                    attachment_id: attachmentId,
+                    coordinates: coords
+                } )
+            } );
+
+            if ( ! response.ok ) {
+                throw new Error( `HTTP ${response.status}` );
+            }
+
+            const data = await response.json();
+
+            if ( ! data.success ) {
+                throw new Error( data.error || 'Unknown API error' );
+            }
+
+            return data.elevations;
+        } catch ( error ) {
+            console.error( 'Pathway: Elevation API failed', error );
             return [];
         }
     }
@@ -838,6 +1219,9 @@
 
         // Reset progress smoothing
         lastSmoothedProgress = null;
+
+        // Update elevation chart
+        updateElevationChart();
     }
 
     /**
@@ -1238,10 +1622,30 @@
             const attachmentId = parseInt( gpxBlock.dataset.attachmentId );
             const gpxUrl = gpxBlock.dataset.gpxUrl;
             if ( gpxUrl ) {
-                const coords = await fetchGPX( attachmentId, gpxUrl );
+                const gpxData = await fetchGPX( attachmentId, gpxUrl );
+                const coords = gpxData.coords;
                 if ( coords.length > 0 ) {
-                    // Store track coordinates for progress indicator
+                    // Store track coordinates and elevation for progress indicator
                     trackCoords = coords;
+                    trackElevations = gpxData.elevations || [];
+
+                    // If no elevation data, fetch from API
+                    if ( trackElevations.length === 0 && trackCoords.length > 0 ) {
+                        try {
+                            const fetchedElevations = await fetchElevationFromAPI( attachmentId, trackCoords );
+                            trackElevations = fetchedElevations;
+
+                            // Update cache to include fetched elevations
+                            const cacheKey = `pathway-gpx-${attachmentId}`;
+                            sessionStorage.setItem( cacheKey, JSON.stringify( {
+                                coords: trackCoords,
+                                elevations: trackElevations
+                            } ) );
+                        } catch ( error ) {
+                            console.warn( 'Pathway: Failed to fetch elevation data', error );
+                            // Continue without elevation - chart simply won't display
+                        }
+                    }
 
                     // Calculate distances along track
                     const distanceData = calculateTrackDistances( coords );
@@ -1291,6 +1695,9 @@
             map.setView( startCoord, startZoom );
             initialZoom = startZoom;
         }
+
+        // Initialize elevation profile (if elevation data available)
+        initElevationProfile();
 
         // Set up scroll handling
         window.addEventListener( 'scroll', handleScroll, { passive: true } );
