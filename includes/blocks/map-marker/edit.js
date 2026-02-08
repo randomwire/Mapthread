@@ -186,7 +186,7 @@ export default function Edit( { attributes, setAttributes, clientId } ) {
                         value={ title }
                         onChange={ ( value ) => setAttributes( { title: value } ) }
                         placeholder={ __( 'Enter marker title...', 'pathway' ) }
-                        help={ __( 'This will be displayed on the map pin', 'pathway' ) }
+                        help={ __( 'This will be displayed above the map pin', 'pathway' ) }
                     />
 
                     <BaseControl label={ __( 'Pin Design', 'pathway' ) }>
