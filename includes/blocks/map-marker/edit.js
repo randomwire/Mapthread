@@ -189,7 +189,7 @@ export default function Edit( { attributes, setAttributes, clientId } ) {
                         help={ __( 'This will be displayed above the map pin', 'mapthread' ) }
                     />
 
-                    <BaseControl label={ __( 'Pin Design', 'mapthread' ) }>
+                    <BaseControl label={ __( 'Marker Design (optional)', 'mapthread' ) }>
                         <div style={ { display: 'flex', alignItems: 'center', gap: '8px' } }>
                             <Button
                                 variant="secondary"
