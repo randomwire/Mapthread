@@ -1472,11 +1472,33 @@ Chart.register( LineController, LineElement, PointElement, LinearScale, Filler, 
             position: 'topright'
         } ).addTo( leafletMap );
 
-        // Add OpenStreetMap tiles
-        L.tileLayer( 'https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+        // Define base layer options
+        const osmLayer = L.tileLayer( 'https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
             attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors',
             maxZoom: 19
-        } ).addTo( leafletMap );
+        } );
+
+        const satelliteLayer = L.tileLayer( 'https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}', {
+            attribution: '&copy; <a href="https://www.esri.com/">Esri</a>',
+            maxZoom: 19
+        } );
+
+        const topoLayer = L.tileLayer( 'https://{s}.tile.opentopomap.org/{z}/{x}/{y}.png', {
+            attribution: '&copy; <a href="https://opentopomap.org">OpenTopoMap</a> contributors',
+            maxZoom: 17
+        } );
+
+        // Add default layer (Street)
+        osmLayer.addTo( leafletMap );
+
+        // Create layer control widget
+        const baseLayers = {
+            'Street': osmLayer,
+            'Satellite': satelliteLayer,
+            'Topographic': topoLayer
+        };
+
+        L.control.layers( baseLayers, null, { position: 'topright' } ).addTo( leafletMap );
 
         // Initialize map view based on progress indicator setting
         if ( bounds && bounds.north !== 0 ) {
