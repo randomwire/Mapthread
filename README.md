@@ -93,8 +93,17 @@ npm run build
 **Purpose:** Uploads and displays your GPS track
 
 **Settings:**
-- GPX File (required) - Upload from media library
-- Displays: Point count, track bounds, file validation
+- **GPX File** (required) - Upload from media library
+  - Displays: Point count, track bounds, file validation
+- **Show Progress Indicator** (toggle) - Enable/disable auto-following behavior
+  - Default: ON
+  - When ON: Map pans/zooms to follow reader's position in story
+  - When OFF: Map stays at full track view, shows all markers at once
+- **Show Elevation Profile** (toggle) - Enable/disable elevation chart
+  - Default: ON
+  - Displays elevation graph at bottom of map with Chart.js
+  - Shows marker positions and current progress on the chart
+  - Only visible when GPX file is loaded
 
 **Validation:**
 - File size >10MB: Warning (may be slow)
@@ -102,16 +111,29 @@ npm run build
 - Invalid GPX: Error (file won't load)
 - Multiple GPX blocks: Warning (only first will display)
 
+**Elevation Data:**
+- Elevation is fetched from Open-Elevation API when GPX is uploaded
+- Chart shows elevation changes along your route
+- Marker positions indicated with vertical lines on chart
+- Current scroll position shown with orange indicator
+
 ### Map Marker Block
 
 **Purpose:** Places numbered waypoints in your story
 
 **Settings:**
-- Title (optional) - Shows in tooltip on hover
-- Address (with search) - Type to search locations via OpenStreetMap
-- Latitude (auto-filled) - Decimal degrees (e.g., 51.5074)
-- Longitude (auto-filled) - Decimal degrees (e.g., -0.1278)
-- Zoom Level (optional) - Default: 14
+- **Marker Style** - Choose between numbered pin or emoji
+  - Numbered Pin (default): Clean circular pins with sequential numbers
+  - Emoji: Choose any emoji as your custom marker icon
+- **Emoji Picker** (when emoji style selected)
+  - Search or browse thousands of emojis
+  - Click to select (e.g., 🏔️, 🏕️, 🚶, 📍)
+  - Emojis scale and animate as readers scroll
+- **Title** (optional) - Shows in tooltip on hover
+- **Address** (with search) - Type to search locations via OpenStreetMap
+- **Latitude** (auto-filled) - Decimal degrees (e.g., 51.5074)
+- **Longitude** (auto-filled) - Decimal degrees (e.g., -0.1278)
+- **Zoom Level** (optional) - Default: 14
 
 **Address Search:**
 - Type any address, landmark, or place name
