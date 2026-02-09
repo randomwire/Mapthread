@@ -22,6 +22,10 @@ L.Icon.Default.mergeOptions({
     shadowUrl: markerShadow,
 });
 
+// Import Leaflet fullscreen plugin
+import { FullScreen } from 'leaflet.fullscreen';
+import 'leaflet.fullscreen/dist/Control.FullScreen.css';
+
 import { Chart, LineController, LineElement, PointElement, LinearScale, Filler, Tooltip } from 'chart.js';
 Chart.register( LineController, LineElement, PointElement, LinearScale, Filler, Tooltip );
 
@@ -1499,6 +1503,11 @@ Chart.register( LineController, LineElement, PointElement, LinearScale, Filler, 
         };
 
         L.control.layers( baseLayers, null, { position: 'topright' } ).addTo( leafletMap );
+
+        // Add fullscreen control
+        leafletMap.addControl( new FullScreen( {
+            position: 'topleft'
+        } ) );
 
         // Initialize map view based on progress indicator setting
         if ( bounds && bounds.north !== 0 ) {

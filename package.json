@@ -30,6 +30,7 @@
   "dependencies": {
     "chart.js": "^4.5.1",
     "emoji-picker-element": "^1.28.1",
-    "leaflet": "^1.9.4"
+    "leaflet": "^1.9.4",
+    "leaflet.fullscreen": "^5.3.0"
   }
 }
