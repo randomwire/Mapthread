@@ -3,7 +3,7 @@ wp-admin/
 wp-includes/
 wp-content/themes/
 wp-content/plugins/*
-!wp-content/plugins/pathway/
+!wp-content/plugins/mapthread/
 
 # Dependencies
 node_modules/

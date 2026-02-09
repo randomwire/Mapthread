@@ -6,6 +6,22 @@
  * @package Mapthread
  */
 
+// Import Leaflet CSS and JS (bundled via webpack)
+import 'leaflet/dist/leaflet.css';
+import L from 'leaflet';
+
+// Fix Leaflet's default icon paths when bundled with webpack
+import markerIcon from 'leaflet/dist/images/marker-icon.png';
+import markerIcon2x from 'leaflet/dist/images/marker-icon-2x.png';
+import markerShadow from 'leaflet/dist/images/marker-shadow.png';
+
+delete L.Icon.Default.prototype._getIconUrl;
+L.Icon.Default.mergeOptions({
+    iconRetinaUrl: markerIcon2x,
+    iconUrl: markerIcon,
+    shadowUrl: markerShadow,
+});
+
 import { Chart, LineController, LineElement, PointElement, LinearScale, Filler, Tooltip } from 'chart.js';
 Chart.register( LineController, LineElement, PointElement, LinearScale, Filler, Tooltip );
 
@@ -1064,10 +1080,10 @@ Chart.register( LineController, LineElement, PointElement, LinearScale, Filler, 
      * @return {L.DivIcon} Leaflet div icon
      */
     function createNumberedIcon( number, isActive = false ) {
-        const activeClass = isActive ? ' pathway-active' : '';
+        const activeClass = isActive ? ' mapthread-active' : '';
         return L.divIcon( {
             className: 'mapthread-marker-icon',
-            html: `<div class="pathway-marker-pin${activeClass}"></div>`,
+            html: `<div class="mapthread-marker-pin${activeClass}"></div>`,
             iconSize: [ ICON_SIZE, ICON_SIZE ],   // Total icon dimensions
             iconAnchor: [ ICON_ANCHOR, ICON_ANCHOR ],   // Point that sits on the lat/lng coordinate
             popupAnchor: [ 0, POPUP_ANCHOR_Y ]  // Where popups open relative to anchor
@@ -1082,10 +1098,10 @@ Chart.register( LineController, LineElement, PointElement, LinearScale, Filler, 
      * @return {L.DivIcon} Leaflet div icon
      */
     function createEmojiIcon( emoji, isActive = false ) {
-        const activeClass = isActive ? ' pathway-active' : '';
+        const activeClass = isActive ? ' mapthread-active' : '';
         return L.divIcon( {
             className: 'mapthread-marker-icon',
-            html: `<span class="pathway-marker-emoji${activeClass}">${emoji}</span>`,
+            html: `<span class="mapthread-marker-emoji${activeClass}">${emoji}</span>`,
             iconSize: [ EMOJI_ICON_SIZE, EMOJI_ICON_SIZE ],
             iconAnchor: [ EMOJI_ICON_ANCHOR, EMOJI_ICON_ANCHOR ],
             popupAnchor: [ 0, EMOJI_POPUP_ANCHOR_Y ]
@@ -1584,14 +1600,14 @@ Chart.register( LineController, LineElement, PointElement, LinearScale, Filler, 
     }
 
     /**
-     * Initialize Pathway map
+     * Initialize Mapthread map
      */
     async function initMapthread() {
-        // Check if we have Pathway blocks on this page
+        // Check if we have Mapthread blocks on this page
         const gpxBlock = document.querySelector( '.mapthread-map-gpx' );
         const markerElements = getMarkerElements();
 
-        // Exit if no Pathway content at all
+        // Exit if no Mapthread content at all
         if ( ! gpxBlock && markerElements.length === 0 ) {
             return;
         }

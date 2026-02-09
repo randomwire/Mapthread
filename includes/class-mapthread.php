@@ -66,36 +66,29 @@ class Mapthread {
             return;
         }
 
-        // Enqueue Leaflet CSS
-        wp_enqueue_style(
-            'leaflet',
-            'https://unpkg.com/leaflet@1.9.4/dist/leaflet.css',
-            array(),
-            '1.9.4'
-        );
+        // Note: Leaflet CSS and JS are now bundled in mapthread-frontend assets via webpack
 
-        // Enqueue Leaflet JS (will be bundled in future phases)
-        wp_enqueue_script(
-            'leaflet',
-            'https://unpkg.com/leaflet@1.9.4/dist/leaflet.js',
-            array(),
-            '1.9.4',
-            true
-        );
-
-        // Enqueue plugin frontend CSS (no dependencies - our CSS doesn't require Leaflet CSS)
+        // Enqueue Leaflet CSS (bundled from node_modules)
         wp_enqueue_style(
-            'mapthread-frontend',
-            MAPTHREAD_PLUGIN_URL . 'build/mapthread-frontend-style.css',
+            'mapthread-leaflet',
+            MAPTHREAD_PLUGIN_URL . 'build/mapthread-frontend.css',
             array(),
             MAPTHREAD_VERSION
         );
 
-        // Enqueue plugin frontend JS
+        // Enqueue plugin frontend CSS (custom Mapthread styles)
+        wp_enqueue_style(
+            'mapthread-frontend',
+            MAPTHREAD_PLUGIN_URL . 'build/mapthread-frontend-style.css',
+            array( 'mapthread-leaflet' ),
+            MAPTHREAD_VERSION
+        );
+
+        // Enqueue plugin frontend JS (Leaflet is now bundled inside)
         wp_enqueue_script(
             'mapthread-frontend',
             MAPTHREAD_PLUGIN_URL . 'build/mapthread-frontend.js',
-            array( 'leaflet' ),
+            array(),
             MAPTHREAD_VERSION,
             true
         );
