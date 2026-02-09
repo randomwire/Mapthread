@@ -1447,8 +1447,14 @@ Chart.register( LineController, LineElement, PointElement, LinearScale, Filler, 
         // Initialize Leaflet map
         const leafletMap = L.map( 'pathway-map', {
             zoomControl: true,
-            scrollWheelZoom: true
+            scrollWheelZoom: true,
+            attributionControl: false  // Disable default bottom-right attribution
         } );
+
+        // Add custom attribution control in top-right position
+        L.control.attribution( {
+            position: 'topright'
+        } ).addTo( leafletMap );
 
         // Add OpenStreetMap tiles
         L.tileLayer( 'https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
