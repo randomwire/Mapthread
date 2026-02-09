@@ -2,7 +2,7 @@
 
 Interactive map-based storytelling for WordPress.
 
-![Version](https://img.shields.io/badge/version-1.0.0-blue.svg)
+![Version](https://img.shields.io/badge/version-1.2.0-blue.svg)
 ![WordPress](https://img.shields.io/badge/wordpress-6.0%2B-brightgreen.svg)
 ![PHP](https://img.shields.io/badge/php-7.4%2B-purple.svg)
 ![License](https://img.shields.io/badge/license-GPLv2%2B-orange.svg)
@@ -26,8 +26,10 @@ Perfect for:
 
 ### Core Functionality
 - **GPX Track Upload** - Upload your GPS tracks from any device or app
+- **Elevation Profiles** - Visualize elevation changes with Chart.js-powered graphs at the bottom of the map
+- **Emoji Markers** - Choose from any emoji as custom map markers
 - **Markers-Only Mode** - Display maps with just markers, no GPX track required
-- **Address Search** - Find locations by name with autocomplete suggestions
+- **Address Search** - Geocode addresses with OpenStreetMap Nominatim autocomplete
 - **Auto-Following Maps** - Map pans and zooms as readers scroll through your story
 - **Numbered Waypoints** - Place markers at key points in your narrative
 - **Smart Follow Mode** - Automatically pauses when readers interact with the map, resumes when they keep scrolling
@@ -42,7 +44,7 @@ Perfect for:
 ### Performance
 - **Client-Side Rendering** - Fast, no server processing required
 - **Smart Caching** - GPX tracks cached in sessionStorage for instant reloads
-- **Lightweight** - Minimal JavaScript footprint (~5KB minified)
+- **Optimized Bundle** - Efficient JavaScript with Chart.js and Leaflet
 
 ---
 
@@ -54,15 +56,15 @@ Perfect for:
 3. Click **Install Now** > **Activate**
 
 ### Manual Installation
-1. Download the latest release from [GitHub Releases](https://github.com/yourusername/pathway/releases)
+1. Download the latest release from [GitHub Releases](https://github.com/randomwire/Pathways/releases)
 2. Upload the `pathway` folder to `/wp-content/plugins/`
 3. Activate through the **Plugins** menu in WordPress
 
 ### Development Installation
 ```bash
 cd wp-content/plugins
-git clone https://github.com/yourusername/pathway.git
-cd pathway
+git clone https://github.com/randomwire/Pathways.git
+cd Pathways
 npm install
 npm run build
 ```
@@ -294,23 +296,82 @@ Contributions welcome! Please:
 
 ## Support
 
-- **Documentation:** [GitHub Wiki](https://github.com/yourusername/pathway/wiki)
-- **Issues:** [GitHub Issues](https://github.com/yourusername/pathway/issues)
+- **Documentation:** [GitHub Wiki](https://github.com/randomwire/Pathways/wiki)
+- **Issues:** [GitHub Issues](https://github.com/randomwire/Pathways/issues)
 - **WordPress.org:** [Support Forum](https://wordpress.org/support/plugin/pathway/)
 
 ---
 
-## Credits
+## Credits & Attribution
 
-- **Maps:** [Leaflet](https://leafletjs.com/) - Open-source JavaScript library
-- **Tiles:** [OpenStreetMap](https://www.openstreetmap.org/) - Map data OpenStreetMap contributors
-- **Icons:** [WordPress Dashicons](https://developer.wordpress.org/resource/dashicons/)
+Pathway is built with and relies on the following open-source libraries and services:
+
+### JavaScript Libraries
+
+- **[Leaflet.js](https://leafletjs.com/)** - BSD-2-Clause License
+  - Interactive map rendering and controls
+  - Loaded from unpkg.com CDN
+
+- **[Chart.js](https://www.chartjs.org/)** - MIT License
+  - Elevation profile visualization
+  - Custom plugins for marker overlays and progress indicators
+
+- **[emoji-picker-element](https://github.com/nolanlawson/emoji-picker-element)** - MIT License
+  - Emoji selection interface in the block editor
+  - By Nolan Lawson
+
+### External Data Services
+
+- **[OpenStreetMap](https://www.openstreetmap.org/)** - ODbL 1.0 License
+  - Map tiles: © OpenStreetMap contributors
+  - Data usage complies with [OpenStreetMap Copyright](https://www.openstreetmap.org/copyright)
+
+- **[Nominatim](https://nominatim.org/)** - OpenStreetMap Geocoding Service
+  - Address search and autocomplete functionality
+  - Follows [Nominatim Usage Policy](https://operations.osmfoundation.org/policies/nominatim/)
+
+- **[Open-Elevation API](https://open-elevation.com/)** - Free Elevation Data Service
+  - Provides elevation data for GPX track visualization
+  - Open-source public service
+
+### WordPress Platform
+
+- **WordPress Block Editor** (Gutenberg) - GPLv2+
+- **@wordpress/scripts** - Build and development tooling
+- **@wordpress/components** - UI component library
+- **[WordPress Dashicons](https://developer.wordpress.org/resource/dashicons/)** - GPLv2+
+
+### Development Tools
+
+- **webpack** (via @wordpress/scripts) - Module bundling
+- **Babel** - JavaScript transpilation
+- **Sass/SCSS** - CSS preprocessing
 
 ---
 
 ## License
 
 Pathway is licensed under the [GNU General Public License v2.0 or later](https://www.gnu.org/licenses/gpl-2.0.html).
+
+All included third-party libraries are GPL-compatible:
+- BSD-2-Clause (Leaflet) - Compatible
+- MIT (Chart.js, emoji-picker-element) - Compatible
+- ODbL 1.0 (OpenStreetMap data) - Requires attribution (provided)
+
+---
+
+## Privacy & Data Usage
+
+**External API Calls:**
+- Address searches query Nominatim API with user-entered text
+- Elevation lookups send GPX coordinates to Open-Elevation API
+- Map tiles loaded from OpenStreetMap tile servers
+- All API calls made from user's browser, not from WordPress server
+
+**No Data Collection:**
+- Plugin does not collect, store, or transmit user data
+- No analytics or tracking
+- No cookies set by the plugin
 
 ---
 

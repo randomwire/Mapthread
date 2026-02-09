@@ -1,11 +1,11 @@
 === Pathway ===
-Contributors: (your-wordpress-username)
-Donate link: https://yourwebsite.com/donate
+Contributors: randomwire
+Donate link: https://github.com/randomwire/Pathways
 Tags: maps, gpx, travel, storytelling, leaflet, hiking, adventure
 Requires at least: 6.0
 Tested up to: 6.4
 Requires PHP: 7.4
-Stable tag: 1.0.0
+Stable tag: 1.2.0
 License: GPLv2 or later
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
 
@@ -22,6 +22,9 @@ Perfect for travel bloggers, hiking enthusiasts, and anyone who wants to tell lo
 * **Auto-Following Maps** - Map pans and zooms as readers scroll through your story
 * **GPX Track Upload** - Support for GPS tracks from any device or app
 * **Numbered Waypoints** - Place markers at key points in your narrative
+* **Elevation Profiles** - Visual elevation charts for GPX tracks
+* **Emoji Markers** - Fun, customizable emoji waypoint pins
+* **Address Search** - Find locations by name with autocomplete
 * **Smart Interactions** - Pause/resume following, click markers to jump to content
 * **Beautiful Design** - Modern numbered pins, smooth animations, theme color integration
 * **Mobile Responsive** - Optimized layouts for all screen sizes
@@ -44,11 +47,12 @@ Perfect for travel bloggers, hiking enthusiasts, and anyone who wants to tell lo
 
 = Technical Details =
 
-* Uses Leaflet.js for fast, interactive maps
-* OpenStreetMap tile provider (free, no API key required)
-* Client-side rendering for optimal performance
-* sessionStorage caching for instant reloads
-* Lightweight JavaScript (~5KB minified)
+* Leaflet.js for fast, interactive maps
+* Chart.js for elevation profile visualization
+* OpenStreetMap tiles and Nominatim geocoding (no API key required)
+* Open-Elevation API for elevation data
+* Client-side GPX parsing with sessionStorage caching
+* Modern JavaScript with React-based block editor
 
 = Browser Support =
 
@@ -124,6 +128,36 @@ Yes! Pathway automatically uses your theme's primary color. You can set this in 
 
 No, Pathway requires an internet connection to load map tiles from OpenStreetMap.
 
+== Third-Party Services & Attribution ==
+
+Pathway uses the following open-source libraries and external services:
+
+= JavaScript Libraries =
+
+* **Leaflet.js** (BSD-2-Clause) - https://leafletjs.com/
+  Interactive map rendering
+* **Chart.js** (MIT) - https://www.chartjs.org/
+  Elevation profile visualization
+* **emoji-picker-element** (MIT) - https://github.com/nolanlawson/emoji-picker-element
+  Emoji selection interface
+
+= External Services =
+
+* **OpenStreetMap** (ODbL 1.0) - https://www.openstreetmap.org/
+  Map tiles and data
+* **Nominatim** - https://nominatim.org/
+  Address geocoding and search (OpenStreetMap service)
+* **Open-Elevation API** - https://open-elevation.com/
+  Elevation data lookup for GPX tracks
+
+All external API calls are made from the user's browser, not from your WordPress server.
+
+= WordPress Integration =
+
+* WordPress Block Editor (Gutenberg)
+* @wordpress/scripts build toolchain
+* WordPress Dashicons (GPLv2+)
+
 == Screenshots ==
 
 1. Editor view - Map GPX block with uploaded track
@@ -133,6 +167,21 @@ No, Pathway requires an internet connection to load map tiles from OpenStreetMap
 5. Map markers and tooltips
 
 == Changelog ==
+
+= 1.2.0 - 2026-02-09 =
+* Added: Elevation profile chart powered by Chart.js with Open-Elevation API
+* Added: Elevation profile toggle in Map GPX block settings
+* Added: Emoji marker support with emoji-picker-element
+* Added: Marker position indicators on elevation chart
+* Changed: Moved Leaflet attribution to top-right corner
+* Fixed: Elevation profile toggle now hidden when no GPX file loaded
+* Technical: Chart.js ^4.5.1 and emoji-picker-element ^1.28.1 integration
+
+= 1.1.0 - 2026-02-03 =
+* Added: Address search with Nominatim API autocomplete
+* Added: Markers-only mode (no GPX required)
+* Added: Mini map preview in address search
+* Improved: Map bounds calculation from markers
 
 = 1.0.0 - 2026-02-01 =
 * Initial release
@@ -145,6 +194,12 @@ No, Pathway requires an internet connection to load map tiles from OpenStreetMap
 
 == Upgrade Notice ==
 
+= 1.2.0 =
+Major update with elevation profiles, emoji markers, and UI improvements. All third-party services properly attributed.
+
+= 1.1.0 =
+Adds address search and markers-only mode for enhanced flexibility.
+
 = 1.0.0 =
 Initial release of Pathway. Install and start creating interactive map stories!
 
@@ -154,12 +209,12 @@ Initial release of Pathway. Install and start creating interactive map stories!
 
 For support, please visit:
 * Plugin support forum: https://wordpress.org/support/plugin/pathway/
-* GitHub issues: https://github.com/yourusername/pathway/issues
+* GitHub issues: https://github.com/randomwire/Pathways/issues
 
 = Contributing =
 
 Pathway is open source! Contributions welcome at:
-https://github.com/yourusername/pathway
+https://github.com/randomwire/Pathways
 
 = Credits =
 

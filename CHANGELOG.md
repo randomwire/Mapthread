@@ -71,14 +71,49 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ---
 
-## [Unreleased]
+## [1.2.0] - 2026-02-09
 
-### Planned for v1.2
-- Multiple GPX files per post
-- Elevation profile display
-- Container block for theme-independent layout
+### Added
+- **Elevation Profile Chart** - Visual elevation graph at bottom of map
+  - Powered by Chart.js with custom overlay plugin
+  - Shows elevation changes along GPX track
+  - Displays current position indicator as user scrolls
+  - Marker position indicators show waypoint locations on chart
+  - Open-Elevation API integration for elevation data lookup
+- **Elevation Profile Toggle** - Block setting to enable/disable elevation chart
+  - Default: enabled
+  - Setting hidden when no GPX file loaded (UI cleanup)
+- **Emoji Marker Support** - Select emoji icons for map markers
+  - emoji-picker-element integration in block editor
+  - Colorful emoji rendering on frontend map
+  - Emoji markers scale and animate on scroll
+- **UI Improvements**
+  - Repositioned Leaflet attribution to top-right (no longer covered by elevation profile)
+  - Elevation profile toggle only shown when GPX file is loaded
+  - Marker positions displayed on elevation chart regardless of progress indicator setting
+
+### Changed
+- Map attribution control moved from bottom-right to top-right corner
+- Elevation chart always updates with active marker position
+
+### Technical
+- Chart.js ^4.5.1 integration for elevation visualization
+- emoji-picker-element ^1.28.1 for emoji selection UI
+- Open-Elevation API for elevation data (https://api.open-elevation.com)
+- Custom Chart.js plugin for marker overlays and progress indicator
+- Improved scroll state management for chart updates
 
 ---
 
-[1.1.0]: https://github.com/yourusername/pathway/releases/tag/v1.1.0
-[1.0.0]: https://github.com/yourusername/pathway/releases/tag/v1.0.0
+## [Unreleased]
+
+### Planned for v1.3
+- Multiple GPX files per post
+- Container block for theme-independent layout
+- Elevation profile on mobile devices
+
+---
+
+[1.2.0]: https://github.com/randomwire/Pathways/releases/tag/v1.2.0
+[1.1.0]: https://github.com/randomwire/Pathways/releases/tag/v1.1.0
+[1.0.0]: https://github.com/randomwire/Pathways/releases/tag/v1.0.0

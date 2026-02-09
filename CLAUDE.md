@@ -11,6 +11,7 @@ Pathways is a WordPress plugin that enables map-based storytelling. It connects 
 - **WordPress Plugin** for block themes only (not classic themes)
 - **Gutenberg Block Editor** - all custom blocks use the WordPress block editor API
 - **Leaflet.js** - interactive map display
+- **Chart.js** - elevation profile visualization
 - **OpenStreetMap** - map tiles and data
 - **GPX files** - route/track data format
 

@@ -3,7 +3,7 @@
  * Plugin Name:       Pathway
  * Plugin URI:        https://github.com/davidgilbert/pathway
  * Description:       Interactive map-based storytelling for WordPress. Combine narratives with GPX tracks and waypoints.
- * Version:           0.1.0
+ * Version:           1.2.0
  * Requires at least: 6.0
  * Requires PHP:      7.4
  * Author:            David Gilbert
@@ -20,7 +20,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 }
 
 // Define plugin constants
-define( 'PATHWAY_VERSION', '0.1.0' );
+define( 'PATHWAY_VERSION', '1.2.0' );
 define( 'PATHWAY_PLUGIN_DIR', plugin_dir_path( __FILE__ ) );
 define( 'PATHWAY_PLUGIN_URL', plugin_dir_url( __FILE__ ) );
 define( 'PATHWAY_PLUGIN_BASENAME', plugin_basename( __FILE__ ) );
