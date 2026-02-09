@@ -154,6 +154,30 @@
             display: none !important;
         }
     }
+
+    // Fullscreen mode overrides (both true fullscreen and pseudo-fullscreen)
+    // Remove body padding when in fullscreen
+    body.has-mapthread-blocks.leaflet-pseudo-fullscreen {
+        padding-top: 0 !important;
+    }
+
+    // Fullscreen map container - handle all fullscreen scenarios
+    body.has-mapthread-blocks #mapthread-map.leaflet-fullscreen-on,
+    body.has-mapthread-blocks #mapthread-map.leaflet-pseudo-fullscreen,
+    body.leaflet-pseudo-fullscreen #mapthread-map,
+    #mapthread-map.leaflet-pseudo-fullscreen {
+        position: fixed !important;
+        top: 0 !important;
+        left: 0 !important;
+        right: 0 !important;
+        bottom: 0 !important;
+        width: 100vw !important;
+        height: 100vh !important;
+        max-height: none !important;
+        min-height: 0 !important;
+        z-index: 9999 !important;
+        border-radius: 0 !important;
+    }
 }
 
 // ============================================================================

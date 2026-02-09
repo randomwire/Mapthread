@@ -1508,8 +1508,11 @@ Chart.register( LineController, LineElement, PointElement, LinearScale, Filler, 
         L.control.layers( baseLayers, null, { position: 'topright' } ).addTo( leafletMap );
 
         // Add fullscreen control
+        // Force pseudoFullscreen on mobile for better compatibility
+        const isMobile = window.innerWidth <= 767;
         leafletMap.addControl( new FullScreen( {
-            position: 'topleft'
+            position: 'topleft',
+            pseudoFullscreen: isMobile
         } ) );
 
         // Initialize map view based on progress indicator setting
