@@ -333,30 +333,38 @@
     }
 }
 
-// Zoom controls
-.leaflet-control-zoom {
+// Zoom and fullscreen controls (consistent styling)
+.leaflet-control-zoom,
+.leaflet-control-fullscreen {
     border: 1px solid rgba(0, 0, 0, 0.08);
     border-radius: 6px;
     box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
     overflow: hidden;
+    background: white;
 
     a {
         color: #333;
-        border-bottom: 1px solid rgba(0, 0, 0, 0.08);
         width: 32px;
         height: 32px;
         line-height: 32px;
         font-size: 20px;
         transition: all 0.15s ease;
+        background-color: white;
+        display: block;
 
         &:hover {
-            background: #f0f0f0;
+            background-color: #f0f0f0;
             color: #000;
         }
+    }
+}
 
-        &:last-child {
-            border-bottom: none;
-        }
+// Zoom control specific styles
+.leaflet-control-zoom a {
+    border-bottom: 1px solid rgba(0, 0, 0, 0.08);
+
+    &:last-child {
+        border-bottom: none;
     }
 }
 
