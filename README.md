@@ -11,7 +11,7 @@ Interactive map-based storytelling for WordPress.
 
 ## Description
 
-Pathway transforms your travel stories, hiking adventures, and geographic narratives into engaging interactive experiences. Upload a GPX track, place numbered markers in your story, and watch as readers scroll - the map automatically pans and zooms to follow along.
+Pathway transforms your travel stories, hiking adventures, and geographic narratives into interactive experiences with maps. Upload a GPX track, place numbered markers in your story, and watch as readers scroll - the map automatically pans and zooms to follow along.
 
 Perfect for:
 - Hiking and adventure blogs
@@ -26,25 +26,22 @@ Perfect for:
 
 ### Core Functionality
 - **GPX Track Upload** - Upload your GPS tracks from any device or app
-- **Elevation Profiles** - Visualize elevation changes with Chart.js-powered graphs at the bottom of the map
+- **Elevation Profiles** - Visualize elevation changes with graphs at the bottom of the map
 - **Emoji Markers** - Choose from any emoji as custom map markers
 - **Markers-Only Mode** - Display maps with just markers, no GPX track required
-- **Address Search** - Geocode addresses with OpenStreetMap Nominatim autocomplete
+- **Address Search** - Geocode addresses with autocomplete
 - **Auto-Following Maps** - Map pans and zooms as readers scroll through your story
 - **Numbered Waypoints** - Place markers at key points in your narrative
 - **Smart Follow Mode** - Automatically pauses when readers interact with the map, resumes when they keep scrolling
 - **Click-to-Scroll** - Click any map marker to jump to that part of the story
 
 ### Design & Layout
-- **Desktop Layout** - Beautiful 2-column layout (story 60%, sticky map 40%)
+- **Desktop Layout** - 2-column layout (story 60%, sticky map 40%)
 - **Mobile Responsive** - Sticky map at top (30vh), story scrolls below
-- **Theme Integration** - Uses your theme's primary colors automatically
-- **Professional Styling** - Clean, modern marker pins and tooltips
 
 ### Performance
 - **Client-Side Rendering** - Fast, no server processing required
 - **Smart Caching** - GPX tracks cached in sessionStorage for instant reloads
-- **Optimized Bundle** - Efficient JavaScript with Chart.js and Leaflet
 
 ---
 
@@ -93,7 +90,7 @@ npm run build
 **Purpose:** Uploads and displays your GPS track
 
 **Settings:**
-- **GPX File** (required) - Upload from media library
+- **GPX File** (optional) - Upload from media library
   - Displays: Point count, track bounds, file validation
 - **Show Progress Indicator** (toggle) - Enable/disable auto-following behavior
   - Default: ON
@@ -126,7 +123,7 @@ npm run build
   - Numbered Pin (default): Clean circular pins with sequential numbers
   - Emoji: Choose any emoji as your custom marker icon
 - **Emoji Picker** (when emoji style selected)
-  - Search or browse thousands of emojis
+  - Search or browse all emojis
   - Click to select (e.g., 🏔️, 🏕️, 🚶, 📍)
   - Emojis scale and animate as readers scroll
 - **Title** (optional) - Shows in tooltip on hover
@@ -156,7 +153,7 @@ npm run build
 
 ### Markers-Only Mode
 
-**You don't need a GPX track!** Pathway works great with just markers:
+**If you don't have a GPX track,** Pathway also works with just markers:
 
 #### Scenario 1: No Map GPX Block at All
 - Add Map Marker blocks to your story content
@@ -272,16 +269,13 @@ A: Standard GPX 1.0/1.1 with `<trk>` (tracks). Waypoints and routes are not disp
 A: Yes! Pathway uses your theme's primary color automatically. Set it in `theme.json` or Customizer.
 
 **Q: Does it work with classic themes?**
-A: The plugin works, but the layout may not be perfect. Block themes are recommended.
+A: Not tested. Pathway is designed for block themes.
 
 **Q: Can I use Pathway with Elementor/Divi/etc?**
 A: Not tested. Pathway is designed for the block editor (Gutenberg).
 
 **Q: Is there a limit on GPX file size?**
 A: 10MB is recommended. Larger files will show a warning and may be slow to render.
-
-**Q: Can I add photos to the map markers?**
-A: Not in v1.0. This feature is planned for a future release.
 
 ---
 
