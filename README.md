@@ -168,17 +168,25 @@ npm run build
 #### Scenario 2: Map GPX Block Without Uploaded File
 - Add Map GPX block but don't upload a GPX file
 - Add Map Marker blocks to your story content
-- **Result:** Same as Scenario 1 - markers-only map
-- Map GPX block provides placeholder until you upload a file
+- **Result:** Markers connected with straight lines in the order they were added
+- Creates a simple route visualization connecting your points
 - Elevation profile hidden (no data without GPX)
 - Settings toggles available but won't show until GPX uploaded
+- Different from Scenario 1: lines connect markers to show a path
 
 **Use Cases for Markers-Only Mode:**
-- City tours with specific points of interest
-- Multi-location travel stories (no connecting route)
+
+*Scenario 1 (No lines):*
+- City tours with unrelated points of interest
 - Photo essays with geographic context
 - Historical events at different locations
 - Restaurant/venue guides
+
+*Scenario 2 (With connecting lines):*
+- Multi-city travel itineraries (show the general path)
+- Road trip stories (approximate route between stops)
+- Walking tours (straight-line path between waypoints)
+- Any journey where you want to show the sequence of locations
 
 **Note:** If you later add a GPX file, the map will display the route and automatically adjust bounds to show both the track and all markers.
 
