@@ -1,0 +1,50 @@
+# Development files
+.git
+.gitignore
+.distignore
+node_modules
+package.json
+package-lock.json
+webpack.config.js
+.babelrc
+.eslintrc.js
+
+# Source files (compiled versions in /build)
+assets/js
+assets/css
+
+# IDE and editor files
+.vscode
+.idea
+.cursor
+*.sublime-project
+*.sublime-workspace
+
+# OS files
+.DS_Store
+Thumbs.db
+._*
+
+# Documentation (internal only)
+CLAUDE.md
+docs/
+
+# Build artifacts (will be regenerated)
+*.log
+npm-debug.log*
+
+# Test files
+test-files/
+
+# Project planning (local only)
+02_Phase_1_Scaffold_Prompt.md
+Pathway Plugin Requirements v2.md
+
+# Distribution directory
+dist/
+
+# Build scripts
+scripts/
+
+# CI/CD
+.github/
