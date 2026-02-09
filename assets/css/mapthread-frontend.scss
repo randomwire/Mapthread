@@ -290,11 +290,11 @@
 
 // Remaining portion of track (yet to travel)
 .mapthread-track-remaining {
-    stroke: #4F7CAC;  // Muted cool blue
+    stroke: #E4572E;  // Vermilion (same as walked, lower opacity)
     stroke-width: 3;
     stroke-linecap: round;
     stroke-linejoin: round;
-    opacity: 0.7;
+    opacity: 0.5;
 }
 
 // ============================================================================
@@ -392,12 +392,13 @@
     }
 }
 
-// GPX track polyline
+// GPX track polyline (when progress indicator is OFF)
 .leaflet-interactive[stroke="#3388ff"] {
-    stroke: #a8b8c8;
+    stroke: #E4572E;  // Vermilion (same as walked, lower opacity)
     stroke-width: 3.5;
     stroke-linecap: round;
     stroke-linejoin: round;
+    opacity: 0.5;
 }
 
 // ============================================================================

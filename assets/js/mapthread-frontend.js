@@ -357,7 +357,7 @@ Chart.register( LineController, LineElement, PointElement, LinearScale, Filler, 
 
         // Track colors
         const walkedColor = '#E4572E';     // Vermilion
-        const remainingColor = '#4F7CAC';  // Muted cool blue
+        const remainingColor = '#E4572E';  // Vermilion (same color, different opacity)
 
         // Create walked polyline (starts at first point only)
         walkedPolyline = L.polyline( [ trackCoords[ 0 ] ], {
@@ -1573,9 +1573,9 @@ Chart.register( LineController, LineElement, PointElement, LinearScale, Filler, 
 
         // Add polyline
         gpxLayer = L.polyline( coords, {
-            color: '#a8b8c8',
+            color: '#E4572E',  // Vermilion
             weight: 3,
-            opacity: 0.8
+            opacity: 0.5
         } ).addTo( map );
     }
 
@@ -1738,9 +1738,9 @@ Chart.register( LineController, LineElement, PointElement, LinearScale, Filler, 
             // If progress indicator is OFF, show a static connecting line
             if ( ! showProgressIndicator ) {
                 L.polyline( trackCoords, {
-                    color: '#4F7CAC',
+                    color: '#E4572E',  // Vermilion
                     weight: 3,
-                    opacity: 0.7,
+                    opacity: 0.5,
                     className: 'mapthread-track-remaining'
                 } ).addTo( map );
             }
