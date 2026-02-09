@@ -154,6 +154,36 @@ npm run build
 
 ---
 
+### Markers-Only Mode
+
+**You don't need a GPX track!** Pathway works great with just markers:
+
+#### Scenario 1: No Map GPX Block at All
+- Add Map Marker blocks to your story content
+- **Result:** Map displays showing only your markers
+- Map bounds automatically calculated from marker positions
+- No route/track line displayed on map
+- Auto-following still works - map centers on each marker as you scroll
+
+#### Scenario 2: Map GPX Block Without Uploaded File
+- Add Map GPX block but don't upload a GPX file
+- Add Map Marker blocks to your story content
+- **Result:** Same as Scenario 1 - markers-only map
+- Map GPX block provides placeholder until you upload a file
+- Elevation profile hidden (no data without GPX)
+- Settings toggles available but won't show until GPX uploaded
+
+**Use Cases for Markers-Only Mode:**
+- City tours with specific points of interest
+- Multi-location travel stories (no connecting route)
+- Photo essays with geographic context
+- Historical events at different locations
+- Restaurant/venue guides
+
+**Note:** If you later add a GPX file, the map will display the route and automatically adjust bounds to show both the track and all markers.
+
+---
+
 ## Layout Setup
 
 Pathway offers two ways to integrate with your theme:
