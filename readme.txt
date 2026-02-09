@@ -5,7 +5,7 @@ Tags: maps, gpx, travel, storytelling, hiking
 Requires at least: 6.0
 Tested up to: 6.9
 Requires PHP: 7.4
-Stable tag: 1.2.0
+Stable tag: 1.3.0
 License: GPLv2 or later
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
 
@@ -21,6 +21,8 @@ Perfect for travel bloggers, hiking enthusiasts, and anyone who wants to tell lo
 
 * **Auto-Following Maps** - Map pans and zooms as readers scroll through your story
 * **GPX Track Upload** - Support for GPS tracks from any device or app
+* **Multiple Map Styles** - Switch between Street, Satellite, and Topographic views
+* **Fullscreen Maps** - Expand maps to fullscreen for immersive viewing
 * **Numbered Waypoints** - Place markers at key points in your narrative
 * **Elevation Profiles** - Visual elevation charts for GPX tracks
 * **Emoji Markers** - Fun, customizable emoji waypoint pins
@@ -136,6 +138,8 @@ Mapthread uses the following open-source libraries and external services:
 
 * **Leaflet.js** (BSD-2-Clause) - https://leafletjs.com/
   Interactive map rendering
+* **Leaflet.fullscreen** (MIT) - https://github.com/brunob/leaflet.fullscreen
+  Fullscreen map control
 * **Chart.js** (MIT) - https://www.chartjs.org/
   Elevation profile visualization
 * **emoji-picker-element** (MIT) - https://github.com/nolanlawson/emoji-picker-element
@@ -144,7 +148,11 @@ Mapthread uses the following open-source libraries and external services:
 = External Services =
 
 * **OpenStreetMap** (ODbL 1.0) - https://www.openstreetmap.org/
-  Map tiles and data
+  Street map tiles and data
+* **Esri World Imagery** - https://www.esri.com/
+  Satellite map tiles
+* **OpenTopoMap** (CC-BY-SA) - https://opentopomap.org/
+  Topographic map tiles
 * **Nominatim** - https://nominatim.org/
   Address geocoding and search (OpenStreetMap service)
 * **Open-Elevation API** - https://open-elevation.com/
@@ -167,6 +175,14 @@ All external API calls are made from the user's browser, not from your WordPress
 5. Map markers and tooltips
 
 == Changelog ==
+
+= 1.3.0 - 2026-02-09 =
+* Added: Multiple map styles - Switch between Street, Satellite, and Topographic views
+* Added: Layer control widget for easy map style switching
+* Added: Fullscreen button for immersive map viewing
+* Added: Default Map Style setting in block editor to choose initial view
+* Technical: Leaflet.fullscreen ^5.3.0 integration
+* Technical: Esri World Imagery and OpenTopoMap tile providers
 
 = 1.2.0 - 2026-02-09 =
 * Added: Elevation profile chart powered by Chart.js with Open-Elevation API
@@ -193,6 +209,9 @@ All external API calls are made from the user's browser, not from your WordPress
 * Performance optimizations
 
 == Upgrade Notice ==
+
+= 1.3.0 =
+New map viewing options! Switch between Street, Satellite, and Topographic map styles. Fullscreen mode for immersive viewing.
 
 = 1.2.0 =
 Major update with elevation profiles, emoji markers, and UI improvements. All third-party services properly attributed.

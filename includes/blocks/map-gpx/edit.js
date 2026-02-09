@@ -12,7 +12,8 @@ import {
     Notice,
     Spinner,
     PanelBody,
-    ToggleControl
+    ToggleControl,
+    SelectControl
 } from '@wordpress/components';
 import { useSelect } from '@wordpress/data';
 import { useState, useEffect } from '@wordpress/element';
@@ -91,7 +92,7 @@ function hasMultipleGPXBlocks( clientId ) {
  */
 export default function Edit( { attributes, setAttributes, clientId } ) {
     const blockProps = useBlockProps();
-    const { attachmentId, fileName, pointCount, bounds, showProgressIndicator, showElevationProfile } = attributes;
+    const { attachmentId, fileName, pointCount, bounds, showProgressIndicator, showElevationProfile, defaultMapLayer } = attributes;
 
     const [ isProcessing, setIsProcessing ] = useState( false );
     const [ validationError, setValidationError ] = useState( '' );
@@ -270,6 +271,17 @@ export default function Edit( { attributes, setAttributes, clientId } ) {
                         checked={ showElevationProfile }
                         onChange={ ( value ) => setAttributes( { showElevationProfile: value } ) }
                         help={ __( 'Display elevation chart at bottom of map', 'mapthread' ) }
+                    />
+                    <SelectControl
+                        label={ __( 'Default Map Style', 'mapthread' ) }
+                        value={ defaultMapLayer }
+                        options={ [
+                            { label: __( 'Street Map', 'mapthread' ), value: 'Street' },
+                            { label: __( 'Satellite View', 'mapthread' ), value: 'Satellite' },
+                            { label: __( 'Topographic Map', 'mapthread' ), value: 'Topographic' }
+                        ] }
+                        onChange={ ( value ) => setAttributes( { defaultMapLayer: value } ) }
+                        help={ __( 'Choose which map style displays when the page loads', 'mapthread' ) }
                     />
                 </PanelBody>
             </InspectorControls>

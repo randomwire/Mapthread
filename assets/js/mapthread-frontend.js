@@ -53,6 +53,7 @@ Chart.register( LineController, LineElement, PointElement, LinearScale, Filler, 
     let remainingPolyline = null;       // Polyline for remaining portion
     let showProgressIndicator = true;   // Setting from block
     let showElevationProfile = true;    // Setting from block
+    let defaultMapLayer = 'Street';     // Which layer to show on load
     let lastSmoothedProgress = null;    // For smooth interpolation
     let mapInteractionScrollListener = null; // Listener for re-enabling follow mode
 
@@ -1492,16 +1493,18 @@ Chart.register( LineController, LineElement, PointElement, LinearScale, Filler, 
             maxZoom: 17
         } );
 
-        // Add default layer (Street)
-        osmLayer.addTo( leafletMap );
-
-        // Create layer control widget
+        // Define layer mapping
         const baseLayers = {
             'Street': osmLayer,
             'Satellite': satelliteLayer,
             'Topographic': topoLayer
         };
 
+        // Add default layer based on user setting
+        const selectedLayer = baseLayers[ defaultMapLayer ] || osmLayer;
+        selectedLayer.addTo( leafletMap );
+
+        // Create layer control widget
         L.control.layers( baseLayers, null, { position: 'topright' } ).addTo( leafletMap );
 
         // Add fullscreen control
@@ -1666,14 +1669,15 @@ Chart.register( LineController, LineElement, PointElement, LinearScale, Filler, 
             bounds = calculateBoundsFromMarkers();
         }
 
-        // Initialize map
-        map = initializeMap( bounds );
-
-        // Read progress indicator setting
+        // Read settings from block attributes BEFORE initializing map
         if ( gpxBlock ) {
             showProgressIndicator = gpxBlock.dataset.showProgress !== 'false';
             showElevationProfile = gpxBlock.dataset.showElevation !== 'false';
+            defaultMapLayer = gpxBlock.dataset.defaultLayer || 'Street';
         }
+
+        // Initialize map (uses settings read above)
+        map = initializeMap( bounds );
 
         // Only fetch GPX if block exists with valid URL
         if ( gpxBlock ) {

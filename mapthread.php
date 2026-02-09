@@ -3,7 +3,7 @@
  * Plugin Name:       Mapthread
  * Plugin URI:        https://github.com/randomwire/Mapthread
  * Description:       Interactive map-based storytelling for WordPress. Combine narratives with GPX tracks and waypoints.
- * Version:           1.2.0
+ * Version:           1.3.0
  * Requires at least: 6.0
  * Requires PHP:      7.4
  * Author:            David Gilbert
@@ -20,7 +20,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 }
 
 // Define plugin constants
-define( 'MAPTHREAD_VERSION', '1.2.0' );
+define( 'MAPTHREAD_VERSION', '1.3.0' );
 define( 'MAPTHREAD_PLUGIN_DIR', plugin_dir_path( __FILE__ ) );
 define( 'MAPTHREAD_PLUGIN_URL', plugin_dir_url( __FILE__ ) );
 define( 'MAPTHREAD_PLUGIN_BASENAME', plugin_basename( __FILE__ ) );

@@ -42,6 +42,10 @@
         "showElevationProfile": {
             "type": "boolean",
             "default": true
+        },
+        "defaultMapLayer": {
+            "type": "string",
+            "default": "Street"
         }
     },
     "supports": {

@@ -24,6 +24,7 @@ $mapthread_bounds                  = isset( $attributes['bounds'] ) ? $attribute
 );
 $mapthread_show_progress_indicator = isset( $attributes['showProgressIndicator'] ) ? $attributes['showProgressIndicator'] : true;
 $mapthread_show_elevation_profile  = isset( $attributes['showElevationProfile'] ) ? $attributes['showElevationProfile'] : true;
+$mapthread_default_map_layer       = isset( $attributes['defaultMapLayer'] ) ? $attributes['defaultMapLayer'] : 'Street';
 
 // Get the GPX URL from the attachment ID (more reliable than stored URL).
 $mapthread_gpx_url = '';
@@ -40,6 +41,7 @@ $mapthread_wrapper_attributes = get_block_wrapper_attributes(
 		'data-bounds'          => esc_attr( wp_json_encode( $mapthread_bounds ) ),
 		'data-show-progress'   => $mapthread_show_progress_indicator ? 'true' : 'false',
 		'data-show-elevation'  => $mapthread_show_elevation_profile ? 'true' : 'false',
+		'data-default-layer'   => esc_attr( $mapthread_default_map_layer ),
 	)
 );
 
