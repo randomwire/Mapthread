@@ -4,7 +4,7 @@
  * Provides autocomplete address search using OpenStreetMap Nominatim API
  * and displays a mini map preview of selected locations.
  *
- * @package Pathway
+ * @package Mapthread
  */
 
 import { __ } from '@wordpress/i18n';
@@ -51,7 +51,7 @@ async function searchAddress( query ) {
             `q=${ encodeURIComponent( query ) }&format=json&limit=5&addressdetails=1`,
             {
                 headers: {
-                    'User-Agent': 'PathwayWordPressPlugin/1.0'
+                    'User-Agent': 'MapthreadWordPressPlugin/1.0'
                 }
             }
         );
@@ -62,7 +62,7 @@ async function searchAddress( query ) {
 
         return await response.json();
     } catch ( error ) {
-        console.error( 'Pathway: Address search failed', error );
+        console.error( 'Mapthread: Address search failed', error );
         return [];
     }
 }
@@ -207,27 +207,27 @@ export default function AddressSearch( { onSelect, currentLat, currentLng, curre
     }
 
     return (
-        <div className="pathway-address-search" ref={ wrapperRef }>
+        <div className="mapthread-address-search" ref={ wrapperRef }>
             <TextControl
-                label={ __( 'Address', 'pathway' ) }
+                label={ __( 'Address', 'mapthread' ) }
                 value={ query }
                 onChange={ handleInputChange }
-                placeholder={ __( 'Search for a location...', 'pathway' ) }
-                help={ __( 'Type to search and auto-fill coordinates', 'pathway' ) }
+                placeholder={ __( 'Search for a location...', 'mapthread' ) }
+                help={ __( 'Type to search and auto-fill coordinates', 'mapthread' ) }
             />
 
             { isLoading && (
-                <div className="pathway-address-search__loading">
+                <div className="mapthread-address-search__loading">
                     <Spinner />
                 </div>
             ) }
 
             { showResults && results.length > 0 && (
-                <ul className="pathway-address-search__results">
+                <ul className="mapthread-address-search__results">
                     { results.map( ( result, index ) => (
                         <li
                             key={ result.place_id || index }
-                            className="pathway-address-search__result"
+                            className="mapthread-address-search__result"
                             onClick={ () => handleSelect( result ) }
                             onKeyDown={ ( e ) => {
                                 if ( e.key === 'Enter' || e.key === ' ' ) {
@@ -237,10 +237,10 @@ export default function AddressSearch( { onSelect, currentLat, currentLng, curre
                             role="option"
                             tabIndex={ 0 }
                         >
-                            <span className="pathway-address-search__result-name">
+                            <span className="mapthread-address-search__result-name">
                                 { result.display_name }
                             </span>
-                            <span className="pathway-address-search__result-type">
+                            <span className="mapthread-address-search__result-type">
                                 { result.type }
                             </span>
                         </li>
@@ -249,21 +249,21 @@ export default function AddressSearch( { onSelect, currentLat, currentLng, curre
             ) }
 
             { showResults && results.length === 0 && ! isLoading && debouncedQuery.length >= 3 && (
-                <div className="pathway-address-search__no-results">
-                    { __( 'No results found', 'pathway' ) }
+                <div className="mapthread-address-search__no-results">
+                    { __( 'No results found', 'mapthread' ) }
                 </div>
             ) }
 
             { hasPreviewLocation && (
-                <div className="pathway-address-search__preview">
-                    <div className="pathway-address-search__map">
+                <div className="mapthread-address-search__preview">
+                    <div className="mapthread-address-search__map">
                         <img
                             src={ tileUrl }
-                            alt={ __( 'Location preview', 'pathway' ) }
-                            className="pathway-address-search__tile"
+                            alt={ __( 'Location preview', 'mapthread' ) }
+                            className="mapthread-address-search__tile"
                         />
                         <div
-                            className="pathway-address-search__marker"
+                            className="mapthread-address-search__marker"
                             style={ markerStyle }
                         />
                     </div>

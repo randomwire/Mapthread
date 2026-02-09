@@ -1,12 +1,12 @@
 # Block Theme Setup Guide
 
-This guide shows you how to properly integrate Pathway maps into your block theme for the best results.
+This guide shows you how to properly integrate Mapthread maps into your block theme for the best results.
 
 ---
 
 ## Overview
 
-Pathway works in two ways:
+Mapthread works in two ways:
 
 1. **Automatic Layout (Default)** - Plugin CSS creates a fixed map on the right
 2. **Manual Layout (Recommended)** - You control the layout using WordPress blocks
@@ -42,12 +42,12 @@ The manual approach gives you full control and works with any block theme.
 **Right Column:**
 - Select the column
 - Sidebar > Width > 40%
-- Advanced > Additional CSS class > `pathway-map-column`
+- Advanced > Additional CSS class > `mapthread-map-column`
 - (Plugin CSS will make this sticky automatically)
 
 **OR set in Custom CSS:**
 ```css
-.pathway-map-column {
+.mapthread-map-column {
     position: sticky;
     top: 20px;
     height: calc(100vh - 40px);
@@ -111,8 +111,8 @@ If you prefer to edit code directly, here's the template structure:
     </div>
     <!-- /wp:column -->
 
-    <!-- wp:column {"width":"40%","className":"pathway-map-column"} -->
-    <div class="wp-block-column pathway-map-column" style="flex-basis:40%">
+    <!-- wp:column {"width":"40%","className":"mapthread-map-column"} -->
+    <div class="wp-block-column mapthread-map-column" style="flex-basis:40%">
         <!-- Map GPX block will be inserted here by user -->
     </div>
     <!-- /wp:column -->
@@ -132,13 +132,13 @@ Add this to your theme's Custom CSS:
 ```css
 /* Make map column sticky on desktop */
 @media (min-width: 768px) {
-    .pathway-map-column {
+    .mapthread-map-column {
         position: sticky;
         top: 20px;
         align-self: start;
     }
 
-    .pathway-map-column #pathway-map {
+    .mapthread-map-column #mapthread-map {
         height: calc(100vh - 40px);
         max-height: 900px;
     }
@@ -146,12 +146,12 @@ Add this to your theme's Custom CSS:
 
 /* Full width map on mobile */
 @media (max-width: 767px) {
-    .pathway-map-column {
+    .mapthread-map-column {
         position: sticky;
         top: 0;
     }
 
-    .pathway-map-column #pathway-map {
+    .mapthread-map-column #mapthread-map {
         height: 35vh;
         min-height: 280px;
     }
@@ -179,7 +179,7 @@ Want a different split? Change the column widths:
 ## Troubleshooting
 
 ### Map not sticky
-- Check that you added the `pathway-map-column` class
+- Check that you added the `mapthread-map-column` class
 - Verify the Custom CSS was added
 - Ensure no parent has `overflow: hidden`
 
@@ -206,7 +206,7 @@ For reusable layouts across multiple posts:
 1. **Create a Template Part:**
    - Appearance > Editor > Patterns > Create Pattern
    - Choose "Synced" pattern
-   - Name: "Pathway Two Column Layout"
+   - Name: "Mapthread Two Column Layout"
 
 2. **Design your layout** with Columns block
 
@@ -240,5 +240,5 @@ For reusable layouts across multiple posts:
 ## Support
 
 Need help? Check:
-- [WordPress Support Forum](https://wordpress.org/support/plugin/pathway/)
-- [GitHub Issues](https://github.com/yourusername/pathway/issues)
+- [WordPress Support Forum](https://wordpress.org/support/plugin/mapthread/)
+- [GitHub Issues](https://github.com/yourusername/mapthread/issues)

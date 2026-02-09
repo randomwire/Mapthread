@@ -1,14 +1,14 @@
 {
     "$schema": "https://schemas.wp.org/trunk/block.json",
     "apiVersion": 2,
-    "name": "pathway/map-gpx",
+    "name": "mapthread/map-gpx",
     "version": "0.1.0",
     "title": "Map GPX",
     "category": "media",
     "icon": "location-alt",
     "description": "Upload and display a GPX track on an interactive map.",
-    "keywords": ["map", "gpx", "track", "route", "pathway"],
-    "textdomain": "pathway",
+    "keywords": ["map", "gpx", "track", "route", "mapthread"],
+    "textdomain": "mapthread",
     "attributes": {
         "attachmentId": {
             "type": "integer",

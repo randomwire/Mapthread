@@ -1,6 +1,6 @@
-=== Pathway ===
+=== Mapthread ===
 Contributors: randomwire
-Donate link: https://github.com/randomwire/Pathways
+Donate link: https://github.com/randomwire/Mapthreads
 Tags: maps, gpx, travel, storytelling, leaflet, hiking, adventure
 Requires at least: 6.0
 Tested up to: 6.4
@@ -13,7 +13,7 @@ Transform your travel stories into interactive map experiences. Upload GPX track
 
 == Description ==
 
-**Pathway** brings your adventures to life with interactive, auto-following maps.
+**Mapthread** brings your adventures to life with interactive, auto-following maps.
 
 Perfect for travel bloggers, hiking enthusiasts, and anyone who wants to tell location-based stories that engage readers.
 
@@ -71,7 +71,7 @@ Should work on most block themes. Classic themes may require customization.
 = From WordPress.org =
 
 1. Go to Plugins > Add New in your WordPress admin
-2. Search for "Pathway"
+2. Search for "Mapthread"
 3. Click Install Now, then Activate
 
 = Manual Installation =
@@ -114,7 +114,7 @@ Not in v1.0. Only the first Map GPX block will be used. Multiple GPX support is 
 
 = Does it work with my theme? =
 
-Pathway is designed for block themes and tested on Twenty Twenty-Four and Twenty Twenty-Five. It should work on most standard block themes. Classic themes may require customization.
+Mapthread is designed for block themes and tested on Twenty Twenty-Four and Twenty Twenty-Five. It should work on most standard block themes. Classic themes may require customization.
 
 = Is there a file size limit for GPX? =
 
@@ -122,15 +122,15 @@ We recommend GPX files under 10MB. Larger files will show a warning and may be s
 
 = Can I customize the marker colors? =
 
-Yes! Pathway automatically uses your theme's primary color. You can set this in your theme.json or WordPress Customizer.
+Yes! Mapthread automatically uses your theme's primary color. You can set this in your theme.json or WordPress Customizer.
 
 = Does this work offline? =
 
-No, Pathway requires an internet connection to load map tiles from OpenStreetMap.
+No, Mapthread requires an internet connection to load map tiles from OpenStreetMap.
 
 == Third-Party Services & Attribution ==
 
-Pathway uses the following open-source libraries and external services:
+Mapthread uses the following open-source libraries and external services:
 
 = JavaScript Libraries =
 
@@ -201,20 +201,20 @@ Major update with elevation profiles, emoji markers, and UI improvements. All th
 Adds address search and markers-only mode for enhanced flexibility.
 
 = 1.0.0 =
-Initial release of Pathway. Install and start creating interactive map stories!
+Initial release of Mapthread. Install and start creating interactive map stories!
 
 == Additional Info ==
 
 = Support =
 
 For support, please visit:
-* Plugin support forum: https://wordpress.org/support/plugin/pathway/
-* GitHub issues: https://github.com/randomwire/Pathways/issues
+* Plugin support forum: https://wordpress.org/support/plugin/mapthread/
+* GitHub issues: https://github.com/randomwire/Mapthreads/issues
 
 = Contributing =
 
-Pathway is open source! Contributions welcome at:
-https://github.com/randomwire/Pathways
+Mapthread is open source! Contributions welcome at:
+https://github.com/randomwire/Mapthreads
 
 = Credits =
 

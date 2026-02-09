@@ -1,7 +1,7 @@
 /**
  * Map Marker Block - Editor Component
  *
- * @package Pathway
+ * @package Mapthread
  */
 
 import { __, sprintf } from '@wordpress/i18n';
@@ -96,7 +96,7 @@ function findGPXBlockInList( blocks ) {
         return null;
     }
     for ( const block of blocks ) {
-        if ( block.name === 'pathway/map-gpx' ) {
+        if ( block.name === 'mapthread/map-gpx' ) {
             return block;
         }
         // Search nested blocks (innerBlocks)
@@ -171,7 +171,7 @@ export default function Edit( { attributes, setAttributes, clientId } ) {
         if ( ! distanceCheck.isNear ) {
             distanceWarning = sprintf(
                 /* translators: %d is the distance in kilometers */
-                __( 'This marker is %d km from the GPX track. Is this intentional?', 'pathway' ),
+                __( 'This marker is %d km from the GPX track. Is this intentional?', 'mapthread' ),
                 distanceCheck.distance
             );
         }
@@ -180,23 +180,23 @@ export default function Edit( { attributes, setAttributes, clientId } ) {
     return (
         <>
             <InspectorControls>
-                <PanelBody title={ __( 'Marker Settings', 'pathway' ) } initialOpen={ true }>
+                <PanelBody title={ __( 'Marker Settings', 'mapthread' ) } initialOpen={ true }>
                     <TextControl
-                        label={ __( 'Title', 'pathway' ) }
+                        label={ __( 'Title', 'mapthread' ) }
                         value={ title }
                         onChange={ ( value ) => setAttributes( { title: value } ) }
-                        placeholder={ __( 'Enter marker title...', 'pathway' ) }
-                        help={ __( 'This will be displayed above the map pin', 'pathway' ) }
+                        placeholder={ __( 'Enter marker title...', 'mapthread' ) }
+                        help={ __( 'This will be displayed above the map pin', 'mapthread' ) }
                     />
 
-                    <BaseControl label={ __( 'Pin Design', 'pathway' ) }>
+                    <BaseControl label={ __( 'Pin Design', 'mapthread' ) }>
                         <div style={ { display: 'flex', alignItems: 'center', gap: '8px' } }>
                             <Button
                                 variant="secondary"
                                 onClick={ () => setShowEmojiPicker( ! showEmojiPicker ) }
                                 style={ { fontSize: emoji ? '20px' : '13px', minWidth: '36px', height: '36px' } }
                             >
-                                { emoji || __( 'Pick Emoji', 'pathway' ) }
+                                { emoji || __( 'Pick Emoji', 'mapthread' ) }
                             </Button>
                             { emoji && (
                                 <Button
@@ -204,7 +204,7 @@ export default function Edit( { attributes, setAttributes, clientId } ) {
                                     isDestructive
                                     onClick={ () => setAttributes( { emoji: '' } ) }
                                 >
-                                    { __( 'Clear', 'pathway' ) }
+                                    { __( 'Clear', 'mapthread' ) }
                                 </Button>
                             ) }
                         </div>
@@ -226,39 +226,39 @@ export default function Edit( { attributes, setAttributes, clientId } ) {
                     />
 
                     <NumberControl
-                        label={ __( 'Latitude', 'pathway' ) }
+                        label={ __( 'Latitude', 'mapthread' ) }
                         value={ lat }
                         onChange={ ( value ) => setAttributes( { lat: parseFloat( value ) || 0 } ) }
                         placeholder="51.5074"
-                        help={ __( 'Decimal degrees (e.g., 51.5074)', 'pathway' ) }
+                        help={ __( 'Decimal degrees (e.g., 51.5074)', 'mapthread' ) }
                         step={ 0.0001 }
                     />
 
                     <NumberControl
-                        label={ __( 'Longitude', 'pathway' ) }
+                        label={ __( 'Longitude', 'mapthread' ) }
                         value={ lng }
                         onChange={ ( value ) => setAttributes( { lng: parseFloat( value ) || 0 } ) }
                         placeholder="-0.1278"
-                        help={ __( 'Decimal degrees (e.g., -0.1278)', 'pathway' ) }
+                        help={ __( 'Decimal degrees (e.g., -0.1278)', 'mapthread' ) }
                         step={ 0.0001 }
                     />
 
                     <NumberControl
-                        label={ __( 'Zoom Level', 'pathway' ) }
+                        label={ __( 'Zoom Level', 'mapthread' ) }
                         value={ zoom }
                         onChange={ ( value ) => setAttributes( { zoom: parseInt( value ) || 14 } ) }
                         min={ 1 }
                         max={ 18 }
-                        help={ __( 'Map zoom when this marker is active (1-18, default: 14)', 'pathway' ) }
+                        help={ __( 'Map zoom when this marker is active (1-18, default: 14)', 'mapthread' ) }
                     />
                 </PanelBody>
             </InspectorControls>
 
             <div { ...blockProps }>
-                <div className="pathway-map-marker-editor">
+                <div className="mapthread-map-marker-editor">
                     { isMissingCoords && (
                         <Notice status="error" isDismissible={ false }>
-                            { __( 'Please enter latitude and longitude in the block settings (sidebar).', 'pathway' ) }
+                            { __( 'Please enter latitude and longitude in the block settings (sidebar).', 'mapthread' ) }
                         </Notice>
                     ) }
 
@@ -268,23 +268,23 @@ export default function Edit( { attributes, setAttributes, clientId } ) {
                         </Notice>
                     ) }
 
-                    <div className="pathway-map-marker-display">
-                        <div className="pathway-map-marker-icon">
+                    <div className="mapthread-map-marker-display">
+                        <div className="mapthread-map-marker-icon">
                             { emoji ? (
                                 <span style={ { fontSize: '24px' } }>{ emoji }</span>
                             ) : (
                                 <span className="dashicons dashicons-location"></span>
                             ) }
                         </div>
-                        <div className="pathway-map-marker-info">
+                        <div className="mapthread-map-marker-info">
                             { title ? (
-                                <strong className="pathway-map-marker-title">{ title }</strong>
+                                <strong className="mapthread-map-marker-title">{ title }</strong>
                             ) : (
-                                <em className="pathway-map-marker-title-empty">
-                                    { __( 'Untitled Marker', 'pathway' ) }
+                                <em className="mapthread-map-marker-title-empty">
+                                    { __( 'Untitled Marker', 'mapthread' ) }
                                 </em>
                             ) }
-                            <div className="pathway-map-marker-coords">
+                            <div className="mapthread-map-marker-coords">
                                 { hasValidCoords ? (
                                     <>
                                         { Math.abs( lat ).toFixed( 4 ) }°{ lat >= 0 ? 'N' : 'S' },
@@ -293,12 +293,12 @@ export default function Edit( { attributes, setAttributes, clientId } ) {
                                         { address && (
                                             <>
                                                 { ' • ' }
-                                                <span className="pathway-map-marker-address">{ address }</span>
+                                                <span className="mapthread-map-marker-address">{ address }</span>
                                             </>
                                         ) }
                                     </>
                                 ) : (
-                                    <em>{ __( 'No coordinates set', 'pathway' ) }</em>
+                                    <em>{ __( 'No coordinates set', 'mapthread' ) }</em>
                                 ) }
                             </div>
                         </div>

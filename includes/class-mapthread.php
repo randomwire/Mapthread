@@ -2,7 +2,7 @@
 /**
  * Core plugin class
  *
- * @package Pathway
+ * @package Mapthread
  */
 
 // Exit if accessed directly
@@ -11,9 +11,9 @@ if ( ! defined( 'ABSPATH' ) ) {
 }
 
 /**
- * Main Pathway class
+ * Main Mapthread class
  */
-class Pathway {
+class Mapthread {
 
     /**
      * Constructor
@@ -33,7 +33,7 @@ class Pathway {
         // Enqueue frontend assets
         add_action( 'wp_enqueue_scripts', array( $this, 'enqueue_frontend_assets' ) );
 
-        // Add body class for posts with Pathway blocks
+        // Add body class for posts with Mapthread blocks
         add_filter( 'body_class', array( $this, 'add_body_class' ) );
 
         // Allow GPX file uploads
@@ -46,10 +46,10 @@ class Pathway {
      */
     public function register_blocks() {
         // Register Map GPX block
-        register_block_type( PATHWAY_PLUGIN_DIR . 'includes/blocks/map-gpx' );
+        register_block_type( MAPTHREAD_PLUGIN_DIR . 'includes/blocks/map-gpx' );
 
         // Register Map Marker block
-        register_block_type( PATHWAY_PLUGIN_DIR . 'includes/blocks/map-marker' );
+        register_block_type( MAPTHREAD_PLUGIN_DIR . 'includes/blocks/map-marker' );
     }
 
     /**
@@ -61,8 +61,8 @@ class Pathway {
             return;
         }
 
-        // Check if post has Pathway blocks
-        if ( ! $this->has_pathway_blocks() ) {
+        // Check if post has Mapthread blocks
+        if ( ! $this->has_mapthread_blocks() ) {
             return;
         }
 
@@ -85,28 +85,28 @@ class Pathway {
 
         // Enqueue plugin frontend CSS (no dependencies - our CSS doesn't require Leaflet CSS)
         wp_enqueue_style(
-            'pathway-frontend',
-            PATHWAY_PLUGIN_URL . 'build/pathway-frontend-style.css',
+            'mapthread-frontend',
+            MAPTHREAD_PLUGIN_URL . 'build/mapthread-frontend-style.css',
             array(),
-            PATHWAY_VERSION
+            MAPTHREAD_VERSION
         );
 
         // Enqueue plugin frontend JS
         wp_enqueue_script(
-            'pathway-frontend',
-            PATHWAY_PLUGIN_URL . 'build/pathway-frontend.js',
+            'mapthread-frontend',
+            MAPTHREAD_PLUGIN_URL . 'build/mapthread-frontend.js',
             array( 'leaflet' ),
-            PATHWAY_VERSION,
+            MAPTHREAD_VERSION,
             true
         );
     }
 
     /**
-     * Check if current post has Pathway blocks
+     * Check if current post has Mapthread blocks
      *
      * @return bool
      */
-    private function has_pathway_blocks() {
+    private function has_mapthread_blocks() {
         global $post;
 
         if ( ! $post ) {
@@ -114,12 +114,12 @@ class Pathway {
         }
 
         // Check for Map GPX block
-        if ( has_block( 'pathway/map-gpx', $post ) ) {
+        if ( has_block( 'mapthread/map-gpx', $post ) ) {
             return true;
         }
 
         // Check for Map Marker block
-        if ( has_block( 'pathway/map-marker', $post ) ) {
+        if ( has_block( 'mapthread/map-marker', $post ) ) {
             return true;
         }
 
@@ -127,14 +127,14 @@ class Pathway {
     }
 
     /**
-     * Add body class for posts with Pathway blocks
+     * Add body class for posts with Mapthread blocks
      *
      * @param array $classes Existing body classes
      * @return array Modified body classes
      */
     public function add_body_class( $classes ) {
-        if ( is_singular() && $this->has_pathway_blocks() ) {
-            $classes[] = 'has-pathway-blocks';
+        if ( is_singular() && $this->has_mapthread_blocks() ) {
+            $classes[] = 'has-mapthread-blocks';
         }
 
         return $classes;

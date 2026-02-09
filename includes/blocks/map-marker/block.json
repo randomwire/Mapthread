@@ -1,14 +1,14 @@
 {
     "$schema": "https://schemas.wp.org/trunk/block.json",
     "apiVersion": 2,
-    "name": "pathway/map-marker",
+    "name": "mapthread/map-marker",
     "version": "0.1.0",
     "title": "Map Marker",
     "category": "media",
     "icon": "location",
     "description": "Mark a location on the map that corresponds to this point in your story.",
-    "keywords": ["map", "marker", "waypoint", "location", "pathway"],
-    "textdomain": "pathway",
+    "keywords": ["map", "marker", "waypoint", "location", "mapthread"],
+    "textdomain": "mapthread",
     "attributes": {
         "id": {
             "type": "string",

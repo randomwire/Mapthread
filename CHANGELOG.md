@@ -1,9 +1,29 @@
 # Changelog
 
-All notable changes to Pathway will be documented in this file.
+All notable changes to Mapthread will be documented in this file.
 
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
+
+---
+
+## [1.3.0] - 2026-02-09
+
+### Changed
+- **BREAKING**: Renamed plugin from "Pathway" to "Mapthread"
+  - Main plugin file: pathway.php → mapthread.php
+  - PHP classes: Pathway → Mapthread, Pathway_Elevation_API → Mapthread_Elevation_API
+  - Block namespaces: pathway/* → mapthread/* (breaks existing content)
+  - REST API endpoint: pathway/v1 → mapthread/v1
+  - JavaScript identifiers: pathway- → mapthread-
+  - CSS classes: pathway- → mapthread-
+  - Text domain: pathway → mapthread
+  - All documentation updated
+
+### Migration Notes
+- This is a complete rename with no backward compatibility
+- Plugin has no active users, so clean break is appropriate
+- Future installations will use "Mapthread" throughout
 
 ---
 
@@ -114,6 +134,6 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ---
 
-[1.2.0]: https://github.com/randomwire/Pathways/releases/tag/v1.2.0
-[1.1.0]: https://github.com/randomwire/Pathways/releases/tag/v1.1.0
-[1.0.0]: https://github.com/randomwire/Pathways/releases/tag/v1.0.0
+[1.2.0]: https://github.com/randomwire/Mapthreads/releases/tag/v1.2.0
+[1.1.0]: https://github.com/randomwire/Mapthreads/releases/tag/v1.1.0
+[1.0.0]: https://github.com/randomwire/Mapthreads/releases/tag/v1.0.0

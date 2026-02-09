@@ -2,8 +2,8 @@ const fs = require('fs');
 const path = require('path');
 const archiver = require('archiver');
 
-// Read version from pathway.php
-const pluginFile = fs.readFileSync('pathway.php', 'utf8');
+// Read version from mapthread.php
+const pluginFile = fs.readFileSync('mapthread.php', 'utf8');
 const versionMatch = pluginFile.match(/Version:\s+(\d+\.\d+\.\d+)/);
 const version = versionMatch ? versionMatch[1] : '1.0.0';
 
@@ -14,15 +14,15 @@ if (!fs.existsSync(distDir)) {
 }
 
 // Output file path
-const outputPath = path.join(distDir, `pathway-${version}.zip`);
+const outputPath = path.join(distDir, `mapthread-${version}.zip`);
 const output = fs.createWriteStream(outputPath);
 const archive = archiver('zip', { zlib: { level: 9 } });
 
 // Listen for completion
 output.on('close', () => {
     const sizeInMB = (archive.pointer() / 1024 / 1024).toFixed(2);
-    console.log(`✓ Package created: pathway-${version}.zip (${sizeInMB} MB)`);
-    console.log(`✓ Location: dist/pathway-${version}.zip`);
+    console.log(`✓ Package created: mapthread-${version}.zip (${sizeInMB} MB)`);
+    console.log(`✓ Location: dist/mapthread-${version}.zip`);
     console.log('✓ Ready for distribution!');
 });
 
@@ -66,7 +66,7 @@ if (fs.existsSync('.distignore')) {
 
 // Add files to archive
 console.log('Creating distribution package...');
-console.log(`Building pathway-${version}.zip...`);
+console.log(`Building mapthread-${version}.zip...`);
 console.log('Excluding:', ignorePatterns.slice(0, 10).join(', '), '...');
 
 // Add all files except those in .distignore

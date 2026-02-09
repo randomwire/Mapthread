@@ -1,7 +1,7 @@
 /**
  * Map GPX Block - Save Component
  *
- * @package Pathway
+ * @package Mapthread
  */
 
 import { useBlockProps } from '@wordpress/block-editor';
@@ -19,7 +19,7 @@ export default function save( { attributes } ) {
     return (
         <div
             { ...blockProps }
-            className="pathway-map-gpx"
+            className="mapthread-map-gpx"
             data-attachment-id={ attachmentId }
             data-gpx-url={ gpxUrl }
             data-bounds={ JSON.stringify( bounds ) }

@@ -1,7 +1,7 @@
 /**
- * Webpack Configuration for Pathway Plugin
+ * Webpack Configuration for Mapthread Plugin
  *
- * @package Pathway
+ * @package Mapthread
  */
 
 const defaultConfig = require( '@wordpress/scripts/config/webpack.config' );
@@ -16,8 +16,8 @@ module.exports = {
         'blocks/map-marker/index': path.resolve( __dirname, 'includes/blocks/map-marker/index.js' ),
         'blocks/map-marker/style': path.resolve( __dirname, 'includes/blocks/map-marker/style.scss' ),
         // Frontend assets
-        'pathway-frontend': path.resolve( __dirname, 'assets/js/pathway-frontend.js' ),
-        'pathway-frontend-style': path.resolve( __dirname, 'assets/css/pathway-frontend.scss' ),
+        'mapthread-frontend': path.resolve( __dirname, 'assets/js/mapthread-frontend.js' ),
+        'mapthread-frontend-style': path.resolve( __dirname, 'assets/css/mapthread-frontend.scss' ),
     },
     output: {
         ...defaultConfig.output,

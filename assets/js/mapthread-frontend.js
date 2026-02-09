@@ -1,9 +1,9 @@
 /**
- * Pathway Frontend JavaScript
+ * Mapthread Frontend JavaScript
  *
  * Handles map initialization, GPX rendering, and scroll-based map following
  *
- * @package Pathway
+ * @package Mapthread
  */
 
 import { Chart, LineController, LineElement, PointElement, LinearScale, Filler, Tooltip } from 'chart.js';
@@ -343,7 +343,7 @@ Chart.register( LineController, LineElement, PointElement, LinearScale, Filler, 
             color: walkedColor,
             weight: 4,
             opacity: 1,
-            className: 'pathway-track-walked'
+            className: 'mapthread-track-walked'
         } ).addTo( map );
 
         // Create remaining polyline (full track initially)
@@ -351,7 +351,7 @@ Chart.register( LineController, LineElement, PointElement, LinearScale, Filler, 
             color: remainingColor,
             weight: 3,
             opacity: 0.7,
-            className: 'pathway-track-remaining'
+            className: 'mapthread-track-remaining'
         } ).addTo( map );
 
         // Remove original gpxLayer (replaced by split polylines)
@@ -857,14 +857,14 @@ Chart.register( LineController, LineElement, PointElement, LinearScale, Filler, 
             return;
         }
 
-        const mapContainer = document.getElementById( 'pathway-map' );
+        const mapContainer = document.getElementById( 'mapthread-map' );
         if ( ! mapContainer ) {
             return;
         }
 
         // Create chart container
         const chartWrapper = document.createElement( 'div' );
-        chartWrapper.className = 'pathway-elevation-profile';
+        chartWrapper.className = 'mapthread-elevation-profile';
 
         const canvas = document.createElement( 'canvas' );
         chartWrapper.appendChild( canvas );
@@ -907,7 +907,7 @@ Chart.register( LineController, LineElement, PointElement, LinearScale, Filler, 
 
             const parserError = xmlDoc.querySelector( 'parsererror' );
             if ( parserError ) {
-                console.error( 'Pathway: GPX parsing error', parserError );
+                console.error( 'Mapthread: GPX parsing error', parserError );
                 return { coords: [], elevations: [] };
             }
 
@@ -937,7 +937,7 @@ Chart.register( LineController, LineElement, PointElement, LinearScale, Filler, 
 
             return { coords, elevations: hasElevation ? elevations : [] };
         } catch ( error ) {
-            console.error( 'Pathway: Failed to parse GPX', error );
+            console.error( 'Mapthread: Failed to parse GPX', error );
             return { coords: [], elevations: [] };
         }
     }
@@ -980,7 +980,7 @@ Chart.register( LineController, LineElement, PointElement, LinearScale, Filler, 
      * @return {Promise<Array>} Array of coordinates
      */
     async function fetchGPX( attachmentId, gpxUrl ) {
-        const cacheKey = `pathway-gpx-${attachmentId}`;
+        const cacheKey = `mapthread-gpx-${attachmentId}`;
 
         // Check sessionStorage cache
         const cached = sessionStorage.getItem( cacheKey );
@@ -1014,7 +1014,7 @@ Chart.register( LineController, LineElement, PointElement, LinearScale, Filler, 
 
             return gpxData;
         } catch ( error ) {
-            console.error( 'Pathway: Failed to fetch GPX', error );
+            console.error( 'Mapthread: Failed to fetch GPX', error );
             return { coords: [], elevations: [] };
         }
     }
@@ -1028,7 +1028,7 @@ Chart.register( LineController, LineElement, PointElement, LinearScale, Filler, 
      */
     async function fetchElevationFromAPI( attachmentId, coords ) {
         try {
-            const response = await fetch( '/wp-json/pathway/v1/elevation', {
+            const response = await fetch( '/wp-json/mapthread/v1/elevation', {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
@@ -1051,7 +1051,7 @@ Chart.register( LineController, LineElement, PointElement, LinearScale, Filler, 
 
             return data.elevations;
         } catch ( error ) {
-            console.error( 'Pathway: Elevation API failed', error );
+            console.error( 'Mapthread: Elevation API failed', error );
             return [];
         }
     }
@@ -1066,7 +1066,7 @@ Chart.register( LineController, LineElement, PointElement, LinearScale, Filler, 
     function createNumberedIcon( number, isActive = false ) {
         const activeClass = isActive ? ' pathway-active' : '';
         return L.divIcon( {
-            className: 'pathway-marker-icon',
+            className: 'mapthread-marker-icon',
             html: `<div class="pathway-marker-pin${activeClass}"></div>`,
             iconSize: [ ICON_SIZE, ICON_SIZE ],   // Total icon dimensions
             iconAnchor: [ ICON_ANCHOR, ICON_ANCHOR ],   // Point that sits on the lat/lng coordinate
@@ -1084,7 +1084,7 @@ Chart.register( LineController, LineElement, PointElement, LinearScale, Filler, 
     function createEmojiIcon( emoji, isActive = false ) {
         const activeClass = isActive ? ' pathway-active' : '';
         return L.divIcon( {
-            className: 'pathway-marker-icon',
+            className: 'mapthread-marker-icon',
             html: `<span class="pathway-marker-emoji${activeClass}">${emoji}</span>`,
             iconSize: [ EMOJI_ICON_SIZE, EMOJI_ICON_SIZE ],
             iconAnchor: [ EMOJI_ICON_ANCHOR, EMOJI_ICON_ANCHOR ],
@@ -1158,7 +1158,7 @@ Chart.register( LineController, LineElement, PointElement, LinearScale, Filler, 
      */
     function getMarkerElements() {
         if ( ! cachedMarkerElements ) {
-            cachedMarkerElements = document.querySelectorAll( '.pathway-marker' );
+            cachedMarkerElements = document.querySelectorAll( '.mapthread-marker' );
         }
         return cachedMarkerElements;
     }
@@ -1433,11 +1433,11 @@ Chart.register( LineController, LineElement, PointElement, LinearScale, Filler, 
     function initializeMap( bounds ) {
         // Create map container
         const mapContainer = document.createElement( 'div' );
-        mapContainer.id = 'pathway-map';
-        mapContainer.className = 'pathway-map';
+        mapContainer.id = 'mapthread-map';
+        mapContainer.className = 'mapthread-map';
 
         // Insert map into page (positioned by CSS)
-        const gpxBlock = document.querySelector( '.pathway-map-gpx' );
+        const gpxBlock = document.querySelector( '.mapthread-map-gpx' );
         if ( gpxBlock && gpxBlock.parentNode ) {
             gpxBlock.parentNode.insertBefore( mapContainer, gpxBlock.nextSibling );
         } else {
@@ -1445,7 +1445,7 @@ Chart.register( LineController, LineElement, PointElement, LinearScale, Filler, 
         }
 
         // Initialize Leaflet map
-        const leafletMap = L.map( 'pathway-map', {
+        const leafletMap = L.map( 'mapthread-map', {
             zoomControl: true,
             scrollWheelZoom: true,
             attributionControl: false  // Disable default bottom-right attribution
@@ -1586,9 +1586,9 @@ Chart.register( LineController, LineElement, PointElement, LinearScale, Filler, 
     /**
      * Initialize Pathway map
      */
-    async function initPathway() {
+    async function initMapthread() {
         // Check if we have Pathway blocks on this page
-        const gpxBlock = document.querySelector( '.pathway-map-gpx' );
+        const gpxBlock = document.querySelector( '.mapthread-map-gpx' );
         const markerElements = getMarkerElements();
 
         // Exit if no Pathway content at all
@@ -1609,7 +1609,7 @@ Chart.register( LineController, LineElement, PointElement, LinearScale, Filler, 
                     hasValidGpxBounds = bounds.north !== 0 || bounds.south !== 0 ||
                                         bounds.east !== 0 || bounds.west !== 0;
                 } catch ( e ) {
-                    console.warn( 'Pathway: Failed to parse bounds', e );
+                    console.warn( 'Mapthread: Failed to parse bounds', e );
                 }
             }
         }
@@ -1647,13 +1647,13 @@ Chart.register( LineController, LineElement, PointElement, LinearScale, Filler, 
                             trackElevations = fetchedElevations;
 
                             // Update cache to include fetched elevations
-                            const cacheKey = `pathway-gpx-${attachmentId}`;
+                            const cacheKey = `mapthread-gpx-${attachmentId}`;
                             sessionStorage.setItem( cacheKey, JSON.stringify( {
                                 coords: trackCoords,
                                 elevations: trackElevations
                             } ) );
                         } catch ( error ) {
-                            console.warn( 'Pathway: Failed to fetch elevation data', error );
+                            console.warn( 'Mapthread: Failed to fetch elevation data', error );
                             // Continue without elevation - chart simply won't display
                         }
                     }
@@ -1687,7 +1687,7 @@ Chart.register( LineController, LineElement, PointElement, LinearScale, Filler, 
                     color: '#4F7CAC',
                     weight: 3,
                     opacity: 0.7,
-                    className: 'pathway-track-remaining'
+                    className: 'mapthread-track-remaining'
                 } ).addTo( map );
             }
         }
@@ -1738,9 +1738,9 @@ Chart.register( LineController, LineElement, PointElement, LinearScale, Filler, 
 
     // Initialize when DOM is ready
     if ( document.readyState === 'loading' ) {
-        document.addEventListener( 'DOMContentLoaded', initPathway );
+        document.addEventListener( 'DOMContentLoaded', initMapthread );
     } else {
-        initPathway();
+        initMapthread();
     }
 
 } )();

@@ -1,6 +1,6 @@
-# Pathway User Guide
+# Mapthread User Guide
 
-A comprehensive guide to creating interactive map-based stories with Pathway.
+A comprehensive guide to creating interactive map-based stories with Mapthread.
 
 ---
 
@@ -23,7 +23,7 @@ A comprehensive guide to creating interactive map-based stories with Pathway.
 
 Before creating your first map story, ensure you have:
 
-1. **Pathway plugin installed and activated**
+1. **Mapthread plugin installed and activated**
 2. **A block theme** (Twenty Twenty-Four or Twenty Twenty-Five recommended)
 3. **A GPX file** from your adventure (optional - see [Working with GPX Files](#working-with-gpx-files))
 4. **Locations** for your story (use the built-in address search or your own coordinates)
@@ -102,11 +102,11 @@ Now add your narrative content with Map Marker blocks at key locations:
 ### What is a GPX File?
 
 GPX (GPS Exchange Format) is a standard XML-based format for GPS data. It can contain:
-- **Tracks** - Recorded paths from your GPS device (what Pathway displays)
+- **Tracks** - Recorded paths from your GPS device (what Mapthread displays)
 - **Waypoints** - Individual marked locations
 - **Routes** - Planned paths between waypoints
 
-Pathway v1.0 displays **tracks** (`<trk>` elements) only.
+Mapthread v1.0 displays **tracks** (`<trk>` elements) only.
 
 ### Where to Get GPX Files
 
@@ -143,7 +143,7 @@ Before uploading, you can validate your GPX file:
 
 1. **Online validators**: gpx.studio, gpxsee.org
 2. **Desktop apps**: GPX See (cross-platform), GPS Visualizer
-3. **Upload to Pathway**: The block will show validation results
+3. **Upload to Mapthread**: The block will show validation results
 
 ---
 

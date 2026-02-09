@@ -1,4 +1,4 @@
-# Pathway
+# Mapthread
 
 Interactive map-based storytelling for WordPress.
 
@@ -11,7 +11,7 @@ Interactive map-based storytelling for WordPress.
 
 ## Description
 
-Pathway transforms your travel stories, hiking adventures, and geographic narratives into interactive experiences with maps. Upload a GPX track, place numbered markers in your story, and watch as readers scroll - the map automatically pans and zooms to follow along.
+Mapthread transforms your travel stories, hiking adventures, and geographic narratives into interactive experiences with maps. Upload a GPX track, place numbered markers in your story, and watch as readers scroll - the map automatically pans and zooms to follow along.
 
 Perfect for:
 - Hiking and adventure blogs
@@ -49,19 +49,19 @@ Perfect for:
 
 ### From WordPress.org (Recommended)
 1. Go to **Plugins > Add New** in WordPress admin
-2. Search for "Pathway"
+2. Search for "Mapthread"
 3. Click **Install Now** > **Activate**
 
 ### Manual Installation
-1. Download the latest release from [GitHub Releases](https://github.com/randomwire/Pathways/releases)
-2. Upload the `pathway` folder to `/wp-content/plugins/`
+1. Download the latest release from [GitHub Releases](https://github.com/randomwire/Mapthread/releases)
+2. Upload the `mapthread` folder to `/wp-content/plugins/`
 3. Activate through the **Plugins** menu in WordPress
 
 ### Development Installation
 ```bash
 cd wp-content/plugins
-git clone https://github.com/randomwire/Pathways.git
-cd Pathways
+git clone https://github.com/randomwire/Mapthread.git
+cd Mapthreads
 npm install
 npm run build
 ```
@@ -153,7 +153,7 @@ npm run build
 
 ### Markers-Only Mode
 
-**If you don't have a GPX track,** Pathway also works with just markers:
+**If you don't have a GPX track,** Mapthread also works with just markers:
 
 #### Scenario 1: No Map GPX Block at All
 - Add Map Marker blocks to your story content
@@ -191,13 +191,13 @@ npm run build
 
 ## Layout Setup
 
-Pathway offers two ways to integrate with your theme:
+Mapthread offers two ways to integrate with your theme:
 
 ### Recommended: Use the Pattern
 
 ### Automatic Layout (Recommended)
 
-Just add your blocks and Pathway handles the layout automatically:
+Just add your blocks and Mapthread handles the layout automatically:
 - Desktop: Map fixed on the right side, content scrolls on the left
 - Mobile: Map fixed at top, content scrolls below
 
@@ -209,9 +209,9 @@ For full control over your layout:
 
 1. Add a **Columns** block (2 columns, 60/40 split)
 2. Left column: Your story content and Map Marker blocks
-3. Right column: Add class `pathway-map-column` and insert Map GPX block
+3. Right column: Add class `mapthread-map-column` and insert Map GPX block
 
-The `pathway-map-column` class makes the map sticky as you scroll. See [Block Theme Setup Guide](docs/BLOCK-THEME-SETUP.md) for details.
+The `mapthread-map-column` class makes the map sticky as you scroll. See [Block Theme Setup Guide](docs/BLOCK-THEME-SETUP.md) for details.
 
 ---
 
@@ -256,7 +256,7 @@ The `pathway-map-column` class makes the map sticky as you scroll. See [Block Th
 
 ## FAQ
 
-**Q: Do I need a GPX file to use Pathway?**
+**Q: Do I need a GPX file to use Mapthread?**
 A: No! You can create map stories with just Map Marker blocks. The map will automatically fit to show all your markers.
 
 **Q: Can I use multiple GPX files in one post?**
@@ -266,13 +266,13 @@ A: Not in v1.0. Only the first Map GPX block will be used.
 A: Standard GPX 1.0/1.1 with `<trk>` (tracks). Waypoints and routes are not displayed in v1.0.
 
 **Q: Can I customize the marker colors?**
-A: Yes! Pathway uses your theme's primary color automatically. Set it in `theme.json` or Customizer.
+A: Yes! Mapthread uses your theme's primary color automatically. Set it in `theme.json` or Customizer.
 
 **Q: Does it work with classic themes?**
-A: Not tested. Pathway is designed for block themes.
+A: Not tested. Mapthread is designed for block themes.
 
-**Q: Can I use Pathway with Elementor/Divi/etc?**
-A: Not tested. Pathway is designed for the block editor (Gutenberg).
+**Q: Can I use Mapthread with Elementor/Divi/etc?**
+A: Not tested. Mapthread is designed for the block editor (Gutenberg).
 
 **Q: Is there a limit on GPX file size?**
 A: 10MB is recommended. Larger files will show a warning and may be slow to render.
@@ -320,18 +320,18 @@ npm run format       # Format code
 
 ### File Structure
 ```
-pathway/
-├── pathway.php                 # Main plugin file
+mapthread/
+├── mapthread.php                 # Main plugin file
 ├── includes/
-│   ├── class-pathway.php       # Core class
+│   ├── class-mapthread.php       # Core class
 │   └── blocks/
 │       ├── map-gpx/            # GPX block
 │       └── map-marker/         # Marker block
 ├── assets/
 │   ├── js/
-│   │   └── pathway-frontend.js # Map behavior
+│   │   └── mapthread-frontend.js # Map behavior
 │   └── css/
-│       └── pathway-frontend.scss
+│       └── mapthread-frontend.scss
 ├── docs/                       # Documentation
 ├── build/                      # Compiled assets
 └── package.json
@@ -350,15 +350,15 @@ Contributions welcome! Please:
 
 ## Support
 
-- **Documentation:** [GitHub Wiki](https://github.com/randomwire/Pathways/wiki)
-- **Issues:** [GitHub Issues](https://github.com/randomwire/Pathways/issues)
-- **WordPress.org:** [Support Forum](https://wordpress.org/support/plugin/pathway/)
+- **Documentation:** [GitHub Wiki](https://github.com/randomwire/Mapthread/wiki)
+- **Issues:** [GitHub Issues](https://github.com/randomwire/Mapthread/issues)
+- **WordPress.org:** [Support Forum](https://wordpress.org/support/plugin/mapthread/)
 
 ---
 
 ## Credits & Attribution
 
-Pathway is built with and relies on the following open-source libraries and services:
+Mapthread is built with and relies on the following open-source libraries and services:
 
 ### JavaScript Libraries
 
@@ -405,7 +405,7 @@ Pathway is built with and relies on the following open-source libraries and serv
 
 ## License
 
-Pathway is licensed under the [GNU General Public License v2.0 or later](https://www.gnu.org/licenses/gpl-2.0.html).
+Mapthread is licensed under the [GNU General Public License v2.0 or later](https://www.gnu.org/licenses/gpl-2.0.html).
 
 All included third-party libraries are GPL-compatible:
 - BSD-2-Clause (Leaflet) - Compatible

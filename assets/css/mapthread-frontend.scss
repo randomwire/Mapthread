@@ -1,7 +1,7 @@
 /**
- * Pathway Frontend Styles
+ * Mapthread Frontend Styles
  *
- * @package Pathway
+ * @package Mapthread
  */
 
 // ============================================================================
@@ -11,12 +11,12 @@
 
 @media (min-width: 768px) {
     // Automatic layout styles (applied by default)
-    body.has-pathway-blocks {
+    body.has-mapthread-blocks {
         // Reserve space for the fixed map on ALL page content (works across themes)
         padding-right: calc(38vw + 10px);
 
         // Map: Fixed to right side of viewport
-        #pathway-map {
+        #mapthread-map {
             position: fixed !important;
             top: 10px !important;
             right: 10px !important;
@@ -34,7 +34,7 @@
         }
 
         // Hide the data-only GPX block
-        .pathway-map-gpx {
+        .mapthread-map-gpx {
             display: none;
         }
 
@@ -51,17 +51,17 @@
 
     // Adjust for WordPress admin bar when logged in
     // Note: WordPress adds .admin-bar to body, not html
-    body.admin-bar.has-pathway-blocks #pathway-map {
+    body.admin-bar.has-mapthread-blocks #mapthread-map {
         top: 42px !important;  // 32px admin bar + 10px gap
     }
 
     // Override automatic layout when using manual column layout
-    body.has-pathway-blocks:has(.pathway-map-column) {
+    body.has-mapthread-blocks:has(.mapthread-map-column) {
         // Reset body padding since map is in-flow
         padding-right: 0;
 
         // Reset map to flow in column instead of fixed
-        #pathway-map {
+        #mapthread-map {
             position: static !important;
             top: auto !important;
             right: auto !important;
@@ -99,11 +99,11 @@
 
 // ============================================================================
 // MANUAL LAYOUT: Column-based with sticky map
-// Applies when user adds .pathway-map-column class to their column
+// Applies when user adds .mapthread-map-column class to their column
 // ============================================================================
 
 @media (min-width: 768px) {
-    .pathway-map-column {
+    .mapthread-map-column {
         position: sticky;
         top: 20px;
         align-self: start;
@@ -112,12 +112,12 @@
 }
 
 @media (max-width: 767px) {
-    .pathway-map-column {
+    .mapthread-map-column {
         position: sticky;
         top: 0;
         z-index: 100;
 
-        #pathway-map {
+        #mapthread-map {
             height: 35vh;
             min-height: 280px;
             max-height: 450px;
@@ -131,11 +131,11 @@
 // ============================================================================
 
 @media (max-width: 767px) {
-    body.has-pathway-blocks {
+    body.has-mapthread-blocks {
         // Add spacing at top to account for fixed map
         padding-top: 35vh;
 
-        #pathway-map {
+        #mapthread-map {
             position: fixed !important;
             top: 0;
             left: 0;
@@ -150,7 +150,7 @@
         }
 
         // Hide GPX block
-        .pathway-map-gpx {
+        .mapthread-map-gpx {
             display: none !important;
         }
     }
@@ -160,7 +160,7 @@
 // MAP CONTAINER (Common styles)
 // ============================================================================
 
-#pathway-map {
+#mapthread-map {
     background: #f8f9fa;
 
     // Leaflet attribution
@@ -175,12 +175,12 @@
 // NUMBERED MARKER PINS
 // ============================================================================
 
-.pathway-marker-icon {
+.mapthread-marker-icon {
     background: transparent;
     border: none;
 }
 
-.pathway-marker-pin {
+.mapthread-marker-pin {
     width: 10px;
     height: 10px;
     background: var(--wp--preset--color--primary, #e74c3c);
@@ -199,17 +199,17 @@
             0 0 0 1px rgba(0, 0, 0, 0.1);
     }
 
-    &.pathway-active {
+    &.mapthread-active {
         background: #1a1a1a;
         transform: scale(1.4);
         box-shadow:
             0 3px 10px rgba(0, 0, 0, 0.4),
             0 0 0 4px rgba(255, 255, 255, 0.4);
-        animation: pathway-pulse 2s ease-in-out infinite;
+        animation: mapthread-pulse 2s ease-in-out infinite;
     }
 }
 
-@keyframes pathway-pulse {
+@keyframes mapthread-pulse {
     0%, 100% {
         box-shadow:
             0 3px 10px rgba(0, 0, 0, 0.4),
@@ -222,7 +222,7 @@
     }
 }
 
-.pathway-marker-emoji {
+.mapthread-marker-emoji {
     display: inline-block;
     font-size: 22px;
     line-height: 1;
@@ -230,18 +230,18 @@
     filter: drop-shadow(0 2px 4px rgba(0, 0, 0, 0.3));
     transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
 
-    &.pathway-active {
+    &.mapthread-active {
         transform: scale(1.5);
-        animation: pathway-pulse-emoji 2s ease-in-out infinite;
+        animation: mapthread-pulse-emoji 2s ease-in-out infinite;
     }
 }
 
 // Hover on Leaflet icon container to reach emoji span
-.pathway-marker-icon:hover .pathway-marker-emoji:not(.pathway-active) {
+.mapthread-marker-icon:hover .mapthread-marker-emoji:not(.mapthread-active) {
     transform: scale(1.3);
 }
 
-@keyframes pathway-pulse-emoji {
+@keyframes mapthread-pulse-emoji {
     0%, 100% { filter: drop-shadow(0 2px 4px rgba(0, 0, 0, 0.3)); }
     50% { filter: drop-shadow(0 3px 8px rgba(0, 0, 0, 0.5)); }
 }
@@ -251,13 +251,13 @@
 // ============================================================================
 
 // Position marker (current location on track)
-.pathway-progress-marker {
+.mapthread-progress-marker {
     filter: drop-shadow(0 2px 4px rgba(0, 0, 0, 0.3));
     transition: none; // Disable transition for smooth tracking
 }
 
 // Walked portion of track (already traveled)
-.pathway-track-walked {
+.mapthread-track-walked {
     stroke: #E4572E;  // Vermilion
     stroke-width: 4;
     stroke-linecap: round;
@@ -265,7 +265,7 @@
 }
 
 // Remaining portion of track (yet to travel)
-.pathway-track-remaining {
+.mapthread-track-remaining {
     stroke: #4F7CAC;  // Muted cool blue
     stroke-width: 3;
     stroke-linecap: round;
@@ -277,7 +277,7 @@
 // ELEVATION PROFILE
 // ============================================================================
 
-.pathway-elevation-profile {
+.mapthread-elevation-profile {
     position: absolute;
     bottom: 0;
     left: 0;
@@ -301,7 +301,7 @@
 
 // Hide elevation profile on mobile
 @media (max-width: 767px) {
-    .pathway-elevation-profile {
+    .mapthread-elevation-profile {
         display: none;
     }
 }
@@ -372,7 +372,7 @@
 // CONTENT MARKERS (Hidden in Story)
 // ============================================================================
 
-.pathway-marker {
+.mapthread-marker {
     // Invisible scroll triggers
     min-height: 0;
     margin: 0;
@@ -384,7 +384,7 @@
     // margin: 1.5rem 0;
 }
 
-.pathway-map-gpx {
+.mapthread-map-gpx {
     display: none;
 }
 
@@ -394,7 +394,7 @@
 
 @media (max-width: 767px) {
     // Slightly smaller pins on mobile
-    .pathway-marker-pin {
+    .mapthread-marker-pin {
         width: 8px;
         height: 8px;
     }
@@ -404,7 +404,7 @@
 // LOADING STATE
 // ============================================================================
 
-#pathway-map:empty::before {
+#mapthread-map:empty::before {
     content: '';
     position: absolute;
     top: 50%;
@@ -415,10 +415,10 @@
     border: 4px solid #e0e0e0;
     border-top-color: #666;
     border-radius: 50%;
-    animation: pathway-spin 0.8s linear infinite;
+    animation: mapthread-spin 0.8s linear infinite;
 }
 
-@keyframes pathway-spin {
+@keyframes mapthread-spin {
     to { transform: rotate(360deg); }
 }
 
@@ -427,7 +427,7 @@
 // ============================================================================
 
 @media print {
-    #pathway-map {
+    #mapthread-map {
         position: static !important;
         width: 100% !important;
         height: 400px !important;
@@ -435,7 +435,7 @@
         margin-bottom: 2rem;
     }
 
-    body.has-pathway-blocks {
+    body.has-mapthread-blocks {
         .site-content,
         main,
         article,
@@ -453,7 +453,7 @@
 // ============================================================================
 
 // Focus states for keyboard navigation
-.pathway-marker-pin:focus {
+.mapthread-marker-pin:focus {
     outline: 3px solid #4A90E2;
     outline-offset: 3px;
 }
@@ -465,12 +465,12 @@
 
 // Reduced motion support
 @media (prefers-reduced-motion: reduce) {
-    .pathway-marker-pin,
+    .mapthread-marker-pin,
     .leaflet-control-zoom a {
         transition: none;
     }
 
-    .pathway-marker-pin.pathway-active {
+    .mapthread-marker-pin.mapthread-active {
         animation: none;
     }
 }

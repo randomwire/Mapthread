@@ -1,7 +1,7 @@
 /**
  * Map GPX Block - Editor Component
  *
- * @package Pathway
+ * @package Mapthread
  */
 
 import { __ } from '@wordpress/i18n';
@@ -32,14 +32,14 @@ function parseGPX( gpxContent ) {
         // Check for parsing errors
         const parserError = xmlDoc.querySelector( 'parsererror' );
         if ( parserError ) {
-            return { error: __( 'Invalid GPX format - XML parsing failed', 'pathway' ) };
+            return { error: __( 'Invalid GPX format - XML parsing failed', 'mapthread' ) };
         }
 
         // Find all track points
         const trkpts = xmlDoc.querySelectorAll( 'trkpt' );
 
         if ( trkpts.length === 0 ) {
-            return { error: __( 'No track points found in GPX file', 'pathway' ) };
+            return { error: __( 'No track points found in GPX file', 'mapthread' ) };
         }
 
         // Extract coordinates and calculate bounds
@@ -60,7 +60,7 @@ function parseGPX( gpxContent ) {
             bounds: { north, south, east, west }
         };
     } catch ( error ) {
-        return { error: __( 'Failed to parse GPX file', 'pathway' ) };
+        return { error: __( 'Failed to parse GPX file', 'mapthread' ) };
     }
 }
 
@@ -72,7 +72,7 @@ function parseGPX( gpxContent ) {
  */
 function hasMultipleGPXBlocks( clientId ) {
     const blocks = wp.data.select( 'core/block-editor' ).getBlocks();
-    const gpxBlocks = blocks.filter( block => block.name === 'pathway/map-gpx' );
+    const gpxBlocks = blocks.filter( block => block.name === 'mapthread/map-gpx' );
 
     // If more than one GPX block exists, and this isn't the first one
     if ( gpxBlocks.length > 1 ) {
@@ -122,13 +122,13 @@ export default function Edit( { attributes, setAttributes, clientId } ) {
     const onSelectGPX = async ( media ) => {
         // Validate file type
         if ( media.mime !== 'application/gpx+xml' && ! media.url.endsWith( '.gpx' ) ) {
-            setValidationError( __( 'Please select a valid GPX file', 'pathway' ) );
+            setValidationError( __( 'Please select a valid GPX file', 'mapthread' ) );
             return;
         }
 
         // Check file size (10MB = 10485760 bytes)
         const fileSizeWarning = media.filesizeInBytes > 10485760
-            ? __( 'Warning: File size exceeds 10MB. This may cause performance issues.', 'pathway' )
+            ? __( 'Warning: File size exceeds 10MB. This may cause performance issues.', 'mapthread' )
             : '';
 
         setIsProcessing( true );
@@ -157,7 +157,7 @@ export default function Edit( { attributes, setAttributes, clientId } ) {
             if ( parsed.pointCount > 50000 ) {
                 setValidationWarning(
                     fileSizeWarning + ' ' +
-                    __( 'Warning: Track has more than 50,000 points. This may cause performance issues.', 'pathway' )
+                    __( 'Warning: Track has more than 50,000 points. This may cause performance issues.', 'mapthread' )
                 );
             }
 
@@ -172,7 +172,7 @@ export default function Edit( { attributes, setAttributes, clientId } ) {
 
             setIsProcessing( false );
         } catch ( error ) {
-            setValidationError( __( 'Error loading GPX file. Please try again.', 'pathway' ) );
+            setValidationError( __( 'Error loading GPX file. Please try again.', 'mapthread' ) );
             setIsProcessing( false );
         }
     };
@@ -198,10 +198,10 @@ export default function Edit( { attributes, setAttributes, clientId } ) {
             <div { ...blockProps }>
                 <Placeholder
                     icon="location-alt"
-                    label={ __( 'Map GPX', 'pathway' ) }
+                    label={ __( 'Map GPX', 'mapthread' ) }
                 >
                     <Spinner />
-                    <p>{ __( 'Processing GPX file...', 'pathway' ) }</p>
+                    <p>{ __( 'Processing GPX file...', 'mapthread' ) }</p>
                 </Placeholder>
             </div>
         );
@@ -212,20 +212,20 @@ export default function Edit( { attributes, setAttributes, clientId } ) {
         return (
             <>
                 <InspectorControls>
-                    <PanelBody title={ __( 'Map Settings', 'pathway' ) }>
+                    <PanelBody title={ __( 'Map Settings', 'mapthread' ) }>
                         <ToggleControl
-                            label={ __( 'Show progress indicator', 'pathway' ) }
+                            label={ __( 'Show progress indicator', 'mapthread' ) }
                             checked={ showProgressIndicator }
                             onChange={ ( value ) => setAttributes( { showProgressIndicator: value } ) }
-                            help={ __( 'Animate position along track as readers scroll', 'pathway' ) }
+                            help={ __( 'Animate position along track as readers scroll', 'mapthread' ) }
                         />
                     </PanelBody>
                 </InspectorControls>
                 <div { ...blockProps }>
                     <Placeholder
                         icon="location-alt"
-                        label={ __( 'Map GPX', 'pathway' ) }
-                        instructions={ __( 'Upload a GPX file to display your route or track on an interactive map.', 'pathway' ) }
+                        label={ __( 'Map GPX', 'mapthread' ) }
+                        instructions={ __( 'Upload a GPX file to display your route or track on an interactive map.', 'mapthread' ) }
                     >
                         { validationError && (
                             <Notice status="error" isDismissible={ false }>
@@ -243,7 +243,7 @@ export default function Edit( { attributes, setAttributes, clientId } ) {
                                         variant="primary"
                                         icon={ upload }
                                     >
-                                        { __( 'Upload GPX File', 'pathway' ) }
+                                        { __( 'Upload GPX File', 'mapthread' ) }
                                     </Button>
                                 ) }
                             />
@@ -258,26 +258,26 @@ export default function Edit( { attributes, setAttributes, clientId } ) {
     return (
         <>
             <InspectorControls>
-                <PanelBody title={ __( 'Map Settings', 'pathway' ) }>
+                <PanelBody title={ __( 'Map Settings', 'mapthread' ) }>
                     <ToggleControl
-                        label={ __( 'Show progress indicator', 'pathway' ) }
+                        label={ __( 'Show progress indicator', 'mapthread' ) }
                         checked={ showProgressIndicator }
                         onChange={ ( value ) => setAttributes( { showProgressIndicator: value } ) }
-                        help={ __( 'Animate position along track as readers scroll', 'pathway' ) }
+                        help={ __( 'Animate position along track as readers scroll', 'mapthread' ) }
                     />
                     <ToggleControl
-                        label={ __( 'Show elevation profile', 'pathway' ) }
+                        label={ __( 'Show elevation profile', 'mapthread' ) }
                         checked={ showElevationProfile }
                         onChange={ ( value ) => setAttributes( { showElevationProfile: value } ) }
-                        help={ __( 'Display elevation chart at bottom of map', 'pathway' ) }
+                        help={ __( 'Display elevation chart at bottom of map', 'mapthread' ) }
                     />
                 </PanelBody>
             </InspectorControls>
             <div { ...blockProps }>
-                <div className="pathway-map-gpx-editor">
+                <div className="mapthread-map-gpx-editor">
                 { multipleBlockWarning && (
                     <Notice status="warning" isDismissible={ false }>
-                        { __( 'Multiple Map GPX blocks detected. Only the first block will be used on the frontend.', 'pathway' ) }
+                        { __( 'Multiple Map GPX blocks detected. Only the first block will be used on the frontend.', 'mapthread' ) }
                     </Notice>
                 ) }
 
@@ -293,23 +293,23 @@ export default function Edit( { attributes, setAttributes, clientId } ) {
                     </Notice>
                 ) }
 
-                <div className="pathway-map-gpx-info">
-                    <div className="pathway-map-gpx-icon">
+                <div className="mapthread-map-gpx-info">
+                    <div className="mapthread-map-gpx-icon">
                         <span className="dashicons dashicons-location-alt"></span>
                     </div>
-                    <div className="pathway-map-gpx-details">
-                        <strong>{ __( 'GPX uploaded:', 'pathway' ) }</strong> { fileName }
+                    <div className="mapthread-map-gpx-details">
+                        <strong>{ __( 'GPX uploaded:', 'mapthread' ) }</strong> { fileName }
                         <br />
-                        <span className="pathway-map-gpx-meta">
-                            { pointCount.toLocaleString() } { __( 'track points', 'pathway' ) }
+                        <span className="mapthread-map-gpx-meta">
+                            { pointCount.toLocaleString() } { __( 'track points', 'mapthread' ) }
                             { ' • ' }
-                            { __( 'Bounds:', 'pathway' ) } { bounds.north.toFixed( 4 ) }°N, { bounds.south.toFixed( 4 ) }°S,
+                            { __( 'Bounds:', 'mapthread' ) } { bounds.north.toFixed( 4 ) }°N, { bounds.south.toFixed( 4 ) }°S,
                             { ' ' }{ bounds.east.toFixed( 4 ) }°E, { bounds.west.toFixed( 4 ) }°W
                         </span>
                     </div>
                 </div>
 
-                <div className="pathway-map-gpx-actions">
+                <div className="mapthread-map-gpx-actions">
                     <MediaUploadCheck>
                         <MediaUpload
                             onSelect={ onSelectGPX }
@@ -317,13 +317,13 @@ export default function Edit( { attributes, setAttributes, clientId } ) {
                             value={ attachmentId }
                             render={ ( { open } ) => (
                                 <Button onClick={ open } variant="secondary">
-                                    { __( 'Replace GPX', 'pathway' ) }
+                                    { __( 'Replace GPX', 'mapthread' ) }
                                 </Button>
                             ) }
                         />
                     </MediaUploadCheck>
                     <Button onClick={ onRemoveGPX } variant="tertiary" isDestructive>
-                        { __( 'Remove GPX', 'pathway' ) }
+                        { __( 'Remove GPX', 'mapthread' ) }
                     </Button>
                 </div>
             </div>

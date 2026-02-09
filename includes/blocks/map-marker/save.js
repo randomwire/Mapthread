@@ -1,7 +1,7 @@
 /**
  * Map Marker Block - Save Component
  *
- * @package Pathway
+ * @package Mapthread
  */
 
 import { useBlockProps } from '@wordpress/block-editor';
@@ -19,7 +19,7 @@ export default function save( { attributes } ) {
     return (
         <div
             { ...blockProps }
-            className="pathway-marker"
+            className="mapthread-marker"
             data-marker-id={ id }
             data-lat={ lat }
             data-lng={ lng }

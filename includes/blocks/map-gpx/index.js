@@ -1,7 +1,7 @@
 /**
  * Map GPX Block
  *
- * @package Pathway
+ * @package Mapthread
  */
 
 import { registerBlockType } from '@wordpress/blocks';

@@ -2,7 +2,7 @@
 /**
  * Map GPX Block - Server-side Render
  *
- * @package Pathway
+ * @package Mapthread
  *
  * @var array    $attributes Block attributes.
  * @var string   $content    Block default content.
@@ -29,7 +29,7 @@ if ( $attachment_id ) {
 // Build wrapper attributes.
 $wrapper_attributes = get_block_wrapper_attributes(
 	array(
-		'class'                => 'pathway-map-gpx',
+		'class'                => 'mapthread-map-gpx',
 		'data-attachment-id'   => esc_attr( $attachment_id ),
 		'data-gpx-url'         => esc_url( $gpx_url ),
 		'data-bounds'          => esc_attr( wp_json_encode( $bounds ) ),

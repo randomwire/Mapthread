@@ -1,10 +1,10 @@
 <?php
 /**
- * Pathway Elevation API Handler
+ * Mapthread Elevation API Handler
  *
  * Fetches elevation data from Open-Elevation API for GPX files lacking elevation.
  *
- * @package Pathway
+ * @package Mapthread
  */
 
 // Exit if accessed directly.
@@ -13,11 +13,11 @@ if ( ! defined( 'ABSPATH' ) ) {
 }
 
 /**
- * Class Pathway_Elevation_API
+ * Class Mapthread_Elevation_API
  *
  * Handles elevation data fetching via Open-Elevation API with smart sampling and caching.
  */
-class Pathway_Elevation_API {
+class Mapthread_Elevation_API {
 	/**
 	 * Constructor.
 	 */
@@ -30,7 +30,7 @@ class Pathway_Elevation_API {
 	 */
 	public function register_routes() {
 		register_rest_route(
-			'pathway/v1',
+			'mapthread/v1',
 			'/elevation',
 			[
 				'methods'             => 'POST',
@@ -61,7 +61,7 @@ class Pathway_Elevation_API {
 		$coords        = $request->get_param( 'coordinates' );
 
 		// Check post meta cache first (permanent).
-		$cached = get_post_meta( $attachment_id, '_pathway_elevations', true );
+		$cached = get_post_meta( $attachment_id, '_mapthread_elevations', true );
 		if ( ! empty( $cached ) && is_array( $cached ) ) {
 			return rest_ensure_response(
 				[
@@ -95,7 +95,7 @@ class Pathway_Elevation_API {
 		);
 
 		// Cache permanently in post meta.
-		update_post_meta( $attachment_id, '_pathway_elevations', $full_elevations );
+		update_post_meta( $attachment_id, '_mapthread_elevations', $full_elevations );
 
 		return rest_ensure_response(
 			[

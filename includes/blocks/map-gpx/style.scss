@@ -1,26 +1,26 @@
 /**
  * Map GPX Block Styles
  *
- * @package Pathway
+ * @package Mapthread
  */
 
 // Editor styles
-.wp-block-pathway-map-gpx {
-    .pathway-map-gpx-editor {
+.wp-block-mapthread-map-gpx {
+    .mapthread-map-gpx-editor {
         padding: 1.5rem;
         border: 1px solid #ddd;
         border-radius: 4px;
         background: #f9f9f9;
     }
 
-    .pathway-map-gpx-info {
+    .mapthread-map-gpx-info {
         display: flex;
         align-items: flex-start;
         gap: 1rem;
         margin-bottom: 1rem;
     }
 
-    .pathway-map-gpx-icon {
+    .mapthread-map-gpx-icon {
         font-size: 2rem;
         color: #2271b1;
 
@@ -31,7 +31,7 @@
         }
     }
 
-    .pathway-map-gpx-details {
+    .mapthread-map-gpx-details {
         flex: 1;
 
         strong {
@@ -39,12 +39,12 @@
         }
     }
 
-    .pathway-map-gpx-meta {
+    .mapthread-map-gpx-meta {
         font-size: 0.875rem;
         color: #757575;
     }
 
-    .pathway-map-gpx-actions {
+    .mapthread-map-gpx-actions {
         display: flex;
         gap: 0.5rem;
     }
@@ -56,6 +56,6 @@
 }
 
 // Frontend styles (minimal - just structure)
-.pathway-map-gpx {
+.mapthread-map-gpx {
     // Will be styled by frontend CSS in Phase 4-5
 }
