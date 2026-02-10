@@ -5,7 +5,7 @@ Tags: maps, gpx, travel, storytelling, hiking
 Requires at least: 6.0
 Tested up to: 6.9
 Requires PHP: 7.4
-Stable tag: 1.3.2
+Stable tag: 1.3.3
 License: GPLv2 or later
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
 
@@ -176,6 +176,9 @@ All external API calls are made from the user's browser, not from your WordPress
 
 == Changelog ==
 
+= 1.3.3 - 2026-02-09 =
+* Improved: Continuous animation loop for map following — camera now glides smoothly to target after scrolling stops instead of freezing mid-animation
+
 = 1.3.2 - 2026-02-09 =
 * Fixed: Track drift when another plugin loads a conflicting Leaflet version — switched to Canvas renderer which is immune to SVG transform corruption
 
@@ -216,6 +219,9 @@ All external API calls are made from the user's browser, not from your WordPress
 * Performance optimizations
 
 == Upgrade Notice ==
+
+= 1.3.3 =
+Smoother map following — camera now completes its animation after scrolling stops.
 
 = 1.3.2 =
 Bug fix for track drift when other map plugins are active on the same page.

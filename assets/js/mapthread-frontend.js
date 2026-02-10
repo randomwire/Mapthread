@@ -56,6 +56,10 @@ Chart.register( LineController, LineElement, PointElement, LinearScale, Filler, 
     let showElevationProfile = true;    // Setting from block
     let defaultMapLayer = 'Street';     // Which layer to show on load
     let lastSmoothedProgress = null;    // For smooth interpolation
+    let targetProgress = 0;             // Raw scroll-derived progress target
+    let targetCurrentZoom = 14;         // Zoom at current segment start (matches DEFAULT_ZOOM)
+    let targetNextZoom = 14;            // Zoom at current segment end (matches DEFAULT_ZOOM)
+    let animationRafId = null;          // Continuous animation loop RAF ID
     let mapInteractionScrollListener = null; // Listener for re-enabling follow mode
 
     // Elevation profile state
@@ -553,42 +557,13 @@ Chart.register( LineController, LineElement, PointElement, LinearScale, Filler, 
         // Clamp progress
         progress = Math.max( 0, Math.min( 1, progress ) );
 
-        // Initialize smoothed progress on first update
-        if ( lastSmoothedProgress === null ) {
-            lastSmoothedProgress = progress;
-        }
+        // Set target state for animation loop
+        targetProgress = progress;
+        targetCurrentZoom = currentZoom;
+        targetNextZoom = nextZoom;
 
-        // Apply exponential smoothing to progress for synchronized camera and polylines
-        const smoothedProgress = lerp( lastSmoothedProgress, progress, CAMERA_SMOOTHING );
-
-        // Get coordinate at smoothed progress along track
-        const targetCoord = getCoordinateAtProgress( smoothedProgress );
-
-        // Apply zoom interpolation
-        const targetZoom = lerp( currentZoom, nextZoom, smoothedProgress );
-
-        if ( targetCoord && map && isFollowMode ) {
-            // Update camera position
-            map.setView( targetCoord, targetZoom, { animate: false } );
-        }
-
-        // Store smoothed progress for next frame
-        lastSmoothedProgress = smoothedProgress;
-
-        // Update polyline split using same smoothed progress
-        const walkedCoords = getTrackUpToProgress( smoothedProgress );
-
-        // Keep remaining polyline showing full track (Vermilion background)
-        if ( walkedPolyline && walkedCoords.length > 0 ) {
-            walkedPolyline.setLatLngs( walkedCoords );
-        }
-        // Remaining polyline always shows full track as Vermilion background
-        if ( remainingPolyline ) {
-            remainingPolyline.setLatLngs( trackCoords );
-        }
-
-        // Update elevation chart
-        updateElevationChart();
+        // Start continuous loop (no-op if already running)
+        startAnimationLoop();
     }
 
     /**
@@ -607,8 +582,65 @@ Chart.register( LineController, LineElement, PointElement, LinearScale, Filler, 
         }
         lastSmoothedProgress = null;
 
+        // Stop any in-flight animation
+        if ( animationRafId !== null ) {
+            cancelAnimationFrame( animationRafId );
+            animationRafId = null;
+        }
+        targetProgress = 0;
+
         // Update elevation chart
         updateElevationChart();
+    }
+
+    /**
+     * Continuous animation loop — runs until smoothedProgress settles on targetProgress.
+     *
+     * Decoupled from scroll events so the camera keeps gliding after the user stops
+     * scrolling, rather than freezing mid-lerp.
+     */
+    function animationLoop() {
+        animationRafId = null;
+
+        if ( lastSmoothedProgress === null ) {
+            lastSmoothedProgress = targetProgress;
+        }
+
+        const smoothedProgress = lerp( lastSmoothedProgress, targetProgress, CAMERA_SMOOTHING );
+        lastSmoothedProgress = smoothedProgress;
+
+        // Update camera
+        const coord = getCoordinateAtProgress( smoothedProgress );
+        const zoom = lerp( targetCurrentZoom, targetNextZoom, smoothedProgress );
+        if ( coord && map && isFollowMode ) {
+            map.setView( coord, zoom, { animate: false } );
+        }
+
+        // Update polyline split
+        const walkedCoords = getTrackUpToProgress( smoothedProgress );
+        if ( walkedPolyline && walkedCoords.length > 0 ) {
+            walkedPolyline.setLatLngs( walkedCoords );
+        }
+        if ( remainingPolyline ) {
+            remainingPolyline.setLatLngs( trackCoords );
+        }
+
+        // Update elevation chart
+        updateElevationChart();
+
+        // Re-schedule until settled (~0.01% of track remaining)
+        if ( Math.abs( smoothedProgress - targetProgress ) > 0.0001 ) {
+            animationRafId = requestAnimationFrame( animationLoop );
+        }
+    }
+
+    /**
+     * Start the animation loop if not already running.
+     */
+    function startAnimationLoop() {
+        if ( animationRafId === null ) {
+            animationRafId = requestAnimationFrame( animationLoop );
+        }
     }
 
     // =========================================================================
@@ -1408,6 +1440,12 @@ Chart.register( LineController, LineElement, PointElement, LinearScale, Filler, 
     function handleMapInteraction() {
         // Reset progress smoothing when user manually pans/zooms
         lastSmoothedProgress = null;
+
+        // Stop any in-flight animation so it doesn't fight user input
+        if ( animationRafId !== null ) {
+            cancelAnimationFrame( animationRafId );
+            animationRafId = null;
+        }
 
         // Remove any existing scroll listener to prevent memory leaks
         if ( mapInteractionScrollListener ) {

@@ -1,6 +1,6 @@
 {
   "name": "mapthread",
-  "version": "1.3.2",
+  "version": "1.3.3",
   "description": "WordPress plugin for interactive map-based storytelling",
   "scripts": {
     "build": "wp-scripts build",
