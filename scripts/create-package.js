@@ -69,12 +69,13 @@ console.log('Creating distribution package...');
 console.log(`Building mapthread-${version}.zip...`);
 console.log('Excluding:', ignorePatterns.slice(0, 10).join(', '), '...');
 
-// Add all files except those in .distignore
+// Add all files inside a mapthread/ directory so WordPress recognises the ZIP
+// as an update to the installed 'mapthread' plugin rather than a new install.
 archive.glob('**/*', {
     cwd: __dirname + '/..',
     ignore: ignorePatterns,
     dot: false // Don't include hidden files by default
-});
+}, { prefix: 'mapthread' });
 
 // Finalize the archive
 archive.finalize();
