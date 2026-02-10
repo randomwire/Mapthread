@@ -17,6 +17,7 @@ assets/css
 .vscode
 .idea
 .cursor
+.claude
 *.sublime-project
 *.sublime-workspace
 
