@@ -666,11 +666,14 @@ Chart.register( LineController, LineElement, PointElement, LinearScale, Filler, 
         el.style.setProperty( 'height',     DISMISS_TILE, 'important' );
         el.style.setProperty( 'min-width',  '0',          'important' );
         el.style.setProperty( 'min-height', '0',          'important' );
-        el.style.setProperty( 'bottom',     'auto',        'important' );
         if ( isMobile ) {
-            el.style.setProperty( 'left',  'auto',  'important' );
-            el.style.setProperty( 'top',   '10px',  'important' );
-            el.style.setProperty( 'right', '10px',  'important' );
+            // Bottom-right: avoids overlapping hamburger menus typically at top-right
+            el.style.setProperty( 'top',    'auto',  'important' );
+            el.style.setProperty( 'bottom', '10px',  'important' );
+            el.style.setProperty( 'left',   'auto',  'important' );
+            el.style.setProperty( 'right',  '10px',  'important' );
+        } else {
+            el.style.setProperty( 'bottom', 'auto',  'important' );
         }
     }
 
