@@ -4,6 +4,39 @@
  * @package Mapthread
  */
 
+/**
+ * Track Styling Variables
+ * Centralized configuration for track visualization
+ */
+
+// Walked portion (trail behind)
+$track-walked-color: #FFFFFF;     // White dotted trail
+$track-walked-width: 2.5px;         // Width
+$track-walked-opacity: 1;           // Full opacity
+$track-walked-dash: 1, 4;           // Dot, gap pattern
+
+// Remaining portion (path ahead)
+$track-remaining-color: #E4572E;  // Vermilion solid line
+$track-remaining-width: 4.5px;      // Width
+$track-remaining-opacity: 0.9;      // 90% opacity
+
+// Marker pin (dot style)
+$marker-pin-size: 10px;                                    // Diameter
+$marker-pin-size-mobile: 8px;                              // Diameter on mobile
+$marker-pin-color: #E4572E;                                // Inactive state (Vermilion)
+$marker-pin-active-dot: #FFFFFF;                            // White center dot when active
+$marker-pin-hover-scale: 1.3;                              // Hover scale
+$marker-pin-active-scale: 1.4;                             // Active scale
+$marker-pin-transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+
+// Marker emoji
+$marker-emoji-size: 22px;                                  // Font size
+$marker-emoji-hover-scale: 1.3;                            // Hover scale
+$marker-emoji-active-scale: 1.5;                           // Active scale
+
+// Focus ring (accessibility)
+$marker-focus-color: #4A90E2;
+
 // ============================================================================
 // AUTOMATIC LAYOUT: Fixed Map on Right (Default)
 // Applied by default, overridden when using manual column layout
@@ -205,27 +238,27 @@
 }
 
 .mapthread-marker-pin {
-    width: 10px;
-    height: 10px;
-    background: var(--wp--preset--color--primary, #e74c3c);
+    width: $marker-pin-size;
+    height: $marker-pin-size;
+    background: $marker-pin-color;
     border: none;
     border-radius: 50%;
     cursor: pointer;
     box-shadow:
         0 2px 6px rgba(0, 0, 0, 0.3),
         0 0 0 1px rgba(0, 0, 0, 0.1);
-    transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+    transition: $marker-pin-transition;
 
     &:hover {
-        transform: scale(1.3);
+        transform: scale(#{$marker-pin-hover-scale});
         box-shadow:
             0 3px 8px rgba(0, 0, 0, 0.35),
             0 0 0 1px rgba(0, 0, 0, 0.1);
     }
 
     &.mapthread-active {
-        background: #1a1a1a;
-        transform: scale(1.4);
+        background: radial-gradient(circle, $marker-pin-active-dot 30%, $marker-pin-color 30%);
+        transform: scale(#{$marker-pin-active-scale});
         box-shadow:
             0 3px 10px rgba(0, 0, 0, 0.4),
             0 0 0 4px rgba(255, 255, 255, 0.4);
@@ -248,21 +281,21 @@
 
 .mapthread-marker-emoji {
     display: inline-block;
-    font-size: 22px;
+    font-size: $marker-emoji-size;
     line-height: 1;
     cursor: pointer;
     filter: drop-shadow(0 2px 4px rgba(0, 0, 0, 0.3));
-    transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+    transition: $marker-pin-transition;
 
     &.mapthread-active {
-        transform: scale(1.5);
+        transform: scale(#{$marker-emoji-active-scale});
         animation: mapthread-pulse-emoji 2s ease-in-out infinite;
     }
 }
 
 // Hover on Leaflet icon container to reach emoji span
 .mapthread-marker-icon:hover .mapthread-marker-emoji:not(.mapthread-active) {
-    transform: scale(1.3);
+    transform: scale(#{$marker-emoji-hover-scale});
 }
 
 @keyframes mapthread-pulse-emoji {
@@ -282,19 +315,21 @@
 
 // Walked portion of track (already traveled)
 .mapthread-track-walked {
-    stroke: #E4572E;  // Vermilion
-    stroke-width: 4;
+    stroke: $track-walked-color;
+    stroke-width: $track-walked-width;
     stroke-linecap: round;
     stroke-linejoin: round;
+    stroke-dasharray: $track-walked-dash;
+    opacity: $track-walked-opacity;
 }
 
 // Remaining portion of track (yet to travel)
 .mapthread-track-remaining {
-    stroke: #E4572E;  // Vermilion (same as walked, lower opacity)
-    stroke-width: 3;
+    stroke: $track-remaining-color;
+    stroke-width: $track-remaining-width;
     stroke-linecap: round;
     stroke-linejoin: round;
-    opacity: 0.5;
+    opacity: $track-remaining-opacity;
 }
 
 // ============================================================================
@@ -394,11 +429,11 @@
 
 // GPX track polyline (when progress indicator is OFF)
 .leaflet-interactive[stroke="#3388ff"] {
-    stroke: #E4572E;  // Vermilion (same as walked, lower opacity)
-    stroke-width: 3.5;
+    stroke: $track-remaining-color;
+    stroke-width: $track-remaining-width;
     stroke-linecap: round;
     stroke-linejoin: round;
-    opacity: 0.5;
+    opacity: $track-remaining-opacity;
 }
 
 // ============================================================================
@@ -428,8 +463,8 @@
 @media (max-width: 767px) {
     // Slightly smaller pins on mobile
     .mapthread-marker-pin {
-        width: 8px;
-        height: 8px;
+        width: $marker-pin-size-mobile;
+        height: $marker-pin-size-mobile;
     }
 }
 
@@ -487,12 +522,12 @@
 
 // Focus states for keyboard navigation
 .mapthread-marker-pin:focus {
-    outline: 3px solid #4A90E2;
+    outline: 3px solid $marker-focus-color;
     outline-offset: 3px;
 }
 
 .leaflet-control-zoom a:focus {
-    outline: 2px solid #4A90E2;
+    outline: 2px solid $marker-focus-color;
     outline-offset: -2px;
 }
 

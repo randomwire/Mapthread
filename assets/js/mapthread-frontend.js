@@ -35,6 +35,7 @@ Chart.register( LineController, LineElement, PointElement, LinearScale, Filler, 
     // State
     let map = null;
     let gpxLayer = null;
+    let gpxLayerWalked = null;
     let markers = [];
     let markerLayers = [];
     let activeMarkerIndex = null;
@@ -86,6 +87,22 @@ Chart.register( LineController, LineElement, PointElement, LinearScale, Filler, 
     const EMOJI_ICON_SIZE = 24;              // Width and height of emoji icon (pixels)
     const EMOJI_ICON_ANCHOR = 10;            // Center anchor point
     const EMOJI_POPUP_ANCHOR_Y = -10;        // Popup offset above emoji
+
+    // Track visualization styling
+    const TRACK_WALKED_COLOR = '#FFFFFF';         // White dotted trail
+    const TRACK_WALKED_WIDTH = 2.5;               // Width in pixels
+    const TRACK_WALKED_OPACITY = 1;               // Full opacity
+    const TRACK_WALKED_DASH = '1, 4';             // Dash pattern (dot, gap)
+
+    const TRACK_REMAINING_COLOR = '#E4572E';      // Vermilion solid line
+    const TRACK_REMAINING_WIDTH = 4.5;            // Width in pixels
+    const TRACK_REMAINING_OPACITY = 0.9;          // 90% opacity
+
+    // Additional visualization colors
+    const PROGRESS_INDICATOR_COLOR = '#E4572E';   // Vermilion
+    const ELEVATION_CHART_FILL = 'rgba(79, 124, 172, 0.15)';     // Light blue
+    const ELEVATION_CHART_BORDER = 'rgba(79, 124, 172, 0.6)';    // Medium blue
+    const TOOLTIP_BACKGROUND = 'rgba(30, 30, 30, 0.92)';         // Dark translucent
 
     // Scroll states for state machine
     const ScrollState = {
@@ -323,29 +340,8 @@ Chart.register( LineController, LineElement, PointElement, LinearScale, Filler, 
      * @param {number} progress - Progress ratio (0-1)
      * @return {Array} Array of [lat, lng] coordinates
      */
-    function getTrackFromProgress( progress ) {
-        if ( trackCoords.length === 0 ) {
-            return [];
-        }
-
-        const targetDistance = progress * totalTrackDistance;
-
-        // Start with interpolated point
-        const points = [];
-        const startPoint = getCoordinateAtProgress( progress );
-        if ( startPoint ) {
-            points.push( startPoint );
-        }
-
-        // Add all points after this distance
-        for ( let i = 0; i < trackDistances.length; i++ ) {
-            if ( trackDistances[ i ] > targetDistance ) {
-                points.push( trackCoords[ i ] );
-            }
-        }
-
-        return points;
-    }
+    // Note: getTrackFromProgress() removed - remaining polyline now always shows full track
+    // This allows the white dotted walked trail to overlay the solid Vermilion background
 
     /**
      * Initialize progress indicator visualization
@@ -356,29 +352,34 @@ Chart.register( LineController, LineElement, PointElement, LinearScale, Filler, 
         }
 
         // Track colors
-        const walkedColor = '#E4572E';     // Vermilion
-        const remainingColor = '#E4572E';  // Vermilion (same color, different opacity)
+        const walkedColor = TRACK_WALKED_COLOR;
+        const remainingColor = TRACK_REMAINING_COLOR;
 
-        // Create walked polyline (starts at first point only)
-        walkedPolyline = L.polyline( [ trackCoords[ 0 ] ], {
-            color: walkedColor,
-            weight: 4,
-            opacity: 1,
-            className: 'mapthread-track-walked'
-        } ).addTo( map );
-
-        // Create remaining polyline (full track initially)
+        // Create remaining polyline first (background layer - full track)
         remainingPolyline = L.polyline( trackCoords, {
             color: remainingColor,
-            weight: 3,
-            opacity: 0.7,
+            weight: TRACK_REMAINING_WIDTH,
+            opacity: TRACK_REMAINING_OPACITY,
             className: 'mapthread-track-remaining'
         } ).addTo( map );
 
-        // Remove original gpxLayer (replaced by split polylines)
+        // Create walked polyline second (foreground layer - starts at first point)
+        walkedPolyline = L.polyline( [ trackCoords[ 0 ] ], {
+            color: walkedColor,
+            weight: TRACK_WALKED_WIDTH,
+            opacity: TRACK_WALKED_OPACITY,
+            dashArray: TRACK_WALKED_DASH,
+            className: 'mapthread-track-walked'
+        } ).addTo( map );
+
+        // Remove original gpxLayer and its overlay (replaced by split polylines)
         if ( gpxLayer ) {
             map.removeLayer( gpxLayer );
             gpxLayer = null;
+        }
+        if ( gpxLayerWalked ) {
+            map.removeLayer( gpxLayerWalked );
+            gpxLayerWalked = null;
         }
     }
 
@@ -569,13 +570,14 @@ Chart.register( LineController, LineElement, PointElement, LinearScale, Filler, 
 
         // Update polyline split using same smoothed progress
         const walkedCoords = getTrackUpToProgress( smoothedProgress );
-        const remainingCoords = getTrackFromProgress( smoothedProgress );
 
+        // Keep remaining polyline showing full track (Vermilion background)
         if ( walkedPolyline && walkedCoords.length > 0 ) {
             walkedPolyline.setLatLngs( walkedCoords );
         }
-        if ( remainingPolyline && remainingCoords.length > 0 ) {
-            remainingPolyline.setLatLngs( remainingCoords );
+        // Remaining polyline always shows full track as Vermilion background
+        if ( remainingPolyline ) {
+            remainingPolyline.setLatLngs( trackCoords );
         }
 
         // Update elevation chart
@@ -721,7 +723,7 @@ Chart.register( LineController, LineElement, PointElement, LinearScale, Filler, 
                     ctx.save();
                     ctx.beginPath();
                     ctx.setLineDash( [] );
-                    ctx.strokeStyle = '#E4572E';
+                    ctx.strokeStyle = PROGRESS_INDICATOR_COLOR;
                     ctx.lineWidth = 2;
                     ctx.moveTo( px, chartArea.top );
                     ctx.lineTo( px, chartArea.bottom );
@@ -733,7 +735,7 @@ Chart.register( LineController, LineElement, PointElement, LinearScale, Filler, 
                         const y = scales.y.getPixelForValue( ele );
                         ctx.beginPath();
                         ctx.arc( px, y, 4, 0, Math.PI * 2 );
-                        ctx.fillStyle = '#E4572E';
+                        ctx.fillStyle = PROGRESS_INDICATOR_COLOR;
                         ctx.fill();
                         ctx.strokeStyle = '#fff';
                         ctx.lineWidth = 1.5;
@@ -1570,12 +1572,23 @@ Chart.register( LineController, LineElement, PointElement, LinearScale, Filler, 
         if ( gpxLayer ) {
             map.removeLayer( gpxLayer );
         }
+        if ( gpxLayerWalked ) {
+            map.removeLayer( gpxLayerWalked );
+        }
 
-        // Add polyline
+        // Add background polyline (Vermilion)
         gpxLayer = L.polyline( coords, {
-            color: '#E4572E',  // Vermilion
-            weight: 3,
-            opacity: 0.5
+            color: TRACK_REMAINING_COLOR,
+            weight: TRACK_REMAINING_WIDTH,
+            opacity: TRACK_REMAINING_OPACITY
+        } ).addTo( map );
+
+        // Add dotted white overlay for legibility
+        gpxLayerWalked = L.polyline( coords, {
+            color: TRACK_WALKED_COLOR,
+            weight: TRACK_WALKED_WIDTH,
+            opacity: TRACK_WALKED_OPACITY,
+            dashArray: TRACK_WALKED_DASH
         } ).addTo( map );
     }
 
@@ -1738,10 +1751,18 @@ Chart.register( LineController, LineElement, PointElement, LinearScale, Filler, 
             // If progress indicator is OFF, show a static connecting line
             if ( ! showProgressIndicator ) {
                 L.polyline( trackCoords, {
-                    color: '#E4572E',  // Vermilion
-                    weight: 3,
-                    opacity: 0.5,
+                    color: TRACK_REMAINING_COLOR,
+                    weight: TRACK_REMAINING_WIDTH,
+                    opacity: TRACK_REMAINING_OPACITY,
                     className: 'mapthread-track-remaining'
+                } ).addTo( map );
+
+                L.polyline( trackCoords, {
+                    color: TRACK_WALKED_COLOR,
+                    weight: TRACK_WALKED_WIDTH,
+                    opacity: TRACK_WALKED_OPACITY,
+                    dashArray: TRACK_WALKED_DASH,
+                    className: 'mapthread-track-walked'
                 } ).addTo( map );
             }
         }
