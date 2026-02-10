@@ -5,7 +5,7 @@ Tags: maps, gpx, travel, storytelling, hiking
 Requires at least: 6.0
 Tested up to: 6.9
 Requires PHP: 7.4
-Stable tag: 1.3.0
+Stable tag: 1.3.2
 License: GPLv2 or later
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
 
@@ -176,6 +176,13 @@ All external API calls are made from the user's browser, not from your WordPress
 
 == Changelog ==
 
+= 1.3.2 - 2026-02-09 =
+* Fixed: Track drift when another plugin loads a conflicting Leaflet version — switched to Canvas renderer which is immune to SVG transform corruption
+
+= 1.3.1 - 2026-02-09 =
+* Fixed: Track alignment bug when another plugin loads a conflicting Leaflet CSS version
+* Added: Donate link on WordPress admin Plugins page row
+
 = 1.3.0 - 2026-02-09 =
 * Added: Multiple map styles - Switch between Street, Satellite, and Topographic views
 * Added: Layer control widget for easy map style switching
@@ -209,6 +216,12 @@ All external API calls are made from the user's browser, not from your WordPress
 * Performance optimizations
 
 == Upgrade Notice ==
+
+= 1.3.2 =
+Bug fix for track drift when other map plugins are active on the same page.
+
+= 1.3.1 =
+Bug fix for track alignment when other map plugins are active on the same page.
 
 = 1.3.0 =
 New map viewing options! Switch between Street, Satellite, and Topographic map styles. Fullscreen mode for immersive viewing.

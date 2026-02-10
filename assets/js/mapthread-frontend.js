@@ -243,6 +243,24 @@ Chart.register( LineController, LineElement, PointElement, LinearScale, Filler, 
     }
 
     /**
+     * Returns the index of the first segment whose end distance >= targetDistance.
+     *
+     * @param {number} targetDistance - Distance along track in metres
+     * @returns {number} Segment start index into trackCoords / trackDistances
+     */
+    function findSegmentAtDistance( targetDistance ) {
+        let segmentIndex = 0;
+        for ( let i = 1; i < trackDistances.length; i++ ) {
+            if ( trackDistances[ i ] >= targetDistance ) {
+                segmentIndex = i - 1;
+                break;
+            }
+            segmentIndex = i - 1;
+        }
+        return segmentIndex;
+    }
+
+    /**
      * Gets the coordinate at a specific progress position along the track.
      *
      * Uses linear interpolation between track segments to find the exact coordinate
@@ -262,16 +280,7 @@ Chart.register( LineController, LineElement, PointElement, LinearScale, Filler, 
         }
 
         const targetDistance = progress * totalTrackDistance;
-
-        // Find the segment containing this distance
-        let segmentIndex = 0;
-        for ( let i = 1; i < trackDistances.length; i++ ) {
-            if ( trackDistances[ i ] >= targetDistance ) {
-                segmentIndex = i - 1;
-                break;
-            }
-            segmentIndex = i - 1;
-        }
+        const segmentIndex = findSegmentAtDistance( targetDistance );
 
         // If at the very end
         if ( segmentIndex >= trackCoords.length - 1 ) {
@@ -360,7 +369,6 @@ Chart.register( LineController, LineElement, PointElement, LinearScale, Filler, 
             color: remainingColor,
             weight: TRACK_REMAINING_WIDTH,
             opacity: TRACK_REMAINING_OPACITY,
-            className: 'mapthread-track-remaining'
         } ).addTo( map );
 
         // Create walked polyline second (foreground layer - starts at first point)
@@ -369,7 +377,6 @@ Chart.register( LineController, LineElement, PointElement, LinearScale, Filler, 
             weight: TRACK_WALKED_WIDTH,
             opacity: TRACK_WALKED_OPACITY,
             dashArray: TRACK_WALKED_DASH,
-            className: 'mapthread-track-walked'
         } ).addTo( map );
 
         // Remove original gpxLayer and its overlay (replaced by split polylines)
@@ -620,15 +627,7 @@ Chart.register( LineController, LineElement, PointElement, LinearScale, Filler, 
         }
 
         const targetDistance = progress * totalTrackDistance;
-
-        let segmentIndex = 0;
-        for ( let i = 1; i < trackDistances.length; i++ ) {
-            if ( trackDistances[ i ] >= targetDistance ) {
-                segmentIndex = i - 1;
-                break;
-            }
-            segmentIndex = i - 1;
-        }
+        const segmentIndex = findSegmentAtDistance( targetDistance );
 
         if ( segmentIndex >= trackElevations.length - 1 ) {
             return trackElevations[ trackElevations.length - 1 ];
@@ -1468,10 +1467,17 @@ Chart.register( LineController, LineElement, PointElement, LinearScale, Filler, 
         }
 
         // Initialize Leaflet map
+        // Use Canvas renderer for polylines — the SVG renderer accumulates a
+        // positional drift when another plugin loads a conflicting Leaflet version,
+        // because the other Leaflet's JS corrupts the SVG pane transform on each zoom.
+        // Canvas redraws from scratch every frame so it is immune to this issue.
+        // Note: Canvas is also the default renderer in Leaflet 2.0, so this is
+        // forward-compatible with a future Leaflet upgrade.
         const leafletMap = L.map( 'mapthread-map', {
             zoomControl: true,
             scrollWheelZoom: true,
-            attributionControl: false  // Disable default bottom-right attribution
+            attributionControl: false,  // Disable default bottom-right attribution
+            renderer: L.canvas()
         } );
 
         // Add custom attribution control in top-right position
@@ -1754,7 +1760,6 @@ Chart.register( LineController, LineElement, PointElement, LinearScale, Filler, 
                     color: TRACK_REMAINING_COLOR,
                     weight: TRACK_REMAINING_WIDTH,
                     opacity: TRACK_REMAINING_OPACITY,
-                    className: 'mapthread-track-remaining'
                 } ).addTo( map );
 
                 L.polyline( trackCoords, {
@@ -1762,7 +1767,6 @@ Chart.register( LineController, LineElement, PointElement, LinearScale, Filler, 
                     weight: TRACK_WALKED_WIDTH,
                     opacity: TRACK_WALKED_OPACITY,
                     dashArray: TRACK_WALKED_DASH,
-                    className: 'mapthread-track-walked'
                 } ).addTo( map );
             }
         }

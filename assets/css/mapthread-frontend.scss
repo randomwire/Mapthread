@@ -4,22 +4,6 @@
  * @package Mapthread
  */
 
-/**
- * Track Styling Variables
- * Centralized configuration for track visualization
- */
-
-// Walked portion (trail behind)
-$track-walked-color: #FFFFFF;     // White dotted trail
-$track-walked-width: 2.5px;         // Width
-$track-walked-opacity: 1;           // Full opacity
-$track-walked-dash: 1, 4;           // Dot, gap pattern
-
-// Remaining portion (path ahead)
-$track-remaining-color: #E4572E;  // Vermilion solid line
-$track-remaining-width: 4.5px;      // Width
-$track-remaining-opacity: 0.9;      // 90% opacity
-
 // Marker pin (dot style)
 $marker-pin-size: 10px;                                    // Diameter
 $marker-pin-size-mobile: 8px;                              // Diameter on mobile
@@ -214,6 +198,30 @@ $marker-focus-color: #4A90E2;
 }
 
 // ============================================================================
+// LEAFLET PANE ISOLATION
+// Scoped overrides guard against CSS conflicts when another plugin loads a
+// different Leaflet version (e.g. map-blocks loads Leaflet 2.0 alpha).
+// Specificity 1-1-0 (ID + class) beats bare class rules (0-1-0) regardless
+// of stylesheet load order.
+// ============================================================================
+
+#mapthread-map {
+    // Tile and overlay panes must share the same coordinate origin.
+    // A conflicting Leaflet CSS version can shift one pane relative to the
+    // other, making the track appear offset on tiles — worse at low zoom.
+    .leaflet-map-pane,
+    .leaflet-tile-pane,
+    .leaflet-overlay-pane,
+    .leaflet-marker-pane,
+    .leaflet-tooltip-pane,
+    .leaflet-popup-pane {
+        position: absolute;
+        top: 0;
+        left: 0;
+    }
+}
+
+// ============================================================================
 // MAP CONTAINER (Common styles)
 // ============================================================================
 
@@ -313,25 +321,6 @@ $marker-focus-color: #4A90E2;
     transition: none; // Disable transition for smooth tracking
 }
 
-// Walked portion of track (already traveled)
-.mapthread-track-walked {
-    stroke: $track-walked-color;
-    stroke-width: $track-walked-width;
-    stroke-linecap: round;
-    stroke-linejoin: round;
-    stroke-dasharray: $track-walked-dash;
-    opacity: $track-walked-opacity;
-}
-
-// Remaining portion of track (yet to travel)
-.mapthread-track-remaining {
-    stroke: $track-remaining-color;
-    stroke-width: $track-remaining-width;
-    stroke-linecap: round;
-    stroke-linejoin: round;
-    opacity: $track-remaining-opacity;
-}
-
 // ============================================================================
 // ELEVATION PROFILE
 // ============================================================================
@@ -425,15 +414,6 @@ $marker-focus-color: #4A90E2;
     &:last-child {
         border-bottom: none;
     }
-}
-
-// GPX track polyline (when progress indicator is OFF)
-.leaflet-interactive[stroke="#3388ff"] {
-    stroke: $track-remaining-color;
-    stroke-width: $track-remaining-width;
-    stroke-linecap: round;
-    stroke-linejoin: round;
-    opacity: $track-remaining-opacity;
 }
 
 // ============================================================================
