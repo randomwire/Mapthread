@@ -1,6 +1,6 @@
 === Mapthread ===
 Contributors: randomwire
-Donate link: https://github.com/randomwire/Mapthreads
+Donate link: https://ko-fi.com/randomwire
 Tags: maps, gpx, travel, storytelling, hiking
 Requires at least: 6.0
 Tested up to: 6.9

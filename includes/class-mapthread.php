@@ -39,6 +39,9 @@ class Mapthread {
         // Allow GPX file uploads
         add_filter( 'upload_mimes', array( $this, 'allow_gpx_uploads' ) );
         add_filter( 'wp_check_filetype_and_ext', array( $this, 'check_gpx_filetype' ), 10, 4 );
+
+        // Add donate link to plugin row meta
+        add_filter( 'plugin_row_meta', array( $this, 'add_plugin_row_meta' ), 10, 2 );
     }
 
     /**
@@ -131,6 +134,22 @@ class Mapthread {
         }
 
         return $classes;
+    }
+
+    /**
+     * Add donate link to plugin row meta on the Plugins page.
+     *
+     * @param array  $links Existing row meta links.
+     * @param string $file  Plugin file path.
+     * @return array Modified row meta links.
+     */
+    public function add_plugin_row_meta( $links, $file ) {
+        if ( plugin_basename( MAPTHREAD_PLUGIN_DIR . 'mapthread.php' ) === $file ) {
+            $links[] = '<a href="https://ko-fi.com/randomwire" target="_blank" rel="noopener noreferrer">'
+                . esc_html__( 'Donate', 'mapthread' )
+                . '</a>';
+        }
+        return $links;
     }
 
     /**
