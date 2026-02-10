@@ -60,6 +60,7 @@ Chart.register( LineController, LineElement, PointElement, LinearScale, Filler, 
     let targetCurrentZoom = 14;         // Zoom at current segment start (matches DEFAULT_ZOOM)
     let targetNextZoom = 14;            // Zoom at current segment end (matches DEFAULT_ZOOM)
     let animationRafId = null;          // Continuous animation loop RAF ID
+    let isMapDismissed = false;         // True when map is collapsed to corner tile
     let mapInteractionScrollListener = null; // Listener for re-enabling follow mode
 
     // Elevation profile state
@@ -84,6 +85,15 @@ Chart.register( LineController, LineElement, PointElement, LinearScale, Filler, 
 
     // Marker icon dimensions
     const ICON_SIZE = 14;                // Width and height of marker icon (pixels)
+
+    // Dismiss control
+    const DISMISS_TILE = '44px';         // Collapsed map tile size
+    const ICON_CLOSE   = '&#x2715;';    // × used on the dismiss button
+    const ICON_MAP_PIN = // Map-pin SVG used on the restore button
+        '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 16 16" ' +
+        'width="12" height="12" fill="currentColor" aria-hidden="true">' +
+        '<path d="M8 0a5 5 0 0 0-5 5c0 4 5 11 5 11s5-7 5-11a5 5 0 0 0-5-5z' +
+        'm0 7a2 2 0 1 1 0-4 2 2 0 0 1 0 4z"/></svg>';
     const ICON_ANCHOR = 7;               // Horizontal and vertical anchor point (center)
     const POPUP_ANCHOR_Y = -7;           // Popup offset above marker
 
@@ -640,6 +650,69 @@ Chart.register( LineController, LineElement, PointElement, LinearScale, Filler, 
     function startAnimationLoop() {
         if ( animationRafId === null ) {
             animationRafId = requestAnimationFrame( animationLoop );
+        }
+    }
+
+    /**
+     * Collapse the map container to a tile by forcing inline !important styles.
+     * setProperty(..., 'important') is required because the base layout CSS
+     * uses !important on the same properties.
+     *
+     * @param {HTMLElement} el - The map container element
+     */
+    function applyDismissStyles( el ) {
+        const isMobile = window.innerWidth <= 767;
+        el.style.setProperty( 'width',      DISMISS_TILE, 'important' );
+        el.style.setProperty( 'height',     DISMISS_TILE, 'important' );
+        el.style.setProperty( 'min-width',  '0',          'important' );
+        el.style.setProperty( 'min-height', '0',          'important' );
+        el.style.setProperty( 'bottom',     'auto',        'important' );
+        if ( isMobile ) {
+            el.style.setProperty( 'left',  'auto',  'important' );
+            el.style.setProperty( 'top',   '10px',  'important' );
+            el.style.setProperty( 'right', '10px',  'important' );
+        }
+    }
+
+    /**
+     * Remove all inline dimension overrides applied by applyDismissStyles().
+     *
+     * @param {HTMLElement} el - The map container element
+     */
+    function clearDismissStyles( el ) {
+        [ 'width', 'height', 'min-width', 'min-height', 'bottom', 'left', 'top', 'right' ]
+            .forEach( ( prop ) => el.style.removeProperty( prop ) );
+    }
+
+    /**
+     * Toggle the map between its full size and a small restore tile.
+     *
+     * @param {HTMLElement} btn - The dismiss/restore anchor element
+     */
+    function toggleMapDismiss( btn ) {
+        isMapDismissed = ! isMapDismissed;
+        document.body.classList.toggle( 'mapthread-map-dismissed', isMapDismissed );
+
+        const mapEl = map ? map.getContainer() : document.getElementById( 'mapthread-map' );
+
+        if ( isMapDismissed ) {
+            btn.innerHTML = ICON_MAP_PIN;
+            btn.title = 'Show map';
+            btn.setAttribute( 'aria-label', 'Show map' );
+            isFollowMode = false;
+            if ( animationRafId !== null ) {
+                cancelAnimationFrame( animationRafId );
+                animationRafId = null;
+            }
+            if ( mapEl ) { applyDismissStyles( mapEl ); }
+        } else {
+            btn.innerHTML = ICON_CLOSE;
+            btn.title = 'Hide map';
+            btn.setAttribute( 'aria-label', 'Hide map' );
+            if ( mapEl ) { clearDismissStyles( mapEl ); }
+            isFollowMode = true;
+            if ( map ) { map.invalidateSize(); }
+            startAnimationLoop();
         }
     }
 
@@ -1485,6 +1558,32 @@ Chart.register( LineController, LineElement, PointElement, LinearScale, Filler, 
     }
 
     /**
+     * Leaflet control that dismisses/restores the map panel.
+     * Defined at module level so initializeMap() can stay free of class boilerplate.
+     */
+    const DismissControl = L.Control.extend( {
+        options: { position: 'topleft' },
+        onAdd() {
+            const container = L.DomUtil.create(
+                'div', 'leaflet-bar leaflet-control mapthread-dismiss-control'
+            );
+            const btn = L.DomUtil.create( 'a', 'mapthread-dismiss-btn', container );
+            btn.href = '#';
+            btn.title = 'Hide map';
+            btn.setAttribute( 'role', 'button' );
+            btn.setAttribute( 'aria-label', 'Hide map' );
+            btn.innerHTML = ICON_CLOSE;
+
+            L.DomEvent.on( btn, 'click', ( e ) => {
+                L.DomEvent.preventDefault( e );
+                toggleMapDismiss( btn );
+            } );
+            L.DomEvent.disableClickPropagation( container );
+            return container;
+        }
+    } );
+
+    /**
      * Initialize the map
      *
      * @param {Object} bounds - GPX bounds object
@@ -1560,6 +1659,9 @@ Chart.register( LineController, LineElement, PointElement, LinearScale, Filler, 
             position: 'topleft',
             pseudoFullscreen: isMobile
         } ) );
+
+        // Add dismiss control
+        leafletMap.addControl( new DismissControl() );
 
         // Initialize map view based on progress indicator setting
         if ( bounds && bounds.north !== 0 ) {

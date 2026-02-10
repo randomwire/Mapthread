@@ -381,9 +381,10 @@ $marker-focus-color: #4A90E2;
     }
 }
 
-// Zoom and fullscreen controls (consistent styling)
+// Zoom, fullscreen, and dismiss controls (consistent styling)
 .leaflet-control-zoom,
-.leaflet-control-fullscreen {
+.leaflet-control-fullscreen,
+.mapthread-dismiss-control {
     border: 1px solid rgba(0, 0, 0, 0.08);
     border-radius: 6px;
     box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
@@ -520,5 +521,64 @@ $marker-focus-color: #4A90E2;
 
     .mapthread-marker-pin.mapthread-active {
         animation: none;
+    }
+}
+
+// ============================================================================
+// DISMISS BUTTON
+// Styled identically to .leaflet-control-zoom anchors — inherits white box,
+// border, and shadow from the .leaflet-bar class added in JS.
+// ============================================================================
+
+.mapthread-dismiss-btn {
+    display: flex; // overrides shared block's display: block
+    align-items: center;
+    justify-content: center;
+    font-size: 16px; // overrides shared block's 20px (sized for +/- zoom symbols)
+    outline: none;   // suppress Leaflet's bundled .leaflet-bar a:focus ring on mouse click
+
+    &:focus-visible {
+        outline: 2px solid $marker-focus-color !important;
+        outline-offset: -2px;
+    }
+}
+
+// ============================================================================
+// DISMISSED STATE
+// Dimensions (width/height/bottom) are set via JS inline setProperty so they
+// reliably beat the base !important stylesheet rules. CSS handles only the
+// content-hiding and body-padding adjustments.
+// ============================================================================
+
+// Hide map content — JS inline styles provide the 44px dimensions.
+// The map container itself becomes invisible; only the dismiss .leaflet-bar
+// control is visible, so there is a single card rather than a nested double-card.
+body.has-mapthread-blocks.mapthread-map-dismissed #mapthread-map {
+    background: transparent !important;
+    box-shadow: none !important;
+    border-radius: 0 !important;
+    overflow: visible !important;
+
+    .leaflet-map-pane,
+    .leaflet-tile-pane,
+    .leaflet-control-attribution,
+    .leaflet-control-layers,
+    .leaflet-control-fullscreen,
+    .leaflet-control-zoom,
+    .mapthread-elevation-profile {
+        display: none;
+    }
+}
+
+// Body padding adjustments when dismissed
+@media (min-width: 768px) {
+    body.has-mapthread-blocks.mapthread-map-dismissed {
+        padding-right: 54px; // 44px tile + 10px gap
+    }
+}
+
+@media (max-width: 767px) {
+    body.has-mapthread-blocks.mapthread-map-dismissed {
+        padding-top: 0; // tile overlays the page; no layout gap needed
     }
 }
