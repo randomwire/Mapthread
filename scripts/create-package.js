@@ -42,26 +42,25 @@ if (fs.existsSync('.distignore')) {
         .split('\n')
         .map(line => line.trim())
         .filter(line => line && !line.startsWith('#'))
-        .map(pattern => {
+        .flatMap(pattern => {
             // Remove trailing slash for consistent handling
             const cleanPattern = pattern.replace(/\/$/, '');
 
-            // Convert .distignore patterns to glob patterns
-            // If pattern doesn't contain wildcards, add ** to match directory contents
-            if (!cleanPattern.includes('*')) {
-                return `**/${cleanPattern}/**`;
+            if (cleanPattern.includes('*')) {
+                // Already a glob — use as-is
+                return [cleanPattern];
             }
-            return cleanPattern;
+            if (cleanPattern.includes('/')) {
+                // Subpath like "assets/icon.svg" or "assets/js":
+                // - exact path matches a file
+                // - path/** matches directory contents
+                return [cleanPattern, `${cleanPattern}/**`];
+            }
+            // Top-level name like "node_modules":
+            // - exact match for top-level
+            // - **/<name>/** matches it anywhere in the tree
+            return [cleanPattern, `**/${cleanPattern}/**`];
         });
-
-    // Add exact matches for top-level files/dirs
-    const topLevel = distignore
-        .split('\n')
-        .map(line => line.trim())
-        .filter(line => line && !line.startsWith('#') && !line.includes('/'))
-        .map(pattern => pattern.replace(/\/$/, '')); // Remove trailing slash
-
-    ignorePatterns = [...topLevel, ...ignorePatterns];
 }
 
 // Add files to archive

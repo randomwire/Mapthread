@@ -13,6 +13,11 @@ webpack.config.js
 assets/js
 assets/css
 
+# WordPress.org plugin directory assets (not needed in installed plugin)
+assets/icon.svg
+assets/icon-128x128.png
+assets/icon-256x256.png
+
 # IDE and editor files
 .vscode
 .idea
@@ -28,6 +33,8 @@ Thumbs.db
 
 # Documentation (internal only)
 CLAUDE.md
+README.md
+CHANGELOG.md
 docs/
 
 # Build artifacts (will be regenerated)
