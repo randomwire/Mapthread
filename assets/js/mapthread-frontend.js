@@ -1738,6 +1738,9 @@ Chart.register( LineController, LineElement, PointElement, LinearScale, Filler, 
             position: 'topright'
         } ).addTo( leafletMap );
 
+        // Scale bar (metric only) — top-left, CSS-offset to sit right of the button column
+        L.control.scale( { position: 'topleft', imperial: false } ).addTo( leafletMap );
+
         // Ctrl/Cmd+scroll hint overlay — shown briefly when user scrolls without modifier
         const isMac = navigator.userAgentData
             ? navigator.userAgentData.platform === 'macOS'

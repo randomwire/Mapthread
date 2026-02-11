@@ -475,6 +475,15 @@ $marker-focus-color: #4A90E2;
     }
 }
 
+// Scale bar: offset right of the button column in the top-left corner.
+// Buttons are 32px wide + 10px Leaflet margin = 42px left; top matches first button face.
+#mapthread-map .leaflet-top.leaflet-left .leaflet-control-scale {
+    position: absolute;
+    top: 13px;
+    left: 56px;
+    margin: 0;
+}
+
 // ============================================================================
 // CTRL+SCROLL HINT OVERLAY
 // Shown briefly when user scrolls over the map without holding Ctrl/Cmd
