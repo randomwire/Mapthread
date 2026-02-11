@@ -70,6 +70,7 @@ Chart.register( LineController, LineElement, PointElement, LinearScale, Filler, 
     // Elevation profile state
     let trackElevations = [];           // Elevation in meters at each track point
     let elevationChart = null;          // Chart.js instance
+    let elevationStats = null;          // { gain, loss } in metres
 
     // Camera smoothing constant
     const CAMERA_SMOOTHING = 0.2;       // Smoothing factor (0.15-0.3 range)
@@ -826,6 +827,55 @@ Chart.register( LineController, LineElement, PointElement, LinearScale, Filler, 
     }
 
     /**
+     * Calculate total elevation gain and loss from the full elevation array.
+     *
+     * @param {number[]} elevations - Elevation values in metres
+     * @return {{ gain: number, loss: number }} Rounded values in metres
+     */
+    function calculateElevationGainLoss( elevations ) {
+        // Filter out null/invalid values
+        const valid = [];
+        for ( let i = 0; i < elevations.length; i++ ) {
+            if ( elevations[ i ] !== null && elevations[ i ] !== undefined && ! isNaN( elevations[ i ] ) ) {
+                valid.push( elevations[ i ] );
+            }
+        }
+        if ( valid.length < 2 ) {
+            return { gain: 0, loss: 0 };
+        }
+
+        // 7-point moving average to smooth GPS noise
+        const WINDOW = 7;
+        const half = Math.floor( WINDOW / 2 );
+        const smoothed = new Array( valid.length );
+        for ( let i = 0; i < valid.length; i++ ) {
+            let sum = 0, count = 0;
+            for ( let j = Math.max( 0, i - half ); j <= Math.min( valid.length - 1, i + half ); j++ ) {
+                sum += valid[ j ];
+                count++;
+            }
+            smoothed[ i ] = sum / count;
+        }
+
+        // Dead-band threshold on smoothed data
+        const THRESHOLD = 4;
+        let gain = 0, loss = 0;
+        let ref = smoothed[ 0 ];
+
+        for ( let i = 1; i < smoothed.length; i++ ) {
+            const diff = smoothed[ i ] - ref;
+            if ( diff > THRESHOLD ) {
+                gain += diff;
+                ref = smoothed[ i ];
+            } else if ( diff < -THRESHOLD ) {
+                loss -= diff;
+                ref = smoothed[ i ];
+            }
+        }
+        return { gain: Math.round( gain ), loss: Math.round( loss ) };
+    }
+
+    /**
      * Downsample elevation data for chart rendering
      *
      * @param {Array} distancesKm - Distance array in km
@@ -962,6 +1012,43 @@ Chart.register( LineController, LineElement, PointElement, LinearScale, Filler, 
     };
 
     /**
+     * Chart.js plugin: draw elevation gain/loss stats on the chart canvas
+     */
+    const elevationStatsPlugin = {
+        id: 'elevationStats',
+        afterDraw( chart ) {
+            const stats = chart._elevationStats;
+            if ( ! stats || ( stats.gain === 0 && stats.loss === 0 ) ) {
+                return;
+            }
+
+            const { ctx, chartArea } = chart;
+
+            ctx.save();
+            ctx.font = '600 8px -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif';
+            ctx.textAlign = 'right';
+            ctx.textBaseline = 'top';
+
+            const gainText = '\u25B2 ' + stats.gain.toLocaleString() + ' m';
+            const lossText = '\u25BC ' + stats.loss.toLocaleString() + ' m';
+
+            const x = chartArea.right - 4;
+            const y = chartArea.top - 8;
+
+            // Loss (muted red) on the right
+            ctx.fillStyle = 'rgba(160, 60, 60, 0.5)';
+            ctx.fillText( lossText, x, y );
+
+            // Gain (muted green) to the left of loss
+            const lossWidth = ctx.measureText( lossText ).width;
+            ctx.fillStyle = 'rgba(60, 120, 60, 0.5)';
+            ctx.fillText( gainText, x - lossWidth - 8, y );
+
+            ctx.restore();
+        }
+    };
+
+    /**
      * Get Chart.js configuration for elevation profile
      *
      * @param {Array} data - Array of {x, y} points
@@ -1045,7 +1132,7 @@ Chart.register( LineController, LineElement, PointElement, LinearScale, Filler, 
                     }
                 }
             },
-            plugins: [ elevationOverlayPlugin, elevationCrosshairPlugin ]
+            plugins: [ elevationOverlayPlugin, elevationCrosshairPlugin, elevationStatsPlugin ]
         };
     }
 
@@ -1076,6 +1163,10 @@ Chart.register( LineController, LineElement, PointElement, LinearScale, Filler, 
 
         // Create chart
         elevationChart = new Chart( canvas, getElevationChartConfig( data ) );
+
+        // Calculate and attach elevation stats for the plugin
+        elevationStats = calculateElevationGainLoss( trackElevations );
+        elevationChart._elevationStats = elevationStats;
 
         // Resize chart when map resizes
         map.on( 'resize', () => {
