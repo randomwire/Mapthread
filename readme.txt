@@ -66,7 +66,7 @@ Tested and working on:
 * Twenty Twenty-Four
 * Twenty Twenty-Five
 
-Should work on most block themes. Classic themes may require customization.
+Should work on most block themes. Classic themes are not tested/supported.
 
 == Installation ==
 
@@ -100,7 +100,7 @@ GPX (GPS Exchange Format) is a standard file format for GPS data. Most fitness t
 
 You can export GPX files from:
 * Fitness apps (Strava, Garmin Connect, etc.)
-* Hiking apps (AllTrails, Komoot, etc.)
+* Hiking apps (Gaia, AllTrails, etc.)
 * GPS devices (Garmin, Suunto, etc.)
 * Google Maps (via third-party tools)
 

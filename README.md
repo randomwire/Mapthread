@@ -435,4 +435,13 @@ See [CHANGELOG.md](CHANGELOG.md) for version history.
 
 ---
 
+## Inspiration
+
+- [Koya Bound](https://walkkumano.com/koyabound/)
+- [Riding the New Silk Road](https://www.nytimes.com/newsgraphics/2013/07/21/silk-road/index.html)
+- [Eater Maps](https://www.eater.com/maps/)
+- [Animated Map Path for Interactive Storytelling](https://tympanus.net/codrops/2015/12/16/animated-map-path-for-interactive-storytelling/)
+
+---
+
 **Made for storytellers and adventurers**
