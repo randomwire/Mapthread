@@ -2,7 +2,7 @@
 
 Interactive map-based storytelling for WordPress.
 
-![Version](https://img.shields.io/badge/version-1.2.0-blue.svg)
+![Version](https://img.shields.io/badge/version-1.3.6-blue.svg)
 ![WordPress](https://img.shields.io/badge/wordpress-6.0%2B-brightgreen.svg)
 ![PHP](https://img.shields.io/badge/php-7.4%2B-purple.svg)
 ![License](https://img.shields.io/badge/license-GPLv2%2B-orange.svg)
@@ -61,7 +61,7 @@ Perfect for:
 ```bash
 cd wp-content/plugins
 git clone https://github.com/randomwire/Mapthread.git
-cd Mapthreads
+cd Mapthread
 npm install
 npm run build
 ```
@@ -260,10 +260,10 @@ The `mapthread-map-column` class makes the map sticky as you scroll. See [Block 
 A: No! You can create map stories with just Map Marker blocks. The map will automatically fit to show all your markers.
 
 **Q: Can I use multiple GPX files in one post?**
-A: Not in v1.0. Only the first Map GPX block will be used.
+A: Not currently. Only the first Map GPX block per post is used.
 
 **Q: What GPX format is supported?**
-A: Standard GPX 1.0/1.1 with `<trk>` (tracks). Waypoints and routes are not displayed in v1.0.
+A: Standard GPX 1.0/1.1 with `<trk>` (tracks). Waypoints and routes from the GPX file are not displayed; use Map Marker blocks to mark key points instead.
 
 **Q: Can I customize the marker colors?**
 A: Yes! Mapthread uses your theme's primary color automatically. Set it in `theme.json` or Customizer.

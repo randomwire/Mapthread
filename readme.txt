@@ -106,7 +106,7 @@ You can export GPX files from:
 
 = Can I use multiple GPX files in one post? =
 
-Not in v1.0. Only the first Map GPX block will be used. Multiple GPX support is planned for v1.1.
+Not currently. Only the first Map GPX block per post is used.
 
 = How do I get coordinates for markers? =
 
@@ -265,12 +265,12 @@ Initial release of Mapthread. Install and start creating interactive map stories
 
 For support, please visit:
 * Plugin support forum: https://wordpress.org/support/plugin/mapthread/
-* GitHub issues: https://github.com/randomwire/Mapthreads/issues
+* GitHub issues: https://github.com/randomwire/Mapthread/issues
 
 = Contributing =
 
 Mapthread is open source! Contributions welcome at:
-https://github.com/randomwire/Mapthreads
+https://github.com/randomwire/Mapthread
 
 = Credits =
 

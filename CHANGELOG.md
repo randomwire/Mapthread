@@ -125,15 +125,58 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ---
 
-## [Unreleased]
+## [1.3.6] - 2026-02-11
 
-### Planned for v1.3
-- Multiple GPX files per post
-- Container block for theme-independent layout
-- Elevation profile on mobile devices
+### Improved
+- Map dismiss button on desktop now overlays the page — article expands to full width when map is hidden; restore tile floats in bottom-right corner
 
 ---
 
-[1.2.0]: https://github.com/randomwire/Mapthreads/releases/tag/v1.2.0
-[1.1.0]: https://github.com/randomwire/Mapthreads/releases/tag/v1.1.0
-[1.0.0]: https://github.com/randomwire/Mapthreads/releases/tag/v1.0.0
+## [1.3.5] - 2026-02-11
+
+### Added
+- Ctrl/Cmd+scroll to zoom map — bare scroll over map no longer hijacks page scrolling
+- Brief hint overlay guides users to use Ctrl (or ⌘ on macOS) to zoom; shown once per page load
+
+---
+
+## [1.3.4] - 2026-02-10
+
+### Added
+- Map dismiss button — collapse the map to a small restore tile to read the full-width article; restore with one tap (works on both desktop and mobile)
+
+---
+
+## [1.3.3] - 2026-02-09
+
+### Improved
+- Continuous animation loop for map following — camera now glides smoothly to target after scrolling stops instead of freezing mid-animation
+
+---
+
+## [1.3.2] - 2026-02-09
+
+### Fixed
+- Track drift when another plugin loads a conflicting Leaflet version — switched to Canvas renderer which is immune to SVG transform corruption
+
+---
+
+## [1.3.1] - 2026-02-09
+
+### Fixed
+- Track alignment bug when another plugin loads a conflicting Leaflet CSS version
+
+### Added
+- Donate link on WordPress admin Plugins page row
+
+---
+
+[1.3.6]: https://github.com/randomwire/Mapthread/releases/tag/v1.3.6
+[1.3.5]: https://github.com/randomwire/Mapthread/releases/tag/v1.3.5
+[1.3.4]: https://github.com/randomwire/Mapthread/releases/tag/v1.3.4
+[1.3.3]: https://github.com/randomwire/Mapthread/releases/tag/v1.3.3
+[1.3.2]: https://github.com/randomwire/Mapthread/releases/tag/v1.3.2
+[1.3.1]: https://github.com/randomwire/Mapthread/releases/tag/v1.3.1
+[1.2.0]: https://github.com/randomwire/Mapthread/releases/tag/v1.2.0
+[1.1.0]: https://github.com/randomwire/Mapthread/releases/tag/v1.1.0
+[1.0.0]: https://github.com/randomwire/Mapthread/releases/tag/v1.0.0
