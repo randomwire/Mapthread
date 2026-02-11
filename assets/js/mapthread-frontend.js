@@ -89,6 +89,7 @@ Chart.register( LineController, LineElement, PointElement, LinearScale, Filler, 
     // Dismiss control
     const DISMISS_TILE = '44px';         // Collapsed map tile size
     const ICON_CLOSE   = '&#x2715;';    // × used on the dismiss button
+    const ICON_LAYERS  = '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 16 16" width="14" height="14" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linejoin="round" aria-hidden="true"><polygon points="8,2 15,5.5 8,9 1,5.5"/><path d="M1 8.5L8 12l7-3.5"/><path d="M1 11.5L8 15l7-3.5"/></svg>';
     const ICON_MAP_PIN = // Map-pin SVG used on the restore button
         '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 16 16" ' +
         'width="12" height="12" fill="currentColor" aria-hidden="true">' +
@@ -1587,6 +1588,111 @@ Chart.register( LineController, LineElement, PointElement, LinearScale, Filler, 
     } );
 
     /**
+     * Custom layer-switcher control — uses leaflet-bar so it inherits
+     * exactly the same CSS treatment as zoom, fullscreen, and dismiss.
+     */
+    const LayersControl = L.Control.extend( {
+        options: { position: 'topleft' },
+
+        initialize( layers, options ) {
+            L.Util.setOptions( this, options );
+            this._layers    = layers;
+            this._current   = null;
+            this._panelOpen = false;
+            this._btn       = null;
+            this._panel     = null;
+        },
+
+        onAdd( map ) {
+            this._map = map;
+
+            const container = L.DomUtil.create(
+                'div', 'leaflet-bar leaflet-control mapthread-layer-control'
+            );
+
+            const btn = this._btn = L.DomUtil.create( 'a', 'mapthread-layer-btn', container );
+            btn.href = '#';
+            btn.title = 'Map layers';
+            btn.setAttribute( 'role', 'button' );
+            btn.setAttribute( 'aria-label', 'Map layers' );
+            btn.setAttribute( 'aria-expanded', 'false' );
+            btn.innerHTML = ICON_LAYERS;
+
+            const panel = this._panel = L.DomUtil.create(
+                'div', 'mapthread-layer-panel', container
+            );
+            panel.hidden = true;
+
+            Object.keys( this._layers ).forEach( ( name ) => {
+                const label = L.DomUtil.create( 'label', 'mapthread-layer-option', panel );
+                const input = L.DomUtil.create( 'input', '', label );
+                input.type  = 'radio';
+                input.name  = 'mapthread-layer';
+                input.value = name;
+                label.append( ` ${ name }` );
+
+                if ( this._current === this._layers[ name ] ) {
+                    input.checked = true;
+                }
+
+                L.DomEvent.on( input, 'change', () => {
+                    this._switchLayer( name );
+                    this._closePanel();
+                } );
+            } );
+
+            L.DomEvent.on( btn, 'click', ( e ) => {
+                L.DomEvent.preventDefault( e );
+                this._panelOpen ? this._closePanel() : this._openPanel();
+            } );
+
+            L.DomEvent.on( document, 'click', this._onDocClick, this );
+            L.DomEvent.disableClickPropagation( container );
+            L.DomEvent.disableScrollPropagation( container );
+            return container;
+        },
+
+        onRemove() {
+            L.DomEvent.off( document, 'click', this._onDocClick, this );
+        },
+
+        setActiveLayer( layer ) {
+            this._current = layer;
+            if ( this._panel ) {
+                this._panel.querySelectorAll( 'input' ).forEach( ( input ) => {
+                    input.checked = ( this._layers[ input.value ] === layer );
+                } );
+            }
+        },
+
+        _switchLayer( name ) {
+            const next = this._layers[ name ];
+            if ( next === this._current ) return;
+            if ( this._current ) this._map.removeLayer( this._current );
+            next.addTo( this._map );
+            this._current = next;
+        },
+
+        _openPanel() {
+            this._panelOpen = true;
+            this._panel.hidden = false;
+            this._btn.setAttribute( 'aria-expanded', 'true' );
+        },
+
+        _closePanel() {
+            this._panelOpen = false;
+            this._panel.hidden = true;
+            this._btn.setAttribute( 'aria-expanded', 'false' );
+        },
+
+        _onDocClick( e ) {
+            if ( this._panelOpen && !this.getContainer().contains( e.target ) ) {
+                this._closePanel();
+            }
+        }
+    } );
+
+    /**
      * Initialize the map
      *
      * @param {Object} bounds - GPX bounds object
@@ -1652,9 +1758,6 @@ Chart.register( LineController, LineElement, PointElement, LinearScale, Filler, 
         const selectedLayer = baseLayers[ defaultMapLayer ] || osmLayer;
         selectedLayer.addTo( leafletMap );
 
-        // Create layer control widget
-        L.control.layers( baseLayers, null, { position: 'topright' } ).addTo( leafletMap );
-
         // Add fullscreen control
         // Force pseudoFullscreen on mobile for better compatibility
         const isMobile = window.innerWidth <= 767;
@@ -1665,6 +1768,11 @@ Chart.register( LineController, LineElement, PointElement, LinearScale, Filler, 
 
         // Add dismiss control
         leafletMap.addControl( new DismissControl() );
+
+        // Add layer control — topleft, below dismiss
+        const layersCtrl = new LayersControl( baseLayers, { position: 'topleft' } );
+        layersCtrl.setActiveLayer( selectedLayer );
+        leafletMap.addControl( layersCtrl );
 
         // Initialize map view based on progress indicator setting
         if ( bounds && bounds.north !== 0 ) {
