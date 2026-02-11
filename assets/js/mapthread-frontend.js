@@ -1049,12 +1049,12 @@ Chart.register( LineController, LineElement, PointElement, LinearScale, Filler, 
             const y = chartArea.top - 8;
 
             // Loss (muted red) on the right
-            ctx.fillStyle = 'rgba(160, 60, 60, 0.5)';
+            ctx.fillStyle = 'rgba(160, 60, 60, 0.7)';
             ctx.fillText( lossText, x, y );
 
             // Gain (muted green) to the left of loss
             const lossWidth = ctx.measureText( lossText ).width;
-            ctx.fillStyle = 'rgba(60, 120, 60, 0.5)';
+            ctx.fillStyle = 'rgba(60, 120, 60, 0.7)';
             ctx.fillText( gainText, x - lossWidth - 8, y );
 
             ctx.restore();
