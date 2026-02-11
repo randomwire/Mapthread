@@ -636,15 +636,16 @@ body.has-mapthread-blocks.mapthread-map-dismissed #mapthread-map {
     }
 }
 
-// Body padding adjustments when dismissed
+// Tile overlays the page — reset body padding so content expands to full width.
 @media (min-width: 768px) {
     body.has-mapthread-blocks.mapthread-map-dismissed {
-        padding-right: 54px; // 44px tile + 10px gap
+        padding-right: 0;
     }
 }
 
+// Mobile only: undo the top padding added for the sticky map.
 @media (max-width: 767px) {
     body.has-mapthread-blocks.mapthread-map-dismissed {
-        padding-top: 0; // tile overlays the page; no layout gap needed
+        padding-top: 0;
     }
 }

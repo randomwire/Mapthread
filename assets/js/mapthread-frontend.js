@@ -663,20 +663,16 @@ Chart.register( LineController, LineElement, PointElement, LinearScale, Filler, 
      * @param {HTMLElement} el - The map container element
      */
     function applyDismissStyles( el ) {
-        const isMobile = window.innerWidth <= 767;
         el.style.setProperty( 'width',      DISMISS_TILE, 'important' );
         el.style.setProperty( 'height',     DISMISS_TILE, 'important' );
         el.style.setProperty( 'min-width',  '0',          'important' );
         el.style.setProperty( 'min-height', '0',          'important' );
-        if ( isMobile ) {
-            // Bottom-right: avoids overlapping hamburger menus typically at top-right
-            el.style.setProperty( 'top',    'auto',  'important' );
-            el.style.setProperty( 'bottom', '10px',  'important' );
-            el.style.setProperty( 'left',   'auto',  'important' );
-            el.style.setProperty( 'right',  '10px',  'important' );
-        } else {
-            el.style.setProperty( 'bottom', 'auto',  'important' );
-        }
+        // Both mobile and desktop: float the tile to the bottom-right corner
+        // so it overlays the page rather than reserving layout space.
+        el.style.setProperty( 'top',    'auto',  'important' );
+        el.style.setProperty( 'bottom', '10px',  'important' );
+        el.style.setProperty( 'left',   'auto',  'important' );
+        el.style.setProperty( 'right',  '10px',  'important' );
     }
 
     /**
