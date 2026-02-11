@@ -844,21 +844,34 @@ Chart.register( LineController, LineElement, PointElement, LinearScale, Filler, 
             return { gain: 0, loss: 0 };
         }
 
-        // 7-point moving average to smooth GPS noise
-        const WINDOW = 7;
-        const half = Math.floor( WINDOW / 2 );
-        const smoothed = new Array( valid.length );
+        // 7-point median filter to remove GPS elevation spikes
+        const MEDIAN_WINDOW = 7;
+        const mHalf = Math.floor( MEDIAN_WINDOW / 2 );
+        const despiked = new Array( valid.length );
         for ( let i = 0; i < valid.length; i++ ) {
+            const neighborhood = [];
+            for ( let j = Math.max( 0, i - mHalf ); j <= Math.min( valid.length - 1, i + mHalf ); j++ ) {
+                neighborhood.push( valid[ j ] );
+            }
+            neighborhood.sort( ( a, b ) => a - b );
+            despiked[ i ] = neighborhood[ Math.floor( neighborhood.length / 2 ) ];
+        }
+
+        // 11-point moving average to smooth remaining GPS noise
+        const WINDOW = 11;
+        const half = Math.floor( WINDOW / 2 );
+        const smoothed = new Array( despiked.length );
+        for ( let i = 0; i < despiked.length; i++ ) {
             let sum = 0, count = 0;
-            for ( let j = Math.max( 0, i - half ); j <= Math.min( valid.length - 1, i + half ); j++ ) {
-                sum += valid[ j ];
+            for ( let j = Math.max( 0, i - half ); j <= Math.min( despiked.length - 1, i + half ); j++ ) {
+                sum += despiked[ j ];
                 count++;
             }
             smoothed[ i ] = sum / count;
         }
 
         // Dead-band threshold on smoothed data
-        const THRESHOLD = 4;
+        const THRESHOLD = 10;
         let gain = 0, loss = 0;
         let ref = smoothed[ 0 ];
 
