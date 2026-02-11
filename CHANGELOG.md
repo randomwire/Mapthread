@@ -125,6 +125,16 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ---
 
+## [1.3.7] - 2026-02-11
+
+### Fixed
+- Elevation gain/loss overcounting — added 7-point median filter to remove GPS spikes, widened moving average to 11 points, raised dead-band threshold to 10m; readings now within 4% of Gaia GPS
+
+### Improved
+- Elevation stats text legibility on chart (increased opacity)
+
+---
+
 ## [1.3.6] - 2026-02-11
 
 ### Improved
@@ -171,6 +181,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ---
 
+[1.3.7]: https://github.com/randomwire/Mapthread/releases/tag/v1.3.7
 [1.3.6]: https://github.com/randomwire/Mapthread/releases/tag/v1.3.6
 [1.3.5]: https://github.com/randomwire/Mapthread/releases/tag/v1.3.5
 [1.3.4]: https://github.com/randomwire/Mapthread/releases/tag/v1.3.4

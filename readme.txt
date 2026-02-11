@@ -5,7 +5,7 @@ Tags: maps, gpx, travel, storytelling, hiking
 Requires at least: 6.0
 Tested up to: 6.9
 Requires PHP: 7.4
-Stable tag: 1.3.6
+Stable tag: 1.3.7
 License: GPLv2 or later
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
 
@@ -176,6 +176,10 @@ All external API calls are made from the user's browser, not from your WordPress
 
 == Changelog ==
 
+= 1.3.7 - 2026-02-11 =
+* Fixed: Elevation gain/loss overcounting — added median filter to remove GPS spikes, tuned smoothing parameters to match Gaia GPS accuracy
+* Improved: Elevation stats text legibility on chart
+
 = 1.3.6 - 2026-02-11 =
 * Improved: Map dismiss button on desktop now overlays the page — article expands to full width when map is hidden
 
@@ -228,6 +232,9 @@ All external API calls are made from the user's browser, not from your WordPress
 * Performance optimizations
 
 == Upgrade Notice ==
+
+= 1.3.7 =
+Elevation gain/loss readings are now much more accurate — fixes overcounting on noisy GPS data.
 
 = 1.3.6 =
 Hiding the map on desktop now expands the article to full width — the restore tile floats in the corner without reserving space.
