@@ -49,6 +49,9 @@ Chart.register( LineController, LineElement, PointElement, LinearScale, Filler, 
     let trackCoords = [];               // Full coordinate array
     let trackDistances = [];            // Cumulative distance at each point
     let totalTrackDistance = 0;         // Total track length
+    let cameraCoords = [];              // Chaikin-smoothed coords for camera (not drawn)
+    let cameraTrackDistances = [];      // Cumulative distances along cameraCoords
+    let cameraTotalDistance = 0;        // Total length of smoothed camera path
     let markerTrackPositions = [];      // Each marker's position ratio (0-1) along track
     let walkedPolyline = null;          // Polyline for walked portion
     let remainingPolyline = null;       // Polyline for remaining portion
@@ -174,6 +177,33 @@ Chart.register( LineController, LineElement, PointElement, LinearScale, Filler, 
      */
     function lerp( a, b, t ) {
         return a + ( b - a ) * t;
+    }
+
+    /**
+     * Apply Chaikin's corner-cutting algorithm to smooth a coordinate array.
+     * Each iteration replaces every segment [P0,P1] with two points at 25% and 75%.
+     * The first and last points are preserved unchanged.
+     *
+     * @param {Array<[number,number]>} coords     Array of [lat, lng] pairs
+     * @param {number}                 iterations Number of passes (2–4 recommended)
+     * @returns {Array<[number,number]>}
+     */
+    function chaikinSmooth( coords, iterations ) {
+        let pts = coords;
+        for ( let iter = 0; iter < iterations; iter++ ) {
+            const out = [ pts[ 0 ] ];
+            for ( let i = 0; i < pts.length - 1; i++ ) {
+                const p0 = pts[ i ];
+                const p1 = pts[ i + 1 ];
+                out.push( [ 0.75 * p0[ 0 ] + 0.25 * p1[ 0 ],
+                    0.75 * p0[ 1 ] + 0.25 * p1[ 1 ] ] );
+                out.push( [ 0.25 * p0[ 0 ] + 0.75 * p1[ 0 ],
+                    0.25 * p0[ 1 ] + 0.75 * p1[ 1 ] ] );
+            }
+            out.push( pts[ pts.length - 1 ] );
+            pts = out;
+        }
+        return pts;
     }
 
     /**
@@ -317,6 +347,48 @@ Chart.register( LineController, LineElement, PointElement, LinearScale, Filler, 
         const lng = trackCoords[ segmentIndex ][ 1 ] + t * ( trackCoords[ segmentIndex + 1 ][ 1 ] - trackCoords[ segmentIndex ][ 1 ] );
 
         return [ lat, lng ];
+    }
+
+    /**
+     * Like getCoordinateAtProgress() but follows the Chaikin-smoothed camera path.
+     * Falls back to the raw track if cameraCoords hasn't been built yet.
+     *
+     * @param {number} progress - Fractional position along track (0 to 1)
+     * @returns {Array<number>|null} [lat, lng] coordinate pair, or null
+     */
+    function getCameraCoordinateAtProgress( progress ) {
+        if ( cameraCoords.length === 0 ) {
+            return getCoordinateAtProgress( progress );
+        }
+
+        const targetDist = progress * cameraTotalDistance;
+        let lo = 0, hi = cameraCoords.length - 2;
+        while ( lo < hi ) {
+            const mid = ( lo + hi ) >> 1;
+            if ( cameraTrackDistances[ mid + 1 ] < targetDist ) {
+                lo = mid + 1;
+            } else {
+                hi = mid;
+            }
+        }
+        const segIdx = lo;
+
+        if ( segIdx >= cameraCoords.length - 1 ) {
+            return cameraCoords[ cameraCoords.length - 1 ];
+        }
+
+        const segStart = cameraTrackDistances[ segIdx ];
+        const segEnd   = cameraTrackDistances[ segIdx + 1 ];
+        const segLen   = segEnd - segStart;
+        if ( segLen === 0 ) {
+            return cameraCoords[ segIdx ];
+        }
+
+        const t = ( targetDist - segStart ) / segLen;
+        return [
+            cameraCoords[ segIdx ][ 0 ] + t * ( cameraCoords[ segIdx + 1 ][ 0 ] - cameraCoords[ segIdx ][ 0 ] ),
+            cameraCoords[ segIdx ][ 1 ] + t * ( cameraCoords[ segIdx + 1 ][ 1 ] - cameraCoords[ segIdx ][ 1 ] ),
+        ];
     }
 
     /**
@@ -622,7 +694,7 @@ Chart.register( LineController, LineElement, PointElement, LinearScale, Filler, 
         lastSmoothedProgress = smoothedProgress;
 
         // Update camera
-        const coord = getCoordinateAtProgress( smoothedProgress );
+        const coord = getCameraCoordinateAtProgress( smoothedProgress );
         const zoom = lerp( targetCurrentZoom, targetNextZoom, smoothedProgress );
         if ( coord && map && isFollowMode ) {
             map.setView( coord, zoom, { animate: false } );
@@ -2037,6 +2109,12 @@ Chart.register( LineController, LineElement, PointElement, LinearScale, Filler, 
                     trackDistances = distanceData.distances;
                     totalTrackDistance = distanceData.totalDistance;
 
+                    // Build smoothed camera path (Chaikin, 4 iterations — not drawn, camera-only)
+                    cameraCoords = chaikinSmooth( trackCoords, 4 );
+                    const camDist = calculateTrackDistances( cameraCoords );
+                    cameraTrackDistances = camDist.distances;
+                    cameraTotalDistance = camDist.totalDistance;
+
                     // Add GPX track (will be replaced by progress indicator if enabled)
                     addGPXTrack( coords );
                 }
@@ -2054,6 +2132,12 @@ Chart.register( LineController, LineElement, PointElement, LinearScale, Filler, 
             const distanceData = calculateTrackDistances( trackCoords );
             trackDistances = distanceData.distances;
             totalTrackDistance = distanceData.totalDistance;
+
+            // Build smoothed camera path (Chaikin, 4 iterations — not drawn, camera-only)
+            cameraCoords = chaikinSmooth( trackCoords, 4 );
+            const camDist = calculateTrackDistances( cameraCoords );
+            cameraTrackDistances = camDist.distances;
+            cameraTotalDistance = camDist.totalDistance;
 
             // If progress indicator is OFF, show a static connecting line
             if ( ! showProgressIndicator ) {
