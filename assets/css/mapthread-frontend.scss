@@ -50,11 +50,6 @@ $marker-focus-color: #4A90E2;
             transform: none !important;
         }
 
-        // Hide the data-only GPX block
-        .mapthread-map-gpx {
-            display: none;
-        }
-
         // Keep reasonable line length for readability
         .entry-content > p,
         .wp-block-post-content > p,
@@ -166,10 +161,6 @@ $marker-focus-color: #4A90E2;
             box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
         }
 
-        // Hide GPX block
-        .mapthread-map-gpx {
-            display: none !important;
-        }
     }
 
     // Fullscreen mode overrides (both true fullscreen and pseudo-fullscreen)
@@ -332,14 +323,21 @@ $marker-focus-color: #4A90E2;
     right: 0;
     height: 100px;
     z-index: 1000;
-    background: linear-gradient(
-        to top,
-        rgba(255, 255, 255, 0.95) 0%,
-        rgba(255, 255, 255, 0.85) 90%,
-        rgba(255, 255, 255, 0) 100%
-    );
     padding: 0 8px 4px 8px;
     pointer-events: auto;
+
+    &::before {
+        content: '';
+        position: absolute;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        top: -10px;
+        backdrop-filter: blur(8px);
+        -webkit-backdrop-filter: blur(8px);
+        background: rgba(255, 255, 255, 0.8);
+        z-index: -1;
+    }
 
     canvas {
         width: 100% !important;
@@ -491,7 +489,7 @@ $marker-focus-color: #4A90E2;
 
 .mapthread-scroll-hint {
     position: absolute;
-    bottom: 110px; // 100px elevation profile + 10px gap; sits flush above gradient when shown
+    bottom: 120px; // 110px elevation backdrop (100px + 10px ::before) + 10px gap
     left: 50%;
     transform: translateX(-50%);
     background: rgba(0, 0, 0, 0.6);
@@ -599,11 +597,6 @@ $marker-focus-color: #4A90E2;
 .mapthread-marker-pin:focus {
     outline: 3px solid $marker-focus-color;
     outline-offset: 3px;
-}
-
-.leaflet-control-zoom a:focus {
-    outline: 2px solid $marker-focus-color;
-    outline-offset: -2px;
 }
 
 // Reduced motion support
