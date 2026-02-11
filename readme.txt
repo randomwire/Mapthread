@@ -5,7 +5,7 @@ Tags: maps, gpx, travel, storytelling, hiking
 Requires at least: 6.0
 Tested up to: 6.9
 Requires PHP: 7.4
-Stable tag: 1.3.5
+Stable tag: 1.3.6
 License: GPLv2 or later
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
 
@@ -176,6 +176,9 @@ All external API calls are made from the user's browser, not from your WordPress
 
 == Changelog ==
 
+= 1.3.6 - 2026-02-11 =
+* Improved: Map dismiss button on desktop now overlays the page — article expands to full width when map is hidden
+
 = 1.3.5 - 2026-02-11 =
 * Added: Ctrl/Cmd+scroll to zoom map — bare scroll over the map no longer hijacks page scrolling; a brief hint overlay guides users to use Ctrl (or ⌘ on macOS) to zoom
 
@@ -225,6 +228,9 @@ All external API calls are made from the user's browser, not from your WordPress
 * Performance optimizations
 
 == Upgrade Notice ==
+
+= 1.3.6 =
+Hiding the map on desktop now expands the article to full width — the restore tile floats in the corner without reserving space.
 
 = 1.3.5 =
 Scroll the page without accidentally zooming the map — use Ctrl (or ⌘ on macOS) + scroll to zoom.
