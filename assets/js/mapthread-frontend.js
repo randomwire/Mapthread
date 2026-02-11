@@ -62,6 +62,7 @@ Chart.register( LineController, LineElement, PointElement, LinearScale, Filler, 
     let animationRafId = null;          // Continuous animation loop RAF ID
     let isMapDismissed = false;         // True when map is collapsed to corner tile
     let mapInteractionScrollListener = null; // Listener for re-enabling follow mode
+    let scrollHintShown = false;            // True after hint has been shown once; prevents repeat flashing
 
     // Elevation profile state
     let trackElevations = [];           // Elevation in meters at each track point
@@ -1731,7 +1732,7 @@ Chart.register( LineController, LineElement, PointElement, LinearScale, Filler, 
         // forward-compatible with a future Leaflet upgrade.
         const leafletMap = L.map( 'mapthread-map', {
             zoomControl: true,
-            scrollWheelZoom: true,
+            scrollWheelZoom: false,  // Replaced by Ctrl/Cmd+scroll handler below
             attributionControl: false,  // Disable default bottom-right attribution
             renderer: L.canvas()
         } );
@@ -1740,6 +1741,46 @@ Chart.register( LineController, LineElement, PointElement, LinearScale, Filler, 
         L.control.attribution( {
             position: 'topright'
         } ).addTo( leafletMap );
+
+        // Ctrl/Cmd+scroll hint overlay — shown briefly when user scrolls without modifier
+        const isMac = navigator.userAgentData
+            ? navigator.userAgentData.platform === 'macOS'
+            : /Mac/.test( navigator.userAgent );
+        const scrollHint = document.createElement( 'div' );
+        scrollHint.className = 'mapthread-scroll-hint';
+        scrollHint.textContent = isMac
+            ? 'Use ⌘ or Ctrl + scroll to zoom'
+            : 'Use Ctrl + scroll to zoom';
+        mapContainer.appendChild( scrollHint );
+
+        // Replace Leaflet's scroll wheel zoom with a modifier-key-gated handler.
+        // Without a modifier, wheel events pass through to page scroll and show hint.
+        mapContainer.addEventListener( 'wheel', ( e ) => {
+            if ( e.ctrlKey || e.metaKey ) {
+                // Modifier held — zoom the map and pause auto-follow
+                e.preventDefault();
+                e.stopPropagation();
+                const delta = e.deltaY < 0 ? 1 : -1;
+                const newZoom = Math.max(
+                    leafletMap.getMinZoom(),
+                    Math.min( leafletMap.getMaxZoom(), leafletMap.getZoom() + delta )
+                );
+                leafletMap.setZoom( newZoom );
+                handleMapInteraction();
+            } else {
+                // No modifier — let page scroll normally, show hint briefly.
+                // Only start the timer on the first event; don't reset it on
+                // subsequent events so the hint auto-hides after 1.5s regardless
+                // of how long the user keeps scrolling.
+                if ( ! scrollHintShown ) {
+                    scrollHintShown = true;
+                    scrollHint.classList.add( 'mapthread-scroll-hint--visible' );
+                    setTimeout( () => {
+                        scrollHint.classList.remove( 'mapthread-scroll-hint--visible' );
+                    }, 1500 );
+                }
+            }
+        }, { passive: false } );
 
         // Define base layer options
         const osmLayer = L.tileLayer( 'https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
