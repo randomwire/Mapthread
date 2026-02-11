@@ -88,7 +88,7 @@ Chart.register( LineController, LineElement, PointElement, LinearScale, Filler, 
 
     // Dismiss control
     const DISMISS_TILE = '44px';         // Collapsed map tile size
-    const ICON_CLOSE   = '&#x2715;';    // × used on the dismiss button
+    const ICON_CLOSE   = '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 14 14" width="14" height="14" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" aria-hidden="true"><line x1="2" y1="2" x2="12" y2="12"/><line x1="12" y1="2" x2="2" y2="12"/></svg>';
     const ICON_LAYERS  = '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 16 16" width="14" height="14" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linejoin="round" aria-hidden="true"><polygon points="8,2 15,5.5 8,9 1,5.5"/><path d="M1 8.5L8 12l7-3.5"/><path d="M1 11.5L8 15l7-3.5"/></svg>';
     const ICON_MAP_PIN = // Map-pin SVG used on the restore button
         '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 16 16" ' +
@@ -1562,6 +1562,25 @@ Chart.register( LineController, LineElement, PointElement, LinearScale, Filler, 
     }
 
     /**
+     * Create a standard leaflet-bar anchor button inside a container.
+     *
+     * @param {HTMLElement} container  Parent element
+     * @param {string}      className  CSS class for the <a>
+     * @param {string}      icon       innerHTML (SVG string)
+     * @param {string}      label      title + aria-label text
+     * @returns {HTMLAnchorElement}
+     */
+    function createControlBtn( container, className, icon, label ) {
+        const btn = L.DomUtil.create( 'a', className, container );
+        btn.href  = '#';
+        btn.title = label;
+        btn.setAttribute( 'role', 'button' );
+        btn.setAttribute( 'aria-label', label );
+        btn.innerHTML = icon;
+        return btn;
+    }
+
+    /**
      * Leaflet control that dismisses/restores the map panel.
      * Defined at module level so initializeMap() can stay free of class boilerplate.
      */
@@ -1571,18 +1590,14 @@ Chart.register( LineController, LineElement, PointElement, LinearScale, Filler, 
             const container = L.DomUtil.create(
                 'div', 'leaflet-bar leaflet-control mapthread-dismiss-control'
             );
-            const btn = L.DomUtil.create( 'a', 'mapthread-dismiss-btn', container );
-            btn.href = '#';
-            btn.title = 'Hide map';
-            btn.setAttribute( 'role', 'button' );
-            btn.setAttribute( 'aria-label', 'Hide map' );
-            btn.innerHTML = ICON_CLOSE;
+            const btn = createControlBtn( container, 'mapthread-dismiss-btn', ICON_CLOSE, 'Hide map' );
 
             L.DomEvent.on( btn, 'click', ( e ) => {
                 L.DomEvent.preventDefault( e );
                 toggleMapDismiss( btn );
             } );
             L.DomEvent.disableClickPropagation( container );
+            L.DomEvent.disableScrollPropagation( container );
             return container;
         }
     } );
@@ -1610,13 +1625,8 @@ Chart.register( LineController, LineElement, PointElement, LinearScale, Filler, 
                 'div', 'leaflet-bar leaflet-control mapthread-layer-control'
             );
 
-            const btn = this._btn = L.DomUtil.create( 'a', 'mapthread-layer-btn', container );
-            btn.href = '#';
-            btn.title = 'Map layers';
-            btn.setAttribute( 'role', 'button' );
-            btn.setAttribute( 'aria-label', 'Map layers' );
+            const btn = this._btn = createControlBtn( container, 'mapthread-layer-btn', ICON_LAYERS, 'Map layers' );
             btn.setAttribute( 'aria-expanded', 'false' );
-            btn.innerHTML = ICON_LAYERS;
 
             const panel = this._panel = L.DomUtil.create(
                 'div', 'mapthread-layer-panel', container

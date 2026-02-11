@@ -400,12 +400,22 @@ $marker-focus-color: #4A90E2;
         font-size: 20px;
         transition: all 0.15s ease;
         background-color: white;
-        display: block;
+        display: flex;
+        align-items: center;
+        justify-content: center;
         text-decoration: none !important;
+        -webkit-tap-highlight-color: transparent; // override Leaflet's .leaflet-container a blue flash
+        outline: none; // suppress browser focus ring on mouse click for all controls
 
-        &:hover {
+        &:hover,
+        &:active {
             background-color: #f0f0f0;
             color: #000;
+        }
+
+        &:focus-visible {
+            outline: 2px solid $marker-focus-color !important;
+            outline-offset: -2px;
         }
     }
 }
@@ -429,19 +439,10 @@ $marker-focus-color: #4A90E2;
 }
 
 .mapthread-layer-btn {
-    display: flex !important;
-    align-items: center;
-    justify-content: center;
     border-radius: 6px !important; // Leaflet .leaflet-bar a:first-child (specificity 0-2-1) sets top corners to 4px,
                                    // beating our plain class selector (0-1-0). !important wins regardless.
     border-bottom: none !important; // Leaflet .leaflet-bar a sets border-bottom: 1px solid #ccc;
                                     // a:last-child suppresses it, but our panel div comes after the a so it's not :last-child
-    outline: none;   // suppress focus ring on mouse click
-
-    &:focus-visible {
-        outline: 2px solid $marker-focus-color !important;
-        outline-offset: -2px;
-    }
 }
 
 .mapthread-layer-panel {
@@ -578,25 +579,6 @@ $marker-focus-color: #4A90E2;
 
     .mapthread-marker-pin.mapthread-active {
         animation: none;
-    }
-}
-
-// ============================================================================
-// DISMISS BUTTON
-// Styled identically to .leaflet-control-zoom anchors — inherits white box,
-// border, and shadow from the .leaflet-bar class added in JS.
-// ============================================================================
-
-.mapthread-dismiss-btn {
-    display: flex; // overrides shared block's display: block
-    align-items: center;
-    justify-content: center;
-    font-size: 16px; // overrides shared block's 20px (sized for +/- zoom symbols)
-    outline: none;   // suppress Leaflet's bundled .leaflet-bar a:focus ring on mouse click
-
-    &:focus-visible {
-        outline: 2px solid $marker-focus-color !important;
-        outline-offset: -2px;
     }
 }
 
