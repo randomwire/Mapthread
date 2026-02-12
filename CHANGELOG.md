@@ -125,6 +125,14 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ---
 
+## [1.3.8] - 2026-02-12
+
+### Improved
+- Combined latitude and longitude into a single Coordinates field in Map Marker settings — paste directly from Google Maps or Gaia GPS
+- Mobile: map starts hidden by default with a "Show map" tooltip, prioritising story content on first load
+
+---
+
 ## [1.3.7] - 2026-02-11
 
 ### Fixed
@@ -181,6 +189,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ---
 
+[1.3.8]: https://github.com/randomwire/Mapthread/releases/tag/v1.3.8
 [1.3.7]: https://github.com/randomwire/Mapthread/releases/tag/v1.3.7
 [1.3.6]: https://github.com/randomwire/Mapthread/releases/tag/v1.3.6
 [1.3.5]: https://github.com/randomwire/Mapthread/releases/tag/v1.3.5

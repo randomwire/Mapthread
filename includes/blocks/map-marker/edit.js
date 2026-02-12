@@ -225,22 +225,21 @@ export default function Edit( { attributes, setAttributes, clientId } ) {
                         currentAddress={ address }
                     />
 
-                    <NumberControl
-                        label={ __( 'Latitude', 'mapthread' ) }
-                        value={ lat }
-                        onChange={ ( value ) => setAttributes( { lat: parseFloat( value ) || 0 } ) }
-                        placeholder="51.5074"
-                        help={ __( 'Decimal degrees (e.g., 51.5074)', 'mapthread' ) }
-                        step={ 0.0001 }
-                    />
-
-                    <NumberControl
-                        label={ __( 'Longitude', 'mapthread' ) }
-                        value={ lng }
-                        onChange={ ( value ) => setAttributes( { lng: parseFloat( value ) || 0 } ) }
-                        placeholder="-0.1278"
-                        help={ __( 'Decimal degrees (e.g., -0.1278)', 'mapthread' ) }
-                        step={ 0.0001 }
+                    <TextControl
+                        label={ __( 'Coordinates', 'mapthread' ) }
+                        value={ lat || lng ? `${ lat }, ${ lng }` : '' }
+                        onChange={ ( value ) => {
+                            const parts = value.split( ',' );
+                            if ( parts.length === 2 ) {
+                                const parsedLat = parseFloat( parts[ 0 ].trim() );
+                                const parsedLng = parseFloat( parts[ 1 ].trim() );
+                                if ( ! isNaN( parsedLat ) && ! isNaN( parsedLng ) ) {
+                                    setAttributes( { lat: parsedLat, lng: parsedLng } );
+                                }
+                            }
+                        } }
+                        placeholder="34.1818, 136.3069"
+                        help={ __( 'Latitude, longitude (e.g. 35.31909, 139.55064)', 'mapthread' ) }
                     />
 
                     <NumberControl

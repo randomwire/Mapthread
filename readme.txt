@@ -5,7 +5,7 @@ Tags: maps, gpx, travel, storytelling, hiking
 Requires at least: 6.0
 Tested up to: 6.9
 Requires PHP: 7.4
-Stable tag: 1.3.7
+Stable tag: 1.3.8
 License: GPLv2 or later
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
 
@@ -176,6 +176,10 @@ All external API calls are made from the user's browser, not from your WordPress
 
 == Changelog ==
 
+= 1.3.8 - 2026-02-12 =
+* Improved: Combined latitude and longitude into a single Coordinates field — paste directly from Google Maps or Gaia GPS
+* Improved: Mobile — map starts hidden by default with a "Show map" tooltip, prioritising story content on first load
+
 = 1.3.7 - 2026-02-11 =
 * Fixed: Elevation gain/loss overcounting — added median filter to remove GPS spikes, tuned smoothing parameters to match Gaia GPS accuracy
 * Improved: Elevation stats text legibility on chart
@@ -232,6 +236,9 @@ All external API calls are made from the user's browser, not from your WordPress
 * Performance optimizations
 
 == Upgrade Notice ==
+
+= 1.3.8 =
+Paste coordinates directly from Google Maps or Gaia GPS into a single field — no more splitting lat/lng manually.
 
 = 1.3.7 =
 Elevation gain/loss readings are now much more accurate — fixes overcounting on noisy GPS data.
