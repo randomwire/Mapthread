@@ -125,6 +125,13 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ---
 
+## [1.3.9] - 2026-02-12
+
+### Added
+- GPX route (`<rte>`) support — files with route points are now parsed alongside tracks
+
+---
+
 ## [1.3.8] - 2026-02-12
 
 ### Improved
@@ -189,6 +196,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ---
 
+[1.3.9]: https://github.com/randomwire/Mapthread/releases/tag/v1.3.9
 [1.3.8]: https://github.com/randomwire/Mapthread/releases/tag/v1.3.8
 [1.3.7]: https://github.com/randomwire/Mapthread/releases/tag/v1.3.7
 [1.3.6]: https://github.com/randomwire/Mapthread/releases/tag/v1.3.6

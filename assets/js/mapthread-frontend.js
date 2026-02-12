@@ -1256,7 +1256,10 @@ Chart.register( LineController, LineElement, PointElement, LinearScale, Filler, 
                 return { coords: [], elevations: [] };
             }
 
-            const trkpts = xmlDoc.querySelectorAll( 'trkpt' );
+            let trkpts = xmlDoc.querySelectorAll( 'trkpt' );
+            if ( trkpts.length === 0 ) {
+                trkpts = xmlDoc.querySelectorAll( 'rtept' );
+            }
             const coords = [];
             const elevations = [];
             let hasElevation = false;

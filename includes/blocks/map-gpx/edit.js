@@ -36,11 +36,14 @@ function parseGPX( gpxContent ) {
             return { error: __( 'Invalid GPX format - XML parsing failed', 'mapthread' ) };
         }
 
-        // Find all track points
-        const trkpts = xmlDoc.querySelectorAll( 'trkpt' );
+        // Find all track points (fall back to route points)
+        let trkpts = xmlDoc.querySelectorAll( 'trkpt' );
+        if ( trkpts.length === 0 ) {
+            trkpts = xmlDoc.querySelectorAll( 'rtept' );
+        }
 
         if ( trkpts.length === 0 ) {
-            return { error: __( 'No track points found in GPX file', 'mapthread' ) };
+            return { error: __( 'No track or route points found in GPX file', 'mapthread' ) };
         }
 
         // Extract coordinates and calculate bounds
