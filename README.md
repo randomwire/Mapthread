@@ -11,7 +11,7 @@ Interactive map-based storytelling for WordPress.
 
 ## Description
 
-Mapthread transforms your travel stories, hiking adventures, and geographic narratives into interactive experiences with maps. Upload a GPX track, place numbered markers in your story, and watch as readers scroll - the map automatically pans and zooms to follow along.
+Mapthread transforms your travel stories, hiking adventures, and geographic narratives into interactive experiences with maps. Upload a GPX file, place markers in your story, and watch as readers scroll - the map automatically pans and zooms to follow along.
 
 Perfect for:
 - Hiking and adventure blogs
@@ -25,23 +25,23 @@ Perfect for:
 ## Features
 
 ### Core Functionality
-- **GPX Track Upload** - Upload your GPS tracks from any device or app
-- **Elevation Profiles** - Visualize elevation changes with graphs at the bottom of the map
-- **Emoji Markers** - Choose from any emoji as custom map markers
-- **Markers-Only Mode** - Display maps with just markers, no GPX track required
-- **Address Search** - Geocode addresses with autocomplete
-- **Auto-Following Maps** - Map pans and zooms as readers scroll through your story
-- **Numbered Waypoints** - Place markers at key points in your narrative
+- **GPX Upload** - Upload your GPS files (tracks or routes) from any device or app
+- **Auto-Following Mode** - Map pans and zooms as readers scroll through your story
 - **Smart Follow Mode** - Automatically pauses when readers interact with the map, resumes when they keep scrolling
+- **Markers-Only Mode** - Display maps with just markers, no GPX file required
+- **Elevation Profiles** - Visualize elevation changes with graphs at the bottom of the map
+- **Numbered Waypoints** - Place markers at key points in your narrative
+- **Address Search** - Geocode addresses with autocomplete
+- **Emoji Markers** - Choose from any emoji as custom map markers
 - **Click-to-Scroll** - Click any map marker to jump to that part of the story
 
 ### Design & Layout
 - **Desktop Layout** - 2-column layout (story 60%, sticky map 40%)
-- **Mobile Responsive** - Sticky map at top (30vh), story scrolls below
+- **Mobile Responsive** - Sticky map at top (~35vh), starts hidden with "Show map" button
 
 ### Performance
 - **Client-Side Rendering** - Fast, no server processing required
-- **Smart Caching** - GPX tracks cached in sessionStorage for instant reloads
+- **Smart Caching** - GPX tracks/routes cached in sessionStorage for instant reloads
 
 ---
 
@@ -76,7 +76,7 @@ npm run build
 2. **Add the Map GPX block**
    - Click the block inserter (+)
    - Search for "Map GPX"
-   - Upload your GPX file from the media library
+   - Upload your GPX file to the media library
 3. **Write your story with Map Marker blocks**
    - Add paragraphs, images, etc.
    - Insert "Map Marker" blocks at key points
@@ -93,14 +93,12 @@ npm run build
 - **GPX File** (optional) - Upload from media library
   - Displays: Point count, track bounds, file validation
 - **Show Progress Indicator** (toggle) - Enable/disable auto-following behavior
-  - Default: ON
-  - When ON: Map pans/zooms to follow reader's position in story
+  - When ON: Map pans/zooms to follow reader's position in story (default)
   - When OFF: Map stays at full track view, shows all markers at once
 - **Show Elevation Profile** (toggle) - Enable/disable elevation chart
-  - Default: ON
-  - Displays elevation graph at bottom of map with Chart.js
+  - Displays elevation graph at bottom of map (default)
   - Shows marker positions and current progress on the chart
-  - Only visible when GPX file is loaded
+- **Default Map Style** (dropdown) - Choose which map style loads initially (Street, Satellite, Topographic)
 
 **Validation:**
 - File size >10MB: Warning (may be slow)
@@ -112,24 +110,22 @@ npm run build
 - Elevation is fetched from Open-Elevation API when GPX is uploaded
 - Chart shows elevation changes along your route
 - Marker positions indicated with vertical lines on chart
-- Current scroll position shown with orange indicator
+- Current scroll position shown with red indicator line
 
 ### Map Marker Block
 
-**Purpose:** Places numbered waypoints in your story
+**Purpose:** Places waypoints in your story
 
 **Settings:**
 - **Marker Style** - Choose between numbered pin or emoji
-  - Numbered Pin (default): Clean circular pins with sequential numbers
+  - Default: Clean circular pins
   - Emoji: Choose any emoji as your custom marker icon
 - **Emoji Picker** (when emoji style selected)
   - Search or browse all emojis
   - Click to select (e.g., 🏔️, 🏕️, 🚶, 📍)
-  - Emojis scale and animate as readers scroll
 - **Title** (optional) - Shows in tooltip on hover
-- **Address** (with search) - Type to search locations via OpenStreetMap
-- **Latitude** (auto-filled) - Decimal degrees (e.g., 51.5074)
-- **Longitude** (auto-filled) - Decimal degrees (e.g., -0.1278)
+- **Address** (optional) - Type to search locations via OpenStreetMap
+- **Coordinates** (required) - Paste from Google Maps or enter manually (e.g. 35.31909, 139.55064)
 - **Zoom Level** (optional) - Default: 14
 
 **Address Search:**
@@ -145,7 +141,7 @@ npm run build
 
 **Getting Coordinates:**
 - **Recommended:** Use the built-in address search
-- Right-click on Google Maps > "What's here?"
+- Right-click on a location in Google Maps
 - Use your GPS device/app
 - Extract from GPX waypoints
 
@@ -153,7 +149,7 @@ npm run build
 
 ### Markers-Only Mode
 
-**If you don't have a GPX track,** Mapthread also works with just markers:
+**If you don't have a GPX file,** Mapthread also works with just markers:
 
 #### Scenario 1: No Map GPX Block at All
 - Add Map Marker blocks to your story content
@@ -193,13 +189,11 @@ npm run build
 
 Mapthread offers two ways to integrate with your theme:
 
-### Recommended: Use the Pattern
-
 ### Automatic Layout (Recommended)
 
 Just add your blocks and Mapthread handles the layout automatically:
 - Desktop: Map fixed on the right side, content scrolls on the left
-- Mobile: Map fixed at top, content scrolls below
+- Mobile: Map fixed at top, content scrolls below (collapsed by default)
 
 No additional setup needed!
 
@@ -211,7 +205,7 @@ For full control over your layout:
 2. Left column: Your story content and Map Marker blocks
 3. Right column: Add class `mapthread-map-column` and insert Map GPX block
 
-The `mapthread-map-column` class makes the map sticky as you scroll. See [Block Theme Setup Guide](docs/BLOCK-THEME-SETUP.md) for details.
+The `mapthread-map-column` class makes the map sticky as you scroll.
 
 ---
 
@@ -220,19 +214,7 @@ The `mapthread-map-column` class makes the map sticky as you scroll. See [Block 
 - **WordPress:** 6.0 or higher
 - **PHP:** 7.4 or higher
 - **Browser Support:** Chrome/Safari latest stable (uses modern CSS/JS)
-- **Theme:** Block theme recommended (Twenty Twenty-Four, Twenty Twenty-Five)
-
----
-
-## Browser Compatibility
-
-| Feature | Chrome | Safari | Firefox | Edge |
-|---------|--------|--------|---------|------|
-| Core Functionality | 105+ | 15.4+ | Untested | Untested |
-| Desktop Layout | Yes | Yes | Untested | Untested |
-| Mobile Layout | Yes | Yes | Untested | Untested |
-
-**Note:** Plugin is tested on Chrome and Safari. Firefox and Edge likely work but are not officially tested.
+- **Theme:** Block theme (not tested with classic themes)
 
 ---
 
@@ -250,8 +232,6 @@ The `mapthread-map-column` class makes the map sticky as you scroll. See [Block 
 - Themes with custom post layouts
 - Themes with complex grid systems
 
-**Tip:** If the layout doesn't work with your theme, open an issue on GitHub with your theme name.
-
 ---
 
 ## FAQ
@@ -263,10 +243,10 @@ A: No! You can create map stories with just Map Marker blocks. The map will auto
 A: Not currently. Only the first Map GPX block per post is used.
 
 **Q: What GPX format is supported?**
-A: Standard GPX 1.0/1.1 with `<trk>` (tracks). Waypoints and routes from the GPX file are not displayed; use Map Marker blocks to mark key points instead.
+A: Standard GPX 1.0/1.1 with `<trk>` (tracks) or `<rte>` (routes). Waypoints from the GPX file are not displayed; use Map Marker blocks to mark key points instead.
 
-**Q: Can I customize the marker colors?**
-A: Yes! Mapthread uses your theme's primary color automatically. Set it in `theme.json` or Customizer.
+**Q: Can I customize the map/track/marker colors?**
+A: Not currently. But you can set emojis for each Marker instead of the default.
 
 **Q: Does it work with classic themes?**
 A: Not tested. Mapthread is designed for block themes.
@@ -288,14 +268,14 @@ A: 10MB is recommended. Larger files will show a warning and may be slow to rend
 4. Check that Map GPX block is present
 
 ### Layout looks broken
-1. Ensure you're using a block theme (Twenty Twenty-Four/Five)
+1. Ensure you're using a block theme
 2. Check if another plugin is conflicting with CSS
 3. Try disabling other plugins temporarily
 4. Open an issue with your theme name
 
-### GPX track doesn't render
+### GPX track/route doesn't render
 1. Check that GPX file is valid (test in another app)
-2. Verify file has `<trk>` elements (not just waypoints)
+2. Verify file has `<trk>` (tracks) or `<rte>` (routes) elements (not just waypoints)
 3. Check browser console for parsing errors
 4. Try a smaller GPX file
 
@@ -332,7 +312,6 @@ mapthread/
 │   │   └── mapthread-frontend.js # Map behavior
 │   └── css/
 │       └── mapthread-frontend.scss
-├── docs/                       # Documentation
 ├── build/                      # Compiled assets
 └── package.json
 ```
@@ -364,7 +343,6 @@ Mapthread is built with and relies on the following open-source libraries and se
 
 - **[Leaflet.js](https://leafletjs.com/)** - BSD-2-Clause License
   - Interactive map rendering and controls
-  - Loaded from unpkg.com CDN
 
 - **[Chart.js](https://www.chartjs.org/)** - MIT License
   - Elevation profile visualization
@@ -420,7 +398,7 @@ All included third-party libraries are GPL-compatible:
 - Address searches query Nominatim API with user-entered text
 - Elevation lookups send GPX coordinates to Open-Elevation API
 - Map tiles loaded from OpenStreetMap tile servers
-- All API calls made from user's browser, not from WordPress server
+- All API calls made from user's browser
 
 **No Data Collection:**
 - Plugin does not collect, store, or transmit user data

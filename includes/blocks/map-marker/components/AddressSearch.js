@@ -209,7 +209,7 @@ export default function AddressSearch( { onSelect, currentLat, currentLng, curre
     return (
         <div className="mapthread-address-search" ref={ wrapperRef }>
             <TextControl
-                label={ __( 'Address', 'mapthread' ) }
+                label={ __( 'Address (optional)', 'mapthread' ) }
                 value={ query }
                 onChange={ handleInputChange }
                 placeholder={ __( 'Search for a location...', 'mapthread' ) }

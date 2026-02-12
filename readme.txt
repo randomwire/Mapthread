@@ -9,7 +9,7 @@ Stable tag: 1.3.9
 License: GPLv2 or later
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
 
-Transform your travel stories into interactive map experiences. Upload GPX tracks, place markers, watch the map follow as readers scroll.
+Transform your travel stories into interactive map experiences. Upload GPX files, place markers, watch the map follow as readers scroll.
 
 == Description ==
 
@@ -20,7 +20,7 @@ Perfect for travel bloggers, hiking enthusiasts, and anyone who wants to tell lo
 = Core Features =
 
 * **Auto-Following Maps** - Map pans and zooms as readers scroll through your story
-* **GPX Track Upload** - Support for GPS tracks from any device or app
+* **GPX File Upload** - Support for GPS files from any device or app
 * **Multiple Map Styles** - Switch between Street, Satellite, and Topographic views
 * **Fullscreen Maps** - Expand maps to fullscreen for immersive viewing
 * **Numbered Waypoints** - Place markers at key points in your narrative
@@ -58,7 +58,7 @@ Perfect for travel bloggers, hiking enthusiasts, and anyone who wants to tell lo
 
 = Browser Support =
 
-Tested on Chrome 105+ and Safari 15.4+. Likely works on Firefox and Edge but not officially tested.
+Tested on Chrome 105+ and Safari 15.4+.
 
 = Theme Compatibility =
 
@@ -100,7 +100,7 @@ GPX (GPS Exchange Format) is a standard file format for GPS data. Most fitness t
 
 You can export GPX files from:
 * Fitness apps (Strava, Garmin Connect, etc.)
-* Hiking apps (Gaia, AllTrails, etc.)
+* Hiking apps (Gaia GPS, AllTrails, etc.)
 * GPS devices (Garmin, Suunto, etc.)
 * Google Maps (via third-party tools)
 
@@ -110,21 +110,21 @@ Not currently. Only the first Map GPX block per post is used.
 
 = How do I get coordinates for markers? =
 
-* Right-click on Google Maps and select "What's here?"
-* Use coordinates from your GPS device
-* Extract waypoints from your GPX file
+* Use the built-in address search (type any place name)
+* Paste coordinates from Google Maps (right-click a location)
+* Use coordinates from your GPS device or app
 
 = Does it work with my theme? =
 
-Mapthread is designed for block themes and tested on Twenty Twenty-Four and Twenty Twenty-Five. It should work on most standard block themes. Classic themes may require customization.
+Mapthread is designed for block themes. It should work on most block themes.
 
 = Is there a file size limit for GPX? =
 
 We recommend GPX files under 10MB. Larger files will show a warning and may be slow to render.
 
-= Can I customize the marker colors? =
+= Can I customize the map/track/marker colors? =
 
-Yes! Mapthread automatically uses your theme's primary color. You can set this in your theme.json or WordPress Customizer.
+Not currently. But you can set emojis for each Marker instead of the default.
 
 = Does this work offline? =
 
@@ -158,7 +158,7 @@ Mapthread uses the following open-source libraries and external services:
 * **Open-Elevation API** - https://open-elevation.com/
   Elevation data lookup for GPX tracks
 
-All external API calls are made from the user's browser, not from your WordPress server.
+All external API calls are made from the user's browser.
 
 = WordPress Integration =
 
