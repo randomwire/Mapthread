@@ -12,11 +12,11 @@
     "create-zip": "node scripts/create-package.js"
   },
   "keywords": [
-    "wordpress",
-    "gutenberg",
-    "block",
     "map",
     "gpx",
+    "travel",
+    "storytelling",
+    "hiking",
     "leaflet"
   ],
   "author": "David Gilbert",
