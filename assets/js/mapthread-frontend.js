@@ -787,7 +787,48 @@ Chart.register( LineController, LineElement, PointElement, LinearScale, Filler, 
             isFollowMode = true;
             if ( map ) { map.invalidateSize(); }
             startAnimationLoop();
+            // Remove tooltip if still visible
+            const tip = document.querySelector( '.mapthread-dismiss-tooltip' );
+            if ( tip ) { tip.remove(); }
         }
+    }
+
+    /**
+     * Show a temporary "Show map" tooltip next to the dismissed map tile.
+     * Auto-dismisses after 3 seconds or on first tap/click.
+     */
+    function showDismissTooltip() {
+        const btn = document.querySelector( '.mapthread-dismiss-btn' );
+        if ( ! btn ) { return; }
+
+        const tooltip = document.createElement( 'div' );
+        tooltip.className = 'mapthread-dismiss-tooltip';
+        tooltip.textContent = 'Show map';
+        document.body.appendChild( tooltip );
+
+        // Position vertically centred on the button
+        const btnRect = btn.getBoundingClientRect();
+        const btnCentre = btnRect.top + btnRect.height / 2;
+        const tooltipHeight = tooltip.offsetHeight;
+        tooltip.style.top = ( btnCentre - tooltipHeight / 2 ) + 'px';
+        tooltip.style.right = ( window.innerWidth - btnRect.left + 8 ) + 'px';
+
+        requestAnimationFrame( () => {
+            tooltip.classList.add( 'mapthread-dismiss-tooltip--visible' );
+        } );
+
+        function removeTooltip() {
+            tooltip.classList.remove( 'mapthread-dismiss-tooltip--visible' );
+            tooltip.addEventListener( 'transitionend', () => tooltip.remove(), { once: true } );
+            setTimeout( () => { if ( tooltip.parentNode ) tooltip.remove(); }, 500 );
+        }
+
+        const autoTimer = setTimeout( removeTooltip, 3000 );
+
+        tooltip.addEventListener( 'click', () => {
+            clearTimeout( autoTimer );
+            removeTooltip();
+        }, { once: true } );
     }
 
     // =========================================================================
@@ -1763,7 +1804,11 @@ Chart.register( LineController, LineElement, PointElement, LinearScale, Filler, 
             const container = L.DomUtil.create(
                 'div', 'leaflet-bar leaflet-control mapthread-dismiss-control'
             );
-            const btn = createControlBtn( container, 'mapthread-dismiss-btn', ICON_CLOSE, 'Hide map' );
+            // On mobile the map starts dismissed — show restore icon
+            const startDismissed = window.innerWidth <= 767;
+            const initialIcon  = startDismissed ? ICON_MAP_PIN : ICON_CLOSE;
+            const initialLabel = startDismissed ? 'Show map'   : 'Hide map';
+            const btn = createControlBtn( container, 'mapthread-dismiss-btn', initialIcon, initialLabel );
 
             L.DomEvent.on( btn, 'click', ( e ) => {
                 L.DomEvent.preventDefault( e );
@@ -2302,6 +2347,20 @@ Chart.register( LineController, LineElement, PointElement, LinearScale, Filler, 
                 updateMarkerIcons( initialMarker );
             }
         }, MAP_INTERACTION_TIMEOUT );
+
+        // Mobile: start with map dismissed to prioritise content
+        if ( window.innerWidth <= 767 ) {
+            isMapDismissed = true;
+            document.body.classList.add( 'mapthread-map-dismissed' );
+            const mapEl = map.getContainer();
+            applyDismissStyles( mapEl );
+            isFollowMode = false;
+            if ( animationRafId !== null ) {
+                cancelAnimationFrame( animationRafId );
+                animationRafId = null;
+            }
+            showDismissTooltip();
+        }
     }
 
     // Initialize when DOM is ready
