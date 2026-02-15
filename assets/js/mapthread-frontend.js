@@ -95,6 +95,8 @@ Chart.register( LineController, LineElement, PointElement, LinearScale, Filler, 
     // Dismiss control
     const DISMISS_TILE = '44px';         // Collapsed map tile size
     // Lucide icons (https://lucide.dev/) — viewBox 0 0 24 24, stroke-width 2.5
+    const ICON_FULLSCREEN_ENTER = '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M8 3H5a2 2 0 0 0-2 2v3"/><path d="M21 8V5a2 2 0 0 0-2-2h-3"/><path d="M3 16v3a2 2 0 0 0 2 2h3"/><path d="M16 21h3a2 2 0 0 0 2-2v-3"/></svg>';
+    const ICON_FULLSCREEN_EXIT = '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M8 3v3a2 2 0 0 1-2 2H3"/><path d="M21 8h-3a2 2 0 0 1-2-2V3"/><path d="M3 16h3a2 2 0 0 1 2 2v3"/><path d="M16 21v-3a2 2 0 0 1 2-2h3"/></svg>';
     const ICON_MINIMIZE = '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M19 13V19H13"/><path d="M5 5L19 19"/></svg>';
     const ICON_DOWNLOAD = '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 15V3"/><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><path d="m7 10 5 5 5-5"/></svg>';
     const ICON_LAYERS  = '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12.83 2.18a2 2 0 0 0-1.66 0L2.6 6.08a1 1 0 0 0 0 1.83l8.58 3.91a2 2 0 0 0 1.66 0l8.58-3.9a1 1 0 0 0 0-1.83z"/><path d="M2 12a1 1 0 0 0 .58.91l8.6 3.91a2 2 0 0 0 1.65 0l8.58-3.9A1 1 0 0 0 22 12"/><path d="M2 17a1 1 0 0 0 .58.91l8.6 3.91a2 2 0 0 0 1.65 0l8.58-3.9A1 1 0 0 0 22 17"/></svg>';
@@ -2084,6 +2086,16 @@ Chart.register( LineController, LineElement, PointElement, LinearScale, Filler, 
         } );
         leafletMap.addControl( fullscreenCtrl );
         fullscreenCtrl.getContainer().classList.add( 'mapthread-fullscreen-control' );
+
+        // Replace the plugin's CSS background-image icon with an inline SVG
+        // so it uses stroke="currentColor" like all other control icons.
+        const fullscreenBtn = fullscreenCtrl.getContainer().querySelector( '.leaflet-fullscreen-icon' );
+        if ( fullscreenBtn ) {
+            fullscreenBtn.innerHTML = ICON_FULLSCREEN_ENTER;
+            fullscreenBtn.style.backgroundImage = 'none';
+            leafletMap.on( 'enterFullscreen', () => { fullscreenBtn.innerHTML = ICON_FULLSCREEN_EXIT; } );
+            leafletMap.on( 'exitFullscreen', () => { fullscreenBtn.innerHTML = ICON_FULLSCREEN_ENTER; } );
+        }
 
         // Add dismiss/minimize control
         leafletMap.addControl( new DismissControl() );
