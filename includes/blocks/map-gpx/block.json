@@ -46,6 +46,10 @@
         "defaultMapLayer": {
             "type": "string",
             "default": "Street"
+        },
+        "allowGpxDownload": {
+            "type": "boolean",
+            "default": false
         }
     },
     "supports": {

@@ -95,7 +95,7 @@ function hasMultipleGPXBlocks( clientId ) {
  */
 export default function Edit( { attributes, setAttributes, clientId } ) {
     const blockProps = useBlockProps();
-    const { attachmentId, fileName, pointCount, bounds, showProgressIndicator, showElevationProfile, defaultMapLayer } = attributes;
+    const { attachmentId, fileName, pointCount, bounds, showProgressIndicator, showElevationProfile, defaultMapLayer, allowGpxDownload } = attributes;
 
     const [ isProcessing, setIsProcessing ] = useState( false );
     const [ validationError, setValidationError ] = useState( '' );
@@ -223,6 +223,12 @@ export default function Edit( { attributes, setAttributes, clientId } ) {
                             onChange={ ( value ) => setAttributes( { showProgressIndicator: value } ) }
                             help={ __( 'Animate position along track as readers scroll', 'mapthread' ) }
                         />
+                        <ToggleControl
+                            label={ __( 'Allow GPX download', 'mapthread' ) }
+                            checked={ allowGpxDownload }
+                            onChange={ ( value ) => setAttributes( { allowGpxDownload: value } ) }
+                            help={ __( 'Show a download button so visitors can save the GPX file', 'mapthread' ) }
+                        />
                     </PanelBody>
                 </InspectorControls>
                 <div { ...blockProps }>
@@ -274,6 +280,12 @@ export default function Edit( { attributes, setAttributes, clientId } ) {
                         checked={ showElevationProfile }
                         onChange={ ( value ) => setAttributes( { showElevationProfile: value } ) }
                         help={ __( 'Display elevation chart at bottom of map', 'mapthread' ) }
+                    />
+                    <ToggleControl
+                        label={ __( 'Allow GPX download', 'mapthread' ) }
+                        checked={ allowGpxDownload }
+                        onChange={ ( value ) => setAttributes( { allowGpxDownload: value } ) }
+                        help={ __( 'Show a download button so visitors can save the GPX file', 'mapthread' ) }
                     />
                     <SelectControl
                         label={ __( 'Default Map Style', 'mapthread' ) }

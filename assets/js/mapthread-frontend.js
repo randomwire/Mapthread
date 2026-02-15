@@ -58,6 +58,7 @@ Chart.register( LineController, LineElement, PointElement, LinearScale, Filler, 
     let showProgressIndicator = true;   // Setting from block
     let showElevationProfile = true;    // Setting from block
     let defaultMapLayer = 'Street';     // Which layer to show on load
+    let allowGpxDownload = false;       // Whether to show download button
     let lastSmoothedProgress = null;    // For smooth interpolation
     let targetProgress = 0;             // Raw scroll-derived progress target
     let targetCurrentZoom = 14;         // Zoom at current segment start (matches DEFAULT_ZOOM)
@@ -94,6 +95,7 @@ Chart.register( LineController, LineElement, PointElement, LinearScale, Filler, 
     // Dismiss control
     const DISMISS_TILE = '44px';         // Collapsed map tile size
     const ICON_MINIMIZE = '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 14 14" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><line x1="3" y1="3" x2="11" y2="11"/><polyline points="6 11 11 11 11 6"/></svg>';
+    const ICON_DOWNLOAD = '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 14 14" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><line x1="7" y1="2" x2="7" y2="9"/><polyline points="3 7 7 11 11 7"/><line x1="2" y1="12" x2="12" y2="12"/></svg>';
     const ICON_LAYERS  = '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 16 16" width="14" height="14" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linejoin="round" aria-hidden="true"><polygon points="8,2 15,5.5 8,9 1,5.5"/><path d="M1 8.5L8 12l7-3.5"/><path d="M1 11.5L8 15l7-3.5"/></svg>';
     const ICON_MAP_PIN = // Map-pin SVG used on the restore button
         '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 16 16" ' +
@@ -1824,6 +1826,38 @@ Chart.register( LineController, LineElement, PointElement, LinearScale, Filler, 
     } );
 
     /**
+     * Leaflet control that triggers a GPX file download.
+     */
+    const DownloadControl = L.Control.extend( {
+        options: { position: 'topright' },
+        onAdd() {
+            const container = L.DomUtil.create(
+                'div', 'leaflet-bar leaflet-control mapthread-download-control'
+            );
+            const btn = createControlBtn( container, 'mapthread-download-btn', ICON_DOWNLOAD, 'Download GPX' );
+
+            L.DomEvent.on( btn, 'click', ( e ) => {
+                L.DomEvent.preventDefault( e );
+                const gpxBlock = document.querySelector( '.mapthread-map-gpx' );
+                const gpxUrl = gpxBlock && gpxBlock.dataset.gpxUrl;
+                if ( ! gpxUrl ) { return; }
+
+                const filename = gpxUrl.split( '/' ).pop().split( '?' )[ 0 ] || 'route.gpx';
+                const a = document.createElement( 'a' );
+                a.href = gpxUrl;
+                a.download = filename;
+                a.style.display = 'none';
+                document.body.appendChild( a );
+                a.click();
+                setTimeout( () => a.remove(), 100 );
+            } );
+            L.DomEvent.disableClickPropagation( container );
+            L.DomEvent.disableScrollPropagation( container );
+            return container;
+        }
+    } );
+
+    /**
      * Custom layer-switcher control — uses leaflet-bar so it inherits
      * exactly the same CSS treatment as zoom, fullscreen, and dismiss.
      */
@@ -2051,6 +2085,11 @@ Chart.register( LineController, LineElement, PointElement, LinearScale, Filler, 
         // Add dismiss/minimize control
         leafletMap.addControl( new DismissControl() );
 
+        // Add download control (if enabled in block settings)
+        if ( allowGpxDownload ) {
+            leafletMap.addControl( new DownloadControl() );
+        }
+
         // Initialize map view based on progress indicator setting
         if ( bounds && bounds.north !== 0 ) {
             const leafletBounds = [
@@ -2224,6 +2263,7 @@ Chart.register( LineController, LineElement, PointElement, LinearScale, Filler, 
             showProgressIndicator = gpxBlock.dataset.showProgress !== 'false';
             showElevationProfile = gpxBlock.dataset.showElevation !== 'false';
             defaultMapLayer = gpxBlock.dataset.defaultLayer || 'Street';
+            allowGpxDownload = gpxBlock.dataset.allowDownload === 'true';
         }
 
         // Initialize map (uses settings read above)
