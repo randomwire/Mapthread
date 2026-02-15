@@ -1802,7 +1802,7 @@ Chart.register( LineController, LineElement, PointElement, LinearScale, Filler, 
      * Defined at module level so initializeMap() can stay free of class boilerplate.
      */
     const DismissControl = L.Control.extend( {
-        options: { position: 'topleft' },
+        options: { position: 'topright' },
         onAdd() {
             const container = L.DomUtil.create(
                 'div', 'leaflet-bar leaflet-control mapthread-dismiss-control'
@@ -1828,7 +1828,7 @@ Chart.register( LineController, LineElement, PointElement, LinearScale, Filler, 
      * exactly the same CSS treatment as zoom, fullscreen, and dismiss.
      */
     const LayersControl = L.Control.extend( {
-        options: { position: 'topleft' },
+        options: { position: 'topright' },
 
         initialize( layers, options ) {
             L.Util.setOptions( this, options );
@@ -1951,19 +1951,22 @@ Chart.register( LineController, LineElement, PointElement, LinearScale, Filler, 
         // Note: Canvas is also the default renderer in Leaflet 2.0, so this is
         // forward-compatible with a future Leaflet upgrade.
         const leafletMap = L.map( 'mapthread-map', {
-            zoomControl: true,
+            zoomControl: false,      // Added manually below with topright position
             scrollWheelZoom: false,  // Replaced by Ctrl/Cmd+scroll handler below
             attributionControl: false,  // Disable default bottom-right attribution
             renderer: L.canvas()
         } );
 
-        // Add custom attribution control in top-right position
+        // Add zoom control in top-right position
+        L.control.zoom( { position: 'topright' } ).addTo( leafletMap );
+
+        // Add custom attribution control in top-left position
         L.control.attribution( {
-            position: 'topright'
+            position: 'topleft'
         } ).addTo( leafletMap );
 
-        // Scale bar (metric only) — top-left, CSS-offset to sit right of the button column
-        L.control.scale( { position: 'topleft', imperial: false } ).addTo( leafletMap );
+        // Scale bar (metric only) — top-right, CSS-offset to sit left of the button column
+        L.control.scale( { position: 'topright', imperial: false } ).addTo( leafletMap );
 
         // Ctrl/Cmd+scroll hint overlay — shown briefly when user scrolls without modifier
         const isMac = navigator.userAgentData
@@ -2032,21 +2035,21 @@ Chart.register( LineController, LineElement, PointElement, LinearScale, Filler, 
         const selectedLayer = baseLayers[ defaultMapLayer ] || osmLayer;
         selectedLayer.addTo( leafletMap );
 
-        // Add fullscreen control
-        // Force pseudoFullscreen on mobile for better compatibility
-        const isMobile = window.innerWidth <= 767;
-        leafletMap.addControl( new FullScreen( {
-            position: 'topleft',
-            pseudoFullscreen: isMobile
-        } ) );
-
-        // Add dismiss control
-        leafletMap.addControl( new DismissControl() );
-
-        // Add layer control — topleft, below dismiss
-        const layersCtrl = new LayersControl( baseLayers, { position: 'topleft' } );
+        // Add layer control — topleft, below zoom
+        const layersCtrl = new LayersControl( baseLayers, { position: 'topright' } );
         layersCtrl.setActiveLayer( selectedLayer );
         leafletMap.addControl( layersCtrl );
+
+        // Add fullscreen control (forceSeparateButton keeps it out of the zoom bar)
+        const isMobile = window.innerWidth <= 767;
+        leafletMap.addControl( new FullScreen( {
+            position: 'topright',
+            pseudoFullscreen: isMobile,
+            forceSeparateButton: true
+        } ) );
+
+        // Add dismiss/minimize control
+        leafletMap.addControl( new DismissControl() );
 
         // Initialize map view based on progress indicator setting
         if ( bounds && bounds.north !== 0 ) {

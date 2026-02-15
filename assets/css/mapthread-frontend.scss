@@ -445,9 +445,9 @@ $marker-focus-color: #4A90E2;
 
 .mapthread-layer-panel {
     position: absolute;
-    left: 0;
-    top: 100%;
-    margin-top: 2px;
+    right: 100%;
+    top: 0;
+    margin-right: 4px;
     background: white;
     border: 1px solid rgba(0, 0, 0, 0.08);
     border-radius: 6px;
@@ -473,12 +473,12 @@ $marker-focus-color: #4A90E2;
     }
 }
 
-// Scale bar: offset right of the button column in the top-left corner.
-// Buttons are 32px wide + 10px Leaflet margin = 42px left; top matches first button face.
-#mapthread-map .leaflet-top.leaflet-left .leaflet-control-scale {
+// Scale bar: offset left of the button column in the top-right corner.
+// Buttons are 32px wide + 10px Leaflet margin = 42px right; top matches first button face.
+#mapthread-map .leaflet-top.leaflet-right .leaflet-control-scale {
     position: absolute;
     top: 13px;
-    left: 56px;
+    right: 56px;
     margin: 0;
 }
 
@@ -631,10 +631,12 @@ body.has-mapthread-blocks.mapthread-map-dismissed #mapthread-map {
     .leaflet-map-pane,
     .leaflet-tile-pane,
     .leaflet-control-attribution,
-    .mapthread-layer-control,
-    .leaflet-control-fullscreen,
-    .leaflet-control-zoom,
     .mapthread-elevation-profile {
+        display: none;
+    }
+
+    // Hide all top-right controls except the dismiss button
+    .leaflet-top.leaflet-right .leaflet-control:not(.mapthread-dismiss-control) {
         display: none;
     }
 }
