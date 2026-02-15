@@ -94,14 +94,11 @@ Chart.register( LineController, LineElement, PointElement, LinearScale, Filler, 
 
     // Dismiss control
     const DISMISS_TILE = '44px';         // Collapsed map tile size
-    const ICON_MINIMIZE = '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 14 14" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><line x1="3" y1="3" x2="11" y2="11"/><polyline points="6 11 11 11 11 6"/></svg>';
-    const ICON_DOWNLOAD = '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 14 14" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><line x1="7" y1="2" x2="7" y2="9"/><polyline points="3 7 7 11 11 7"/><line x1="2" y1="12" x2="12" y2="12"/></svg>';
-    const ICON_LAYERS  = '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 16 16" width="14" height="14" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linejoin="round" aria-hidden="true"><polygon points="8,2 15,5.5 8,9 1,5.5"/><path d="M1 8.5L8 12l7-3.5"/><path d="M1 11.5L8 15l7-3.5"/></svg>';
-    const ICON_MAP_PIN = // Map-pin SVG used on the restore button
-        '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 16 16" ' +
-        'width="12" height="12" fill="currentColor" aria-hidden="true">' +
-        '<path d="M8 0a5 5 0 0 0-5 5c0 4 5 11 5 11s5-7 5-11a5 5 0 0 0-5-5z' +
-        'm0 7a2 2 0 1 1 0-4 2 2 0 0 1 0 4z"/></svg>';
+    // Lucide icons (https://lucide.dev/) — viewBox 0 0 24 24, stroke-width 2.5
+    const ICON_MINIMIZE = '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M19 13V19H13"/><path d="M5 5L19 19"/></svg>';
+    const ICON_DOWNLOAD = '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 15V3"/><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><path d="m7 10 5 5 5-5"/></svg>';
+    const ICON_LAYERS  = '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12.83 2.18a2 2 0 0 0-1.66 0L2.6 6.08a1 1 0 0 0 0 1.83l8.58 3.91a2 2 0 0 0 1.66 0l8.58-3.9a1 1 0 0 0 0-1.83z"/><path d="M2 12a1 1 0 0 0 .58.91l8.6 3.91a2 2 0 0 0 1.65 0l8.58-3.9A1 1 0 0 0 22 12"/><path d="M2 17a1 1 0 0 0 .58.91l8.6 3.91a2 2 0 0 0 1.65 0l8.58-3.9A1 1 0 0 0 22 17"/></svg>';
+    const ICON_MAP_PIN = '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20 10c0 4.993-5.539 10.193-7.399 11.799a1 1 0 0 1-1.202 0C9.539 20.193 4 14.993 4 10a8 8 0 0 1 16 0"/><circle cx="12" cy="10" r="3"/></svg>';
     const ICON_ANCHOR = 7;               // Horizontal and vertical anchor point (center)
     const POPUP_ANCHOR_Y = -7;           // Popup offset above marker
 
@@ -1992,7 +1989,11 @@ Chart.register( LineController, LineElement, PointElement, LinearScale, Filler, 
         } );
 
         // Add zoom control in top-right position
-        L.control.zoom( { position: 'topright' } ).addTo( leafletMap );
+        L.control.zoom( {
+            position: 'topright',
+            zoomInText: '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12h14"/><path d="M12 5v14"/></svg>',
+            zoomOutText: '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12h14"/></svg>'
+        } ).addTo( leafletMap );
 
         // Add custom attribution control in top-left position
         L.control.attribution( {

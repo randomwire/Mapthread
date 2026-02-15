@@ -428,6 +428,25 @@ $marker-focus-color: #4A90E2;
     }
 }
 
+// Reset Leaflet's monospace font for zoom buttons (now SVG icons, not text)
+.leaflet-control-zoom-in,
+.leaflet-control-zoom-out {
+    font: inherit;
+    text-indent: 0;
+}
+
+// Override leaflet.fullscreen icons with Lucide maximize/minimize
+.mapthread-fullscreen-control .leaflet-fullscreen-icon {
+    background-image: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="%23333" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M8 3H5a2 2 0 0 0-2 2v3"/><path d="M21 8V5a2 2 0 0 0-2-2h-3"/><path d="M3 16v3a2 2 0 0 0 2 2h3"/><path d="M16 21h3a2 2 0 0 0 2-2v-3"/></svg>');
+    background-size: 16px 16px;
+    background-position: center;
+    background-repeat: no-repeat;
+}
+
+.mapthread-fullscreen-control .leaflet-fullscreen-icon.leaflet-fullscreen-on {
+    background-image: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="%23333" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M8 3v3a2 2 0 0 1-2 2H3"/><path d="M21 8h-3a2 2 0 0 1-2-2V3"/><path d="M3 16h3a2 2 0 0 1 2 2v3"/><path d="M16 21v-3a2 2 0 0 1 2-2h3"/></svg>');
+}
+
 // ============================================================================
 // LAYER CONTROL (custom — replaces L.control.layers)
 // ============================================================================

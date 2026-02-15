@@ -352,6 +352,12 @@ Mapthread is built with and relies on the following open-source libraries and se
   - Emoji selection interface in the block editor
   - By Nolan Lawson
 
+- **[Leaflet.fullscreen](https://github.com/brunob/leaflet.fullscreen)** - MIT License
+  - Fullscreen map control
+
+- **[Lucide](https://lucide.dev/)** - ISC License
+  - Map control icons (zoom, layers, fullscreen, dismiss, download)
+
 ### External Data Services
 
 - **[OpenStreetMap](https://www.openstreetmap.org/)** - ODbL 1.0 License
@@ -387,7 +393,8 @@ Mapthread is licensed under the [GNU General Public License v2.0 or later](https
 
 All included third-party libraries are GPL-compatible:
 - BSD-2-Clause (Leaflet) - Compatible
-- MIT (Chart.js, emoji-picker-element) - Compatible
+- MIT (Chart.js, emoji-picker-element, Leaflet.fullscreen) - Compatible
+- ISC (Lucide icons) - Compatible
 - ODbL 1.0 (OpenStreetMap data) - Requires attribution (provided)
 
 ---

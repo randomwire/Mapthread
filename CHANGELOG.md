@@ -7,6 +7,20 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ---
 
+## [1.4.0] - 2026-02-15
+
+### Added
+- Optional GPX download button — toggle via "Allow GPX download" in Map GPX block settings
+
+### Changed
+- Map controls moved from top-left to top-right; attribution moved to top-left
+- Fullscreen control separated from zoom button group
+- Layer dropdown opens leftward (away from screen edge)
+- All control icons replaced with Lucide SVGs for consistent appearance
+- Hide-map icon changed from × to directional arrow
+
+---
+
 ## [1.3.9] - 2026-02-12
 
 ### Added
