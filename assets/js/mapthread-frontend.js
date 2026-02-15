@@ -93,7 +93,7 @@ Chart.register( LineController, LineElement, PointElement, LinearScale, Filler, 
 
     // Dismiss control
     const DISMISS_TILE = '44px';         // Collapsed map tile size
-    const ICON_CLOSE   = '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 14 14" width="14" height="14" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" aria-hidden="true"><line x1="2" y1="2" x2="12" y2="12"/><line x1="12" y1="2" x2="2" y2="12"/></svg>';
+    const ICON_MINIMIZE = '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 14 14" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><line x1="3" y1="3" x2="11" y2="11"/><polyline points="6 11 11 11 11 6"/></svg>';
     const ICON_LAYERS  = '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 16 16" width="14" height="14" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linejoin="round" aria-hidden="true"><polygon points="8,2 15,5.5 8,9 1,5.5"/><path d="M1 8.5L8 12l7-3.5"/><path d="M1 11.5L8 15l7-3.5"/></svg>';
     const ICON_MAP_PIN = // Map-pin SVG used on the restore button
         '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 16 16" ' +
@@ -780,7 +780,7 @@ Chart.register( LineController, LineElement, PointElement, LinearScale, Filler, 
             }
             if ( mapEl ) { applyDismissStyles( mapEl ); }
         } else {
-            btn.innerHTML = ICON_CLOSE;
+            btn.innerHTML = ICON_MINIMIZE;
             btn.title = 'Hide map';
             btn.setAttribute( 'aria-label', 'Hide map' );
             if ( mapEl ) { clearDismissStyles( mapEl ); }
@@ -1809,7 +1809,7 @@ Chart.register( LineController, LineElement, PointElement, LinearScale, Filler, 
             );
             // On mobile the map starts dismissed — show restore icon
             const startDismissed = window.innerWidth <= 767;
-            const initialIcon  = startDismissed ? ICON_MAP_PIN : ICON_CLOSE;
+            const initialIcon  = startDismissed ? ICON_MAP_PIN : ICON_MINIMIZE;
             const initialLabel = startDismissed ? 'Show map'   : 'Hide map';
             const btn = createControlBtn( container, 'mapthread-dismiss-btn', initialIcon, initialLabel );
 
