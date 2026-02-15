@@ -2076,11 +2076,13 @@ Chart.register( LineController, LineElement, PointElement, LinearScale, Filler, 
 
         // Add fullscreen control (forceSeparateButton keeps it out of the zoom bar)
         const isMobile = window.innerWidth <= 767;
-        leafletMap.addControl( new FullScreen( {
+        const fullscreenCtrl = new FullScreen( {
             position: 'topright',
             pseudoFullscreen: isMobile,
             forceSeparateButton: true
-        } ) );
+        } );
+        leafletMap.addControl( fullscreenCtrl );
+        fullscreenCtrl.getContainer().classList.add( 'mapthread-fullscreen-control' );
 
         // Add dismiss/minimize control
         leafletMap.addControl( new DismissControl() );

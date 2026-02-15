@@ -379,10 +379,11 @@ $marker-focus-color: #4A90E2;
     }
 }
 
-// Zoom, fullscreen, dismiss, and layer controls (consistent styling)
+// Map control buttons (consistent styling)
 .leaflet-control-zoom,
-.leaflet-control-fullscreen,
+.mapthread-fullscreen-control,
 .mapthread-dismiss-control,
+.mapthread-download-control,
 .mapthread-layer-control {
     border: 1px solid rgba(0, 0, 0, 0.08);
     border-radius: 6px;
