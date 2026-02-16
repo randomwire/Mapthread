@@ -22,9 +22,9 @@ L.Icon.Default.mergeOptions({
     shadowUrl: markerShadow,
 });
 
-// Import Leaflet fullscreen plugin
+// Import Leaflet fullscreen plugin (CSS is NOT imported here — we provide our
+// own icon via inline SVG and the fullscreen container rules live in our SCSS).
 import { FullScreen } from 'leaflet.fullscreen';
-import 'leaflet.fullscreen/dist/Control.FullScreen.css';
 
 import { Chart, LineController, LineElement, PointElement, LinearScale, Filler, Tooltip } from 'chart.js';
 Chart.register( LineController, LineElement, PointElement, LinearScale, Filler, Tooltip );
