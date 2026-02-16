@@ -1908,6 +1908,12 @@ Chart.register( LineController, LineElement, PointElement, LinearScale, Filler, 
             this._panelOpen = true;
             this._panel.hidden = false;
             this._btn.setAttribute( 'aria-expanded', 'true' );
+
+            // Constrain panel height to fit within the map container.
+            const mapRect = this._map.getContainer().getBoundingClientRect();
+            const btnRect = this._btn.getBoundingClientRect();
+            const maxH    = mapRect.bottom - btnRect.top - 8;
+            this._panel.style.maxHeight = maxH > 60 ? maxH + 'px' : '';
         },
 
         _closePanel() {
