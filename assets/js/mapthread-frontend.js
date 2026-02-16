@@ -753,6 +753,7 @@ Chart.register( LineController, LineElement, PointElement, LinearScale, Filler, 
                 animationRafId = null;
             }
             if ( mapEl ) { applyDismissStyles( mapEl ); }
+            showDismissTooltip();
         } else {
             btn.innerHTML = ICON_MINIMIZE;
             btn.title = 'Hide map';
