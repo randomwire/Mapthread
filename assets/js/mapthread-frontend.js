@@ -101,6 +101,8 @@ Chart.register( LineController, LineElement, PointElement, LinearScale, Filler, 
     const ICON_DOWNLOAD = '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 15V3"/><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><path d="m7 10 5 5 5-5"/></svg>';
     const ICON_LAYERS  = '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12.83 2.18a2 2 0 0 0-1.66 0L2.6 6.08a1 1 0 0 0 0 1.83l8.58 3.91a2 2 0 0 0 1.66 0l8.58-3.9a1 1 0 0 0 0-1.83z"/><path d="M2 12a1 1 0 0 0 .58.91l8.6 3.91a2 2 0 0 0 1.65 0l8.58-3.9A1 1 0 0 0 22 12"/><path d="M2 17a1 1 0 0 0 .58.91l8.6 3.91a2 2 0 0 0 1.65 0l8.58-3.9A1 1 0 0 0 22 17"/></svg>';
     const ICON_MAP_PIN = '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20 10c0 4.993-5.539 10.193-7.399 11.799a1 1 0 0 1-1.202 0C9.539 20.193 4 14.993 4 10a8 8 0 0 1 16 0"/><circle cx="12" cy="10" r="3"/></svg>';
+    const ICON_TRENDING_UP = '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="22 7 13.5 15.5 8.5 10.5 2 17"/><polyline points="16 7 22 7 22 13"/></svg>';
+    const ICON_TRENDING_DOWN = '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="22 17 13.5 8.5 8.5 13.5 2 7"/><polyline points="16 17 22 17 22 11"/></svg>';
     const ICON_ANCHOR = 7;               // Horizontal and vertical anchor point (center)
     const POPUP_ANCHOR_Y = -7;           // Popup offset above marker
 
@@ -1067,42 +1069,6 @@ Chart.register( LineController, LineElement, PointElement, LinearScale, Filler, 
     };
 
     /**
-     * Chart.js plugin: draw elevation gain/loss stats on the chart canvas
-     */
-    const elevationStatsPlugin = {
-        id: 'elevationStats',
-        afterDraw( chart ) {
-            const stats = chart._elevationStats;
-            if ( ! stats || ( stats.gain === 0 && stats.loss === 0 ) ) {
-                return;
-            }
-
-            const { ctx, chartArea } = chart;
-
-            ctx.save();
-            ctx.font = '600 8px -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif';
-            ctx.textAlign = 'right';
-            ctx.textBaseline = 'top';
-
-            const gainText = '\u25B2 ' + stats.gain.toLocaleString() + ' m';
-            const lossText = '\u25BC ' + stats.loss.toLocaleString() + ' m';
-
-            const x = chartArea.right - 4;
-            const y = chartArea.top - 8;
-
-            // Loss (muted red) on the right
-            ctx.fillStyle = 'rgba(160, 60, 60, 0.7)';
-            ctx.fillText( lossText, x, y );
-
-            // Gain (muted green) to the left of loss
-            const lossWidth = ctx.measureText( lossText ).width;
-            ctx.fillStyle = 'rgba(60, 120, 60, 0.7)';
-            ctx.fillText( gainText, x - lossWidth - 8, y );
-
-            ctx.restore();
-        }
-    };
-
     /**
      * Get Chart.js configuration for elevation profile
      *
@@ -1137,7 +1103,7 @@ Chart.register( LineController, LineElement, PointElement, LinearScale, Filler, 
                         display: true,
                         ticks: {
                             font: { size: 9 },
-                            color: 'rgba(0, 0, 0, 0.4)',
+                            color: 'rgba(0, 0, 0, 0.65)',
                             maxTicksLimit: 6,
                             callback: ( value ) => `${ value.toFixed( 0 ) } km`
                         },
@@ -1148,7 +1114,7 @@ Chart.register( LineController, LineElement, PointElement, LinearScale, Filler, 
                         display: true,
                         ticks: {
                             font: { size: 9 },
-                            color: 'rgba(0, 0, 0, 0.4)',
+                            color: 'rgba(0, 0, 0, 0.65)',
                             maxTicksLimit: 4,
                             callback: ( value ) => `${ Math.round( value ) } m`
                         },
@@ -1187,7 +1153,7 @@ Chart.register( LineController, LineElement, PointElement, LinearScale, Filler, 
                     }
                 }
             },
-            plugins: [ elevationOverlayPlugin, elevationCrosshairPlugin, elevationStatsPlugin ]
+            plugins: [ elevationOverlayPlugin, elevationCrosshairPlugin ]
         };
     }
 
@@ -1208,8 +1174,46 @@ Chart.register( LineController, LineElement, PointElement, LinearScale, Filler, 
         const chartWrapper = document.createElement( 'div' );
         chartWrapper.className = 'mapthread-elevation-profile';
 
+        // Calculate elevation stats
+        elevationStats = calculateElevationGainLoss( trackElevations );
+        const validElevations = trackElevations.filter( ( e ) => e !== null && ! isNaN( e ) );
+        const maxEle = validElevations.length > 0 ? Math.round( Math.max( ...validElevations ) ) : 0;
+        const minEle = validElevations.length > 0 ? Math.round( Math.min( ...validElevations ) ) : 0;
+        const distanceKm = ( totalTrackDistance / 1000 ).toFixed( 1 );
+
+        // Build stats bar
+        const statsBar = document.createElement( 'div' );
+        statsBar.className = 'mapthread-elevation-stats';
+        statsBar.innerHTML =
+            '<span class="mapthread-stat">' +
+                '<span class="mapthread-stat-icon">' + ICON_TRENDING_UP + '</span>' +
+                '<span class="mapthread-stat-label">Gain:</span> ' +
+                '<span class="mapthread-stat-value">' + elevationStats.gain.toLocaleString() + 'm</span>' +
+            '</span>' +
+            '<span class="mapthread-stat">' +
+                '<span class="mapthread-stat-icon">' + ICON_TRENDING_DOWN + '</span>' +
+                '<span class="mapthread-stat-label">Loss:</span> ' +
+                '<span class="mapthread-stat-value">' + elevationStats.loss.toLocaleString() + 'm</span>' +
+            '</span>' +
+            '<span class="mapthread-stat mapthread-stat-secondary">' +
+                '<span class="mapthread-stat-label">Max:</span> ' +
+                '<span class="mapthread-stat-value">' + maxEle.toLocaleString() + 'm</span>' +
+            '</span>' +
+            '<span class="mapthread-stat mapthread-stat-secondary">' +
+                '<span class="mapthread-stat-label">Min:</span> ' +
+                '<span class="mapthread-stat-value">' + minEle.toLocaleString() + 'm</span>' +
+            '</span>' +
+            '<span class="mapthread-stat mapthread-stat-secondary">' +
+                '<span class="mapthread-stat-label">Distance:</span> ' +
+                '<span class="mapthread-stat-value">' + distanceKm + 'km</span>' +
+            '</span>';
+        chartWrapper.appendChild( statsBar );
+
+        const chartContainer = document.createElement( 'div' );
+        chartContainer.className = 'mapthread-elevation-chart';
         const canvas = document.createElement( 'canvas' );
-        chartWrapper.appendChild( canvas );
+        chartContainer.appendChild( canvas );
+        chartWrapper.appendChild( chartContainer );
         mapContainer.appendChild( chartWrapper );
 
         // Build chart data
@@ -1218,10 +1222,6 @@ Chart.register( LineController, LineElement, PointElement, LinearScale, Filler, 
 
         // Create chart
         elevationChart = new Chart( canvas, getElevationChartConfig( data ) );
-
-        // Calculate and attach elevation stats for the plugin
-        elevationStats = calculateElevationGainLoss( trackElevations );
-        elevationChart._elevationStats = elevationStats;
 
         // Resize chart when map resizes
         map.on( 'resize', () => {

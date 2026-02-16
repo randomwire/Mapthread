@@ -321,10 +321,11 @@ $marker-focus-color: #4A90E2;
     bottom: 0;
     left: 0;
     right: 0;
-    height: 100px;
+    height: 122px; // 22px stats bar + 100px chart
     z-index: 1000;
     padding: 0 8px 4px 8px;
     pointer-events: auto;
+    container-type: inline-size;
 
     &::before {
         content: '';
@@ -333,15 +334,52 @@ $marker-focus-color: #4A90E2;
         right: 0;
         bottom: 0;
         top: -10px;
-        backdrop-filter: blur(8px);
-        -webkit-backdrop-filter: blur(8px);
-        background: rgba(255, 255, 255, 0.8);
+        background: white;
         z-index: -1;
     }
 
-    canvas {
-        width: 100% !important;
-        height: 100% !important;
+    .mapthread-elevation-chart {
+        position: relative;
+        width: 100%;
+        height: 100px;
+    }
+}
+
+.mapthread-elevation-stats {
+    display: flex;
+    align-items: center;
+    justify-content: flex-end;
+    gap: 16px;
+    font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;
+    font-size: 11px;
+    color: #333;
+    flex-shrink: 0;
+}
+
+.mapthread-stat {
+    display: inline-flex;
+    align-items: center;
+    gap: 3px;
+}
+
+.mapthread-stat-icon {
+    display: inline-flex;
+    align-items: center;
+    color: #666;
+}
+
+.mapthread-stat-label {
+    color: #666;
+}
+
+.mapthread-stat-value {
+    font-weight: 600;
+}
+
+// Hide secondary stats (Max, Min, Distance) when map is narrow
+@container (max-width: 450px) {
+    .mapthread-stat-secondary {
+        display: none;
     }
 }
 
@@ -516,7 +554,7 @@ $marker-focus-color: #4A90E2;
 
 .mapthread-scroll-hint {
     position: absolute;
-    bottom: 120px; // 110px elevation backdrop (100px + 10px ::before) + 10px gap
+    bottom: 142px; // 132px elevation backdrop (122px + 10px ::before) + 10px gap
     left: 50%;
     transform: translateX(-50%);
     background: rgba(0, 0, 0, 0.6);

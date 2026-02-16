@@ -7,6 +7,23 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ---
 
+## [1.4.1] - 2026-02-16
+
+### Added
+- Elevation stats bar above chart showing Gain, Loss, Max, Min, and Distance
+- Lucide trending-up/trending-down icons for gain/loss stats
+- Responsive stats bar — secondary stats (Max, Min, Distance) hide on narrow maps via container query
+
+### Changed
+- Elevation profile background changed from semi-transparent blur to solid white
+- Chart axis labels darkened for better readability
+- Elevation stats moved from canvas-drawn overlay to proper DOM elements
+
+### Fixed
+- Dark-mode browser extensions breaking fullscreen icon rendering — dropped plugin CSS, inlined only needed container rules
+
+---
+
 ## [1.4.0] - 2026-02-15
 
 ### Added
