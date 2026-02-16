@@ -2013,30 +2013,53 @@ Chart.register( LineController, LineElement, PointElement, LinearScale, Filler, 
             }
         }, { passive: false } );
 
-        // Define base layer options
+        // Build base layers dynamically from settings.
+        const baseLayers = {};
+        const layersConfig = ( typeof mapthreadConfig !== 'undefined' && mapthreadConfig.layers ) ? mapthreadConfig.layers : {};
+        const freeLayers = layersConfig.free || {};
+
+        // Street (OSM) — always available.
         const osmLayer = L.tileLayer( 'https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
             attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors',
             maxZoom: 19
         } );
+        baseLayers.Street = osmLayer;
 
-        const satelliteLayer = L.tileLayer( 'https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}', {
-            attribution: '&copy; <a href="https://www.esri.com/">Esri</a>',
-            maxZoom: 19
+        // Optional free layers.
+        if ( freeLayers.satellite !== false ) {
+            baseLayers.Satellite = L.tileLayer( 'https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}', {
+                attribution: '&copy; <a href="https://www.esri.com/">Esri</a>',
+                maxZoom: 19
+            } );
+        }
+        if ( freeLayers.topographic !== false ) {
+            baseLayers.Topographic = L.tileLayer( 'https://{s}.tile.opentopomap.org/{z}/{x}/{y}.png', {
+                attribution: '&copy; <a href="https://opentopomap.org">OpenTopoMap</a> contributors',
+                maxZoom: 17
+            } );
+        }
+
+        // Provider layers from settings.
+        Object.keys( layersConfig ).forEach( ( providerId ) => {
+            if ( providerId === 'free' ) {
+                return;
+            }
+            const provider = layersConfig[ providerId ];
+            if ( ! provider.apiKey || ! provider.styles || ! provider.styles.length ) {
+                return;
+            }
+            provider.styles.forEach( ( styleSlug ) => {
+                const styleLabel = ( provider.styleLabels && provider.styleLabels[ styleSlug ] ) || styleSlug;
+                const layerName = provider.label + ' ' + styleLabel;
+                const url = provider.url.replace( '{style}', styleSlug ).replace( '{key}', provider.apiKey );
+                baseLayers[ layerName ] = L.tileLayer( url, {
+                    attribution: provider.attribution,
+                    maxZoom: provider.maxZoom || 20
+                } );
+            } );
         } );
 
-        const topoLayer = L.tileLayer( 'https://{s}.tile.opentopomap.org/{z}/{x}/{y}.png', {
-            attribution: '&copy; <a href="https://opentopomap.org">OpenTopoMap</a> contributors',
-            maxZoom: 17
-        } );
-
-        // Define layer mapping
-        const baseLayers = {
-            'Street': osmLayer,
-            'Satellite': satelliteLayer,
-            'Topographic': topoLayer
-        };
-
-        // Add default layer based on user setting
+        // Add default layer based on user setting, fallback to Street (OSM).
         const selectedLayer = baseLayers[ defaultMapLayer ] || osmLayer;
         selectedLayer.addTo( leafletMap );
 

@@ -35,5 +35,5 @@ npm-debug.log*
 test-files/
 
 # Project planning documents (local only)
-Pathway Plugin Requirements v2.md
 CLAUDE.md
+docs/

@@ -27,6 +27,14 @@ $mapthread_show_elevation_profile  = isset( $attributes['showElevationProfile'] 
 $mapthread_default_map_layer       = isset( $attributes['defaultMapLayer'] ) ? $attributes['defaultMapLayer'] : 'Street';
 $mapthread_allow_gpx_download      = isset( $attributes['allowGpxDownload'] ) ? $attributes['allowGpxDownload'] : false;
 
+// Validate the default layer is still available; fall back to Street if not.
+$mapthread_settings       = new Mapthread_Settings();
+$mapthread_available      = $mapthread_settings->get_available_layer_options();
+$mapthread_layer_values   = array_column( $mapthread_available, 'value' );
+if ( ! in_array( $mapthread_default_map_layer, $mapthread_layer_values, true ) ) {
+	$mapthread_default_map_layer = 'Street';
+}
+
 // Get the GPX URL from the attachment ID (more reliable than stored URL).
 $mapthread_gpx_url = '';
 if ( $mapthread_attachment_id ) {

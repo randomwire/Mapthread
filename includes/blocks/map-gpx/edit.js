@@ -290,11 +290,11 @@ export default function Edit( { attributes, setAttributes, clientId } ) {
                     <SelectControl
                         label={ __( 'Default Map Style', 'mapthread' ) }
                         value={ defaultMapLayer }
-                        options={ [
-                            { label: __( 'Street Map', 'mapthread' ), value: 'Street' },
-                            { label: __( 'Satellite View', 'mapthread' ), value: 'Satellite' },
-                            { label: __( 'Topographic Map', 'mapthread' ), value: 'Topographic' }
-                        ] }
+                        options={
+                            ( typeof mapthreadConfig !== 'undefined' && mapthreadConfig.availableLayers )
+                                ? mapthreadConfig.availableLayers
+                                : [ { label: __( 'Street Map', 'mapthread' ), value: 'Street' } ]
+                        }
                         onChange={ ( value ) => setAttributes( { defaultMapLayer: value } ) }
                         help={ __( 'Choose which map style displays when the page loads', 'mapthread' ) }
                     />

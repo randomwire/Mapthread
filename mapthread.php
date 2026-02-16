@@ -27,6 +27,7 @@ define( 'MAPTHREAD_PLUGIN_BASENAME', plugin_basename( __FILE__ ) );
 
 // Include the main plugin class
 require_once MAPTHREAD_PLUGIN_DIR . 'includes/class-mapthread.php';
+require_once MAPTHREAD_PLUGIN_DIR . 'includes/class-mapthread-settings.php';
 require_once MAPTHREAD_PLUGIN_DIR . 'includes/class-mapthread-elevation-api.php';
 
 /**

@@ -16,22 +16,34 @@ if ( ! defined( 'ABSPATH' ) ) {
 class Mapthread {
 
     /**
+     * Settings instance.
+     *
+     * @var Mapthread_Settings
+     */
+    private $settings;
+
+    /**
      * Constructor
      */
     public function __construct() {
-        // Constructor intentionally left empty
-        // Initialization happens in run() method
+        $this->settings = new Mapthread_Settings();
     }
 
     /**
      * Run the plugin
      */
     public function run() {
+        // Initialize settings page.
+        $this->settings->run();
+
         // Register blocks
         add_action( 'init', array( $this, 'register_blocks' ) );
 
         // Enqueue frontend assets
         add_action( 'wp_enqueue_scripts', array( $this, 'enqueue_frontend_assets' ) );
+
+        // Localize block editor scripts with available layers.
+        add_action( 'enqueue_block_editor_assets', array( $this, 'localize_editor_assets' ) );
 
         // Add body class for posts with Mapthread blocks
         add_filter( 'body_class', array( $this, 'add_body_class' ) );
@@ -94,6 +106,24 @@ class Mapthread {
             array(),
             MAPTHREAD_VERSION,
             true
+        );
+
+        // Pass layers configuration to frontend JS.
+        wp_localize_script(
+            'mapthread-frontend',
+            'mapthreadConfig',
+            array( 'layers' => $this->settings->get_layers_config() )
+        );
+    }
+
+    /**
+     * Localize block editor scripts with available layer options.
+     */
+    public function localize_editor_assets() {
+        wp_localize_script(
+            'mapthread-map-gpx-editor-script',
+            'mapthreadConfig',
+            array( 'availableLayers' => $this->settings->get_available_layer_options() )
         );
     }
 
