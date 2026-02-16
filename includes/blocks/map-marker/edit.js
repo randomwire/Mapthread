@@ -134,7 +134,7 @@ export default function Edit( { attributes, setAttributes, clientId } ) {
         };
         picker.addEventListener( 'emoji-click', handleEmojiClick );
         return () => picker.removeEventListener( 'emoji-click', handleEmojiClick );
-    }, [ showEmojiPicker ] );
+    }, [ showEmojiPicker, setAttributes ] );
 
     // Auto-generate ID on mount if not set
     useEffect( () => {

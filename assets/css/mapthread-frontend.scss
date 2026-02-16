@@ -21,16 +21,31 @@ $marker-emoji-active-scale: 1.5;                           // Active scale
 // Focus ring (accessibility)
 $marker-focus-color: #4A90E2;
 
+// Layout
+$breakpoint-tablet: 768px;
+$desktop-map-width: 38vw;
+$mobile-map-height: 35vh;
+
+// Colors
+$text-primary: #333;
+$text-secondary: #666;
+$border-subtle: rgba(0, 0, 0, 0.08);
+
+// Shadows
+$shadow-sm: 0 2px 6px rgba(0, 0, 0, 0.1);
+$shadow-md: 0 2px 8px rgba(0, 0, 0, 0.1);
+$shadow-lg: 0 3px 12px rgba(0, 0, 0, 0.4);
+
 // ============================================================================
 // AUTOMATIC LAYOUT: Fixed Map on Right (Default)
 // Applied by default, overridden when using manual column layout
 // ============================================================================
 
-@media (min-width: 768px) {
+@media (min-width: $breakpoint-tablet) {
     // Automatic layout styles (applied by default)
     body.has-mapthread-blocks {
         // Reserve space for the fixed map on ALL page content (works across themes)
-        padding-right: calc(38vw + 10px);
+        padding-right: calc(#{$desktop-map-width} + 10px);
 
         // Map: Fixed to right side of viewport
         #mapthread-map {
@@ -38,7 +53,7 @@ $marker-focus-color: #4A90E2;
             top: 10px !important;
             right: 10px !important;
             bottom: 10px !important;
-            width: 38vw !important;
+            width: $desktop-map-width !important;
             height: auto !important;
             z-index: 999 !important;
             border-radius: 8px;
@@ -82,7 +97,7 @@ $marker-focus-color: #4A90E2;
             height: calc(100vh - 40px) !important;
             max-height: 900px;
             z-index: auto !important;
-            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+            box-shadow: $shadow-md;
         }
 
         // Reset content constraints completely
@@ -114,7 +129,7 @@ $marker-focus-color: #4A90E2;
 // Applies when user adds .mapthread-map-column class to their column
 // ============================================================================
 
-@media (min-width: 768px) {
+@media (min-width: $breakpoint-tablet) {
     .mapthread-map-column {
         position: sticky;
         top: 20px;
@@ -123,17 +138,17 @@ $marker-focus-color: #4A90E2;
     }
 }
 
-@media (max-width: 767px) {
+@media (max-width: #{$breakpoint-tablet - 1}) {
     .mapthread-map-column {
         position: sticky;
         top: 0;
         z-index: 100;
 
         #mapthread-map {
-            height: 35vh;
+            height: $mobile-map-height;
             min-height: 280px;
             max-height: 450px;
-            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+            box-shadow: $shadow-md;
         }
     }
 }
@@ -142,10 +157,10 @@ $marker-focus-color: #4A90E2;
 // MOBILE LAYOUT: Sticky Map at Top (Default for automatic layout)
 // ============================================================================
 
-@media (max-width: 767px) {
+@media (max-width: #{$breakpoint-tablet - 1}) {
     body.has-mapthread-blocks {
         // Add spacing at top to account for fixed map
-        padding-top: 35vh;
+        padding-top: $mobile-map-height;
 
         #mapthread-map {
             position: fixed !important;
@@ -153,12 +168,12 @@ $marker-focus-color: #4A90E2;
             left: 0;
             right: 0;
             width: 100vw;
-            height: 35vh;
+            height: $mobile-map-height;
             min-height: 280px;
             max-height: 450px;
             z-index: 100;
             margin: 0;
-            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+            box-shadow: $shadow-md;
         }
 
     }
@@ -357,7 +372,7 @@ $marker-focus-color: #4A90E2;
     gap: 16px;
     font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;
     font-size: 11px;
-    color: #333;
+    color: $text-primary;
     flex-shrink: 0;
 }
 
@@ -370,11 +385,11 @@ $marker-focus-color: #4A90E2;
 .mapthread-stat-icon {
     display: inline-flex;
     align-items: center;
-    color: #666;
+    color: $text-secondary;
 }
 
 .mapthread-stat-label {
-    color: #666;
+    color: $text-secondary;
 }
 
 .mapthread-stat-value {
@@ -389,7 +404,7 @@ $marker-focus-color: #4A90E2;
 }
 
 // Hide elevation profile on mobile
-@media (max-width: 767px) {
+@media (max-width: #{$breakpoint-tablet - 1}) {
     .mapthread-elevation-profile {
         display: none;
     }
@@ -410,7 +425,7 @@ $marker-focus-color: #4A90E2;
     color: white;
     border: none;
     border-radius: 6px;
-    box-shadow: 0 3px 12px rgba(0, 0, 0, 0.4);
+    box-shadow: $shadow-lg;
     backdrop-filter: blur(4px);
     white-space: nowrap;
 }
@@ -428,14 +443,14 @@ $marker-focus-color: #4A90E2;
 .mapthread-dismiss-control,
 .mapthread-download-control,
 .mapthread-layer-control {
-    border: 1px solid rgba(0, 0, 0, 0.08);
+    border: 1px solid $border-subtle;
     border-radius: 6px;
-    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
+    box-shadow: $shadow-sm;
     overflow: hidden;
     background: white;
 
     a {
-        color: #333;
+        color: $text-primary;
         width: 32px;
         height: 32px;
         line-height: 32px;
@@ -464,7 +479,7 @@ $marker-focus-color: #4A90E2;
 
 // Zoom control specific styles
 .leaflet-control-zoom a {
-    border-bottom: 1px solid rgba(0, 0, 0, 0.08);
+    border-bottom: 1px solid $border-subtle;
 
     &:last-child {
         border-bottom: none;
@@ -519,9 +534,9 @@ $marker-focus-color: #4A90E2;
     top: 0;
     margin-right: 4px;
     background: white;
-    border: 1px solid rgba(0, 0, 0, 0.08);
+    border: 1px solid $border-subtle;
     border-radius: 6px;
-    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
+    box-shadow: $shadow-sm;
     padding: 6px 10px;
     min-width: 110px;
     z-index: 1000;
@@ -534,7 +549,7 @@ $marker-focus-color: #4A90E2;
     gap: 6px;
     padding: 3px 0;
     font-size: 13px;
-    color: #333;
+    color: $text-primary;
     cursor: pointer;
 
     input {
@@ -603,7 +618,7 @@ $marker-focus-color: #4A90E2;
 // RESPONSIVE TYPOGRAPHY ADJUSTMENTS
 // ============================================================================
 
-@media (max-width: 767px) {
+@media (max-width: #{$breakpoint-tablet - 1}) {
     // Slightly smaller pins on mobile
     .mapthread-marker-pin {
         width: $marker-pin-size-mobile;
@@ -712,14 +727,14 @@ body.has-mapthread-blocks.mapthread-map-dismissed #mapthread-map {
 }
 
 // Tile overlays the page — reset body padding so content expands to full width.
-@media (min-width: 768px) {
+@media (min-width: $breakpoint-tablet) {
     body.has-mapthread-blocks.mapthread-map-dismissed {
         padding-right: 0;
     }
 }
 
 // Mobile only: undo the top padding added for the sticky map.
-@media (max-width: 767px) {
+@media (max-width: #{$breakpoint-tablet - 1}) {
     body.has-mapthread-blocks.mapthread-map-dismissed {
         padding-top: 0;
     }
@@ -744,7 +759,7 @@ body.has-mapthread-blocks.mapthread-map-dismissed #mapthread-map {
     cursor: pointer;
     opacity: 0;
     transition: opacity 0.2s ease;
-    box-shadow: 0 3px 12px rgba(0, 0, 0, 0.4);
+    box-shadow: $shadow-lg;
 
     // Right-pointing arrow toward the tile
     &::after {
@@ -766,7 +781,7 @@ body.has-mapthread-blocks.mapthread-map-dismissed #mapthread-map {
 }
 
 // Only show tooltip on mobile
-@media (min-width: 768px) {
+@media (min-width: $breakpoint-tablet) {
     .mapthread-dismiss-tooltip {
         display: none;
     }

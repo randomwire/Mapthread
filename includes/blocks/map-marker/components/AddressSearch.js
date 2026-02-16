@@ -141,6 +141,9 @@ export default function AddressSearch( { onSelect, currentLat, currentLng, curre
                 setResults( data );
                 setIsLoading( false );
                 setShowResults( true );
+            } ).catch( () => {
+                setResults( [] );
+                setIsLoading( false );
             } );
         } else {
             setResults( [] );

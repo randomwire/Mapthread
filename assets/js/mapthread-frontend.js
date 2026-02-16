@@ -86,8 +86,16 @@ Chart.register( LineController, LineElement, PointElement, LinearScale, Filler, 
     // Scroll detection thresholds
     const SCROLL_TOP_THRESHOLD = 10;     // Pixels from top to trigger reset
 
+    // Responsive breakpoints
+    const MOBILE_BREAKPOINT = 767;       // Max-width for mobile layout (px)
+
     // Timing and animation
     const MAP_INTERACTION_TIMEOUT = 100; // Delay for initial marker activation (ms)
+
+    // Elevation smoothing
+    const ELEVATION_MEDIAN_WINDOW = 7;   // Points for median filter
+    const ELEVATION_AVG_WINDOW = 11;     // Points for moving average
+    const ELEVATION_GAIN_THRESHOLD = 10; // Min metres to count as gain/loss
 
     // Marker icon dimensions
     const ICON_SIZE = 14;                // Width and height of marker icon (pixels)
@@ -293,64 +301,57 @@ Chart.register( LineController, LineElement, PointElement, LinearScale, Filler, 
     }
 
     /**
-     * Returns the index of the first segment whose end distance >= targetDistance.
+     * Binary-search interpolation along a coordinate path.
      *
-     * @param {number} targetDistance - Distance along track in metres
-     * @returns {number} Segment start index into trackCoords / trackDistances
+     * @param {Array}  coords       - Array of [lat, lng] pairs
+     * @param {Array}  distances    - Cumulative distance at each coord
+     * @param {number} totalDist    - Total path distance in metres
+     * @param {number} progress     - Fractional position (0 to 1)
+     * @returns {[number, number]|null} Interpolated [lat, lng], or null if empty
      */
-    function findSegmentAtDistance( targetDistance ) {
-        let segmentIndex = 0;
-        for ( let i = 1; i < trackDistances.length; i++ ) {
-            if ( trackDistances[ i ] >= targetDistance ) {
-                segmentIndex = i - 1;
-                break;
-            }
-            segmentIndex = i - 1;
+    function interpolateAlongPath( coords, distances, totalDist, progress ) {
+        if ( coords.length === 0 ) {
+            return null;
         }
-        return segmentIndex;
+
+        const targetDist = progress * totalDist;
+
+        // Binary search for segment
+        let lo = 0, hi = coords.length - 2;
+        while ( lo < hi ) {
+            const mid = ( lo + hi ) >> 1;
+            if ( distances[ mid + 1 ] < targetDist ) {
+                lo = mid + 1;
+            } else {
+                hi = mid;
+            }
+        }
+
+        if ( lo >= coords.length - 1 ) {
+            return coords[ coords.length - 1 ];
+        }
+
+        const segStart = distances[ lo ];
+        const segLen = distances[ lo + 1 ] - segStart;
+        if ( segLen === 0 ) {
+            return coords[ lo ];
+        }
+
+        const t = ( targetDist - segStart ) / segLen;
+        return [
+            coords[ lo ][ 0 ] + t * ( coords[ lo + 1 ][ 0 ] - coords[ lo ][ 0 ] ),
+            coords[ lo ][ 1 ] + t * ( coords[ lo + 1 ][ 1 ] - coords[ lo ][ 1 ] ),
+        ];
     }
 
     /**
      * Gets the coordinate at a specific progress position along the track.
      *
-     * Uses linear interpolation between track segments to find the exact coordinate
-     * at the given fractional position (0 = start, 1 = end).
-     *
      * @param {number} progress - Fractional position along track (0 to 1)
      * @returns {[number, number]|null} Latitude/longitude pair, or null if track empty
-     *
-     * @example
-     * // Get coordinate at 50% along the track
-     * const midpoint = getCoordinateAtProgress(0.5);
-     * // Returns: [latitude, longitude]
      */
     function getCoordinateAtProgress( progress ) {
-        if ( trackCoords.length === 0 ) {
-            return null;
-        }
-
-        const targetDistance = progress * totalTrackDistance;
-        const segmentIndex = findSegmentAtDistance( targetDistance );
-
-        // If at the very end
-        if ( segmentIndex >= trackCoords.length - 1 ) {
-            return trackCoords[ trackCoords.length - 1 ];
-        }
-
-        // Interpolate within segment
-        const segmentStart = trackDistances[ segmentIndex ];
-        const segmentEnd = trackDistances[ segmentIndex + 1 ];
-        const segmentLength = segmentEnd - segmentStart;
-
-        if ( segmentLength === 0 ) {
-            return trackCoords[ segmentIndex ];
-        }
-
-        const t = ( targetDistance - segmentStart ) / segmentLength;
-        const lat = trackCoords[ segmentIndex ][ 0 ] + t * ( trackCoords[ segmentIndex + 1 ][ 0 ] - trackCoords[ segmentIndex ][ 0 ] );
-        const lng = trackCoords[ segmentIndex ][ 1 ] + t * ( trackCoords[ segmentIndex + 1 ][ 1 ] - trackCoords[ segmentIndex ][ 1 ] );
-
-        return [ lat, lng ];
+        return interpolateAlongPath( trackCoords, trackDistances, totalTrackDistance, progress );
     }
 
     /**
@@ -364,35 +365,7 @@ Chart.register( LineController, LineElement, PointElement, LinearScale, Filler, 
         if ( cameraCoords.length === 0 ) {
             return getCoordinateAtProgress( progress );
         }
-
-        const targetDist = progress * cameraTotalDistance;
-        let lo = 0, hi = cameraCoords.length - 2;
-        while ( lo < hi ) {
-            const mid = ( lo + hi ) >> 1;
-            if ( cameraTrackDistances[ mid + 1 ] < targetDist ) {
-                lo = mid + 1;
-            } else {
-                hi = mid;
-            }
-        }
-        const segIdx = lo;
-
-        if ( segIdx >= cameraCoords.length - 1 ) {
-            return cameraCoords[ cameraCoords.length - 1 ];
-        }
-
-        const segStart = cameraTrackDistances[ segIdx ];
-        const segEnd   = cameraTrackDistances[ segIdx + 1 ];
-        const segLen   = segEnd - segStart;
-        if ( segLen === 0 ) {
-            return cameraCoords[ segIdx ];
-        }
-
-        const t = ( targetDist - segStart ) / segLen;
-        return [
-            cameraCoords[ segIdx ][ 0 ] + t * ( cameraCoords[ segIdx + 1 ][ 0 ] - cameraCoords[ segIdx ][ 0 ] ),
-            cameraCoords[ segIdx ][ 1 ] + t * ( cameraCoords[ segIdx + 1 ][ 1 ] - cameraCoords[ segIdx ][ 1 ] ),
-        ];
+        return interpolateAlongPath( cameraCoords, cameraTrackDistances, cameraTotalDistance, progress );
     }
 
     /**
@@ -441,8 +414,6 @@ Chart.register( LineController, LineElement, PointElement, LinearScale, Filler, 
      * @param {number} progress - Progress ratio (0-1)
      * @return {Array} Array of [lat, lng] coordinates
      */
-    // Note: getTrackFromProgress() removed - remaining polyline now always shows full track
-    // This allows the white dotted walked trail to overlay the solid Vermilion background
 
     /**
      * Initialize progress indicator visualization
@@ -888,9 +859,8 @@ Chart.register( LineController, LineElement, PointElement, LinearScale, Filler, 
             return { gain: 0, loss: 0 };
         }
 
-        // 7-point median filter to remove GPS elevation spikes
-        const MEDIAN_WINDOW = 7;
-        const mHalf = Math.floor( MEDIAN_WINDOW / 2 );
+        // Median filter to remove GPS elevation spikes
+        const mHalf = Math.floor( ELEVATION_MEDIAN_WINDOW / 2 );
         const despiked = new Array( valid.length );
         for ( let i = 0; i < valid.length; i++ ) {
             const neighborhood = [];
@@ -901,9 +871,8 @@ Chart.register( LineController, LineElement, PointElement, LinearScale, Filler, 
             despiked[ i ] = neighborhood[ Math.floor( neighborhood.length / 2 ) ];
         }
 
-        // 11-point moving average to smooth remaining GPS noise
-        const WINDOW = 11;
-        const half = Math.floor( WINDOW / 2 );
+        // Moving average to smooth remaining GPS noise
+        const half = Math.floor( ELEVATION_AVG_WINDOW / 2 );
         const smoothed = new Array( despiked.length );
         for ( let i = 0; i < despiked.length; i++ ) {
             let sum = 0, count = 0;
@@ -915,16 +884,15 @@ Chart.register( LineController, LineElement, PointElement, LinearScale, Filler, 
         }
 
         // Dead-band threshold on smoothed data
-        const THRESHOLD = 10;
         let gain = 0, loss = 0;
         let ref = smoothed[ 0 ];
 
         for ( let i = 1; i < smoothed.length; i++ ) {
             const diff = smoothed[ i ] - ref;
-            if ( diff > THRESHOLD ) {
+            if ( diff > ELEVATION_GAIN_THRESHOLD ) {
                 gain += diff;
                 ref = smoothed[ i ];
-            } else if ( diff < -THRESHOLD ) {
+            } else if ( diff < -ELEVATION_GAIN_THRESHOLD ) {
                 loss -= diff;
                 ref = smoothed[ i ];
             }
@@ -1408,11 +1376,10 @@ Chart.register( LineController, LineElement, PointElement, LinearScale, Filler, 
     /**
      * Create marker icon
      *
-     * @param {number} number - Marker number (kept for API compatibility)
      * @param {boolean} isActive - Whether this marker is currently active
      * @return {L.DivIcon} Leaflet div icon
      */
-    function createNumberedIcon( number, isActive = false ) {
+    function createNumberedIcon( isActive = false ) {
         const activeClass = isActive ? ' mapthread-active' : '';
         return L.divIcon( {
             className: 'mapthread-marker-icon',
@@ -1452,7 +1419,7 @@ Chart.register( LineController, LineElement, PointElement, LinearScale, Filler, 
             const markerData = markers[ index ];
             const icon = markerData && markerData.emoji
                 ? createEmojiIcon( markerData.emoji, isActive )
-                : createNumberedIcon( index + 1, isActive );
+                : createNumberedIcon( isActive );
             marker.setIcon( icon );
 
             // Automatically show/hide tooltip based on active state
@@ -1809,7 +1776,7 @@ Chart.register( LineController, LineElement, PointElement, LinearScale, Filler, 
                 'div', 'leaflet-bar leaflet-control mapthread-dismiss-control'
             );
             // On mobile the map starts dismissed — show restore icon
-            const startDismissed = window.innerWidth <= 767;
+            const startDismissed = window.innerWidth <= MOBILE_BREAKPOINT;
             const initialIcon  = startDismissed ? ICON_MAP_PIN : ICON_MINIMIZE;
             const initialLabel = startDismissed ? 'Show map'   : 'Hide map';
             const btn = createControlBtn( container, 'mapthread-dismiss-btn', initialIcon, initialLabel );
@@ -2079,7 +2046,7 @@ Chart.register( LineController, LineElement, PointElement, LinearScale, Filler, 
         leafletMap.addControl( layersCtrl );
 
         // Add fullscreen control (forceSeparateButton keeps it out of the zoom bar)
-        const isMobile = window.innerWidth <= 767;
+        const isMobile = window.innerWidth <= MOBILE_BREAKPOINT;
         const fullscreenCtrl = new FullScreen( {
             position: 'topright',
             pseudoFullscreen: isMobile,
@@ -2209,7 +2176,7 @@ Chart.register( LineController, LineElement, PointElement, LinearScale, Filler, 
                 // Create marker icon (emoji or default circle)
                 const icon = emoji
                     ? createEmojiIcon( emoji, false )
-                    : createNumberedIcon( markers.length, false );
+                    : createNumberedIcon( false );
                 const marker = L.marker( [ lat, lng ], { icon } );
 
                 // Add tooltip
@@ -2411,7 +2378,7 @@ Chart.register( LineController, LineElement, PointElement, LinearScale, Filler, 
         }, MAP_INTERACTION_TIMEOUT );
 
         // Mobile: start with map dismissed to prioritise content
-        if ( window.innerWidth <= 767 ) {
+        if ( window.innerWidth <= MOBILE_BREAKPOINT ) {
             isMapDismissed = true;
             document.body.classList.add( 'mapthread-map-dismissed' );
             const mapEl = map.getContainer();

@@ -184,10 +184,9 @@
     }
 }
 
-// Frontend styles (minimal - just structure)
+// Frontend styles (minimal — main styles in mapthread-frontend.scss)
 .mapthread-marker {
-    // Invisible anchor point - theme can optionally style as visible
-    // Will be styled by frontend CSS in Phase 4-5
+    // Invisible scroll anchor; styled by frontend stylesheet
     display: block;
     height: 0;
     overflow: hidden;

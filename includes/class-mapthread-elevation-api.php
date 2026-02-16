@@ -35,15 +35,50 @@ class Mapthread_Elevation_API {
 			[
 				'methods'             => 'POST',
 				'callback'            => [ $this, 'get_elevation' ],
-				'permission_callback' => '__return_true',
+				'permission_callback' => function ( $request ) {
+					$attachment_id = $request->get_param( 'attachment_id' );
+					$attachment    = get_post( $attachment_id );
+					if ( ! $attachment || 'attachment' !== $attachment->post_type ) {
+						return false;
+					}
+					// No parent — allow if attachment status is inherit (standard for uploads).
+					if ( ! $attachment->post_parent ) {
+						return 'inherit' === $attachment->post_status;
+					}
+					$parent = get_post( $attachment->post_parent );
+					if ( ! $parent ) {
+						return false;
+					}
+					// Published parent — anyone can request elevation data.
+					if ( 'publish' === $parent->post_status ) {
+						return true;
+					}
+					// Draft/pending/private — only users who can edit the parent post.
+					return current_user_can( 'edit_post', $parent->ID );
+				},
 				'args'                => [
 					'attachment_id' => [
 						'required' => true,
 						'type'     => 'integer',
 					],
 					'coordinates'   => [
-						'required' => true,
-						'type'     => 'array',
+						'required'          => true,
+						'type'              => 'array',
+						'sanitize_callback' => function ( $coords ) {
+							if ( ! is_array( $coords ) ) {
+								return [];
+							}
+							return array_values(
+								array_filter(
+									$coords,
+									function ( $c ) {
+										return is_array( $c ) && count( $c ) === 2
+											&& is_numeric( $c[0] ) && is_numeric( $c[1] )
+											&& abs( $c[0] ) <= 90 && abs( $c[1] ) <= 180;
+									}
+								)
+							);
+						},
 					],
 				],
 			]
@@ -57,8 +92,11 @@ class Mapthread_Elevation_API {
 	 * @return WP_REST_Response|WP_Error Response object or error.
 	 */
 	public function get_elevation( $request ) {
-		$attachment_id = $request->get_param( 'attachment_id' );
-		$coords        = $request->get_param( 'coordinates' );
+		$attachment_id = absint( $request->get_param( 'attachment_id' ) );
+		if ( ! get_post( $attachment_id ) ) {
+			return new WP_Error( 'invalid_attachment', 'Invalid attachment ID', [ 'status' => 404 ] );
+		}
+		$coords = $request->get_param( 'coordinates' );
 
 		// Check post meta cache first (permanent).
 		$cached = get_post_meta( $attachment_id, '_mapthread_elevations', true );
