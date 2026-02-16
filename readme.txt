@@ -5,7 +5,7 @@ Tags: maps, gpx, travel, storytelling, hiking
 Requires at least: 6.0
 Tested up to: 6.9
 Requires PHP: 7.4
-Stable tag: 1.4.1
+Stable tag: 1.5.0
 License: GPLv2 or later
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
 
@@ -21,7 +21,7 @@ Perfect for travel bloggers, hiking enthusiasts, and anyone who wants to tell lo
 
 * **Auto-Following Maps** - Map pans and zooms as readers scroll through your story
 * **GPX File Upload** - Support for GPS files from any device or app
-* **Multiple Map Styles** - Switch between Street, Satellite, and Topographic views
+* **Multiple Map Styles** - Street, Satellite, Topographic, plus additional providers (Mapbox, Thunderforest, JawgMaps, Stadia Maps)
 * **Fullscreen Maps** - Expand maps to fullscreen for immersive viewing
 * **Numbered Waypoints** - Place markers at key points in your narrative
 * **Elevation Profiles** - Visual elevation charts for GPX tracks
@@ -47,12 +47,24 @@ Perfect for travel bloggers, hiking enthusiasts, and anyone who wants to tell lo
 4. Add coordinates and titles to each marker
 5. Publish - the map automatically follows as readers scroll!
 
+= Map Providers =
+
+Mapthread includes three free map styles out of the box (Street, Satellite, Topographic). You can also connect additional tile providers for additional styles:
+
+* **Mapbox** - Streets, Outdoors, Light, Dark, Satellite, Satellite Streets
+* **Thunderforest** - Cycle, Transport, Landscape, Outdoors, Atlas, Pioneer, Neighbourhood
+* **JawgMaps** - Streets, Sunny, Terrain, Dark, Light
+* **Stadia Maps** - Smooth, Smooth Dark, Satellite, Outdoors, OSM Bright, Stamen Toner, Stamen Terrain, Stamen Watercolor
+
+Configure providers under **Settings > Mapthread** by entering your API key and selecting which styles to enable. Each provider offers free tiers suitable for most blogs.
+
 = Technical Details =
 
 * Leaflet.js for fast, interactive maps
 * Chart.js for elevation profile visualization
 * OpenStreetMap tiles and Nominatim geocoding (no API key required)
 * Open-Elevation API for elevation data
+* Optional additional tile providers (Mapbox, Thunderforest, JawgMaps, Stadia Maps) with API key configuration
 * Client-side GPX parsing with sessionStorage caching
 * Modern JavaScript with React-based block editor
 
@@ -90,6 +102,13 @@ Should work on most block themes. Classic themes are not tested/supported.
 3. Add "Map Marker" blocks throughout your content
 4. Publish and enjoy!
 
+= Configuring Map Providers =
+
+1. Go to Settings > Mapthread
+2. Enter your API key for any supported provider (Mapbox, Thunderforest, JawgMaps, Stadia Maps)
+3. Select which map styles to enable for each provider
+4. Save Changes — enabled styles will appear in the map layer switcher on the frontend
+
 == Frequently Asked Questions ==
 
 = What is a GPX file? =
@@ -126,6 +145,14 @@ We recommend GPX files under 10MB. Larger files will show a warning and may be s
 
 Not currently. But you can set emojis for each Marker instead of the default.
 
+= How do I add more map styles? =
+
+Go to Settings > Mapthread and enter your API key for any supported provider (Mapbox, Thunderforest, JawgMaps, Stadia Maps). Then select which styles to enable. Each provider offers free tiers suitable for most blogs.
+
+= Are API keys secure? =
+
+The tile provider API keys used by Mapthread are publishable tokens designed for client-side use. Security is handled via domain restrictions configured in each provider's dashboard.
+
 = Does this work offline? =
 
 No, Mapthread requires an internet connection to load map tiles from OpenStreetMap.
@@ -158,7 +185,16 @@ Mapthread uses the following open-source libraries and external services:
 * **Open-Elevation API** - https://open-elevation.com/
   Elevation data lookup for GPX tracks
 
-All external API calls are made from the user's browser.
+* **Mapbox** - https://www.mapbox.com/
+  Additional map tiles (optional, requires API key)
+* **Thunderforest** - https://www.thunderforest.com/
+  Additional map tiles (optional, requires API key)
+* **JawgMaps** - https://www.jawg.io/
+  Additional map tiles (optional, requires API key)
+* **Stadia Maps** - https://stadiamaps.com/
+  Additional map tiles (optional, requires API key)
+
+All external API calls are made from the user's browser. Additional tile provider API calls are only made when the corresponding provider is configured with an API key.
 
 = WordPress Integration =
 
@@ -175,6 +211,15 @@ All external API calls are made from the user's browser.
 5. Map markers and tooltips
 
 == Changelog ==
+
+= 1.5.0 - 2026-02-16 =
+* Added: Settings page (Settings > Mapthread) for configuring map tile providers
+* Added: Support for Mapbox, Thunderforest, JawgMaps, and Stadia Maps tile providers
+* Added: Per-provider API key storage and style selection
+* Added: Toggleable free layers (Satellite, Topographic) with Street Map always available as fallback
+* Added: Dynamic layer switcher — frontend dropdown reflects configured providers
+* Added: Default Map Style dropdown in block editor now shows all available layers
+* Improved: Layer panel scrolls when many styles are enabled
 
 = 1.3.9 - 2026-02-12 =
 * Added: GPX route support — files with route points (`<rte>`) are now parsed alongside tracks
@@ -239,6 +284,9 @@ All external API calls are made from the user's browser.
 * Performance optimizations
 
 == Upgrade Notice ==
+
+= 1.5.0 =
+New settings page! Configure additional map providers (Mapbox, Thunderforest, JawgMaps, Stadia Maps) under Settings > Mapthread. Toggle free layers and choose from dozens of map styles.
 
 = 1.3.9 =
 GPX files with routes (not just tracks) are now supported.

@@ -2,7 +2,7 @@
 
 Interactive map-based storytelling for WordPress.
 
-![Version](https://img.shields.io/badge/version-1.3.9-blue.svg)
+![Version](https://img.shields.io/badge/version-1.5.0-blue.svg)
 ![WordPress](https://img.shields.io/badge/wordpress-6.0%2B-brightgreen.svg)
 ![PHP](https://img.shields.io/badge/php-7.4%2B-purple.svg)
 ![License](https://img.shields.io/badge/license-GPLv2%2B-orange.svg)
@@ -34,6 +34,7 @@ Perfect for:
 - **Address Search** - Geocode addresses with autocomplete
 - **Emoji Markers** - Choose from any emoji as custom map markers
 - **Click-to-Scroll** - Click any map marker to jump to that part of the story
+- **Additional Map Providers** - Connect Mapbox, Thunderforest, JawgMaps, or Stadia Maps for additional styles
 
 ### Design & Layout
 - **Desktop Layout** - 2-column layout (story 60%, sticky map 40%)
@@ -98,7 +99,7 @@ npm run build
 - **Show Elevation Profile** (toggle) - Enable/disable elevation chart
   - Displays elevation graph at bottom of map (default)
   - Shows marker positions and current progress on the chart
-- **Default Map Style** (dropdown) - Choose which map style loads initially (Street, Satellite, Topographic)
+- **Default Map Style** (dropdown) - Choose which map style loads initially (shows all enabled styles from Settings > Mapthread)
 
 **Validation:**
 - File size >10MB: Warning (may be slow)
@@ -209,6 +210,32 @@ The `mapthread-map-column` class makes the map sticky as you scroll.
 
 ---
 
+## Settings
+
+Navigate to **Settings > Mapthread** in WordPress admin to configure map tile providers.
+
+### Free Map Providers
+
+Three free map styles are included out of the box:
+- **Street** (OpenStreetMap) — always enabled, serves as the fallback
+- **Satellite** (Esri World Imagery) — toggleable
+- **Topographic** (OpenTopoMap) — toggleable
+
+### Additional Map Providers
+
+Enter an API key and select which styles to enable. Enabled styles appear in the frontend layer switcher and the block editor's Default Map Style dropdown.
+
+| Provider | Styles Available |
+|---|---|
+| **[Mapbox](https://www.mapbox.com/)** | Streets, Outdoors, Light, Dark, Satellite, Satellite Streets |
+| **[Thunderforest](https://www.thunderforest.com/)** | Cycle, Transport, Landscape, Outdoors, Atlas, Pioneer, Neighbourhood |
+| **[JawgMaps](https://www.jawg.io/)** | Streets, Sunny, Terrain, Dark, Light |
+| **[Stadia Maps](https://stadiamaps.com/)** | Smooth, Smooth Dark, Satellite, Outdoors, OSM Bright, Stamen Toner, Stamen Terrain, Stamen Watercolor |
+
+All providers offer free tiers suitable for most blogs. API keys are publishable tokens designed for client-side use — security is handled via domain restrictions in each provider's dashboard.
+
+---
+
 ## Requirements
 
 - **WordPress:** 6.0 or higher
@@ -253,6 +280,12 @@ A: Not tested. Mapthread is designed for block themes.
 
 **Q: Can I use Mapthread with Elementor/Divi/etc?**
 A: Not tested. Mapthread is designed for the block editor (Gutenberg).
+
+**Q: How do I add more map styles?**
+A: Go to Settings > Mapthread and enter your API key for any supported provider (Mapbox, Thunderforest, JawgMaps, Stadia Maps). Then select which styles to enable.
+
+**Q: Are the API keys secure?**
+A: Tile provider API keys are publishable tokens designed for client-side use. Secure them via domain restrictions in each provider's dashboard.
 
 **Q: Is there a limit on GPX file size?**
 A: 10MB is recommended. Larger files will show a warning and may be slow to render.
@@ -304,6 +337,7 @@ mapthread/
 ├── mapthread.php                 # Main plugin file
 ├── includes/
 │   ├── class-mapthread.php       # Core class
+│   ├── class-mapthread-settings.php # Settings page
 │   └── blocks/
 │       ├── map-gpx/            # GPX block
 │       └── map-marker/         # Marker block
@@ -372,6 +406,15 @@ Mapthread is built with and relies on the following open-source libraries and se
   - Provides elevation data for GPX track visualization
   - Open-source public service
 
+### Optional Additional Tile Providers
+
+These services are only used when configured with an API key in Settings > Mapthread:
+
+- **[Mapbox](https://www.mapbox.com/)** - Additional map tiles
+- **[Thunderforest](https://www.thunderforest.com/)** - Additional map tiles
+- **[JawgMaps](https://www.jawg.io/)** - Additional map tiles
+- **[Stadia Maps](https://stadiamaps.com/)** - Additional map tiles
+
 ### WordPress Platform
 
 - **WordPress Block Editor** (Gutenberg) - GPLv2+
@@ -404,7 +447,7 @@ All included third-party libraries are GPL-compatible:
 **External API Calls:**
 - Address searches query Nominatim API with user-entered text
 - Elevation lookups send GPX coordinates to Open-Elevation API
-- Map tiles loaded from OpenStreetMap tile servers
+- Map tiles loaded from OpenStreetMap tile servers (and optionally from configured premium providers)
 - All API calls made from user's browser
 
 **No Data Collection:**

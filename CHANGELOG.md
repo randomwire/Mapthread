@@ -7,6 +7,21 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ---
 
+## [1.5.0] - 2026-02-16
+
+### Added
+- Settings page (Settings > Mapthread) for configuring map tile providers
+- Support for Mapbox, Thunderforest, JawgMaps, and Stadia Maps tile providers
+- Per-provider API key storage and style selection
+- Toggleable free layers (Satellite, Topographic) with Street Map always available as fallback
+- Dynamic layer switcher — frontend dropdown reflects configured providers
+- Default Map Style dropdown in block editor now shows all available layers
+
+### Improved
+- Layer panel scrolls when many styles are enabled (JS-calculated max-height based on map bounds)
+
+---
+
 ## [1.4.1] - 2026-02-16
 
 ### Added
@@ -227,6 +242,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ---
 
+[1.5.0]: https://github.com/randomwire/Mapthread/releases/tag/v1.5.0
 [1.3.9]: https://github.com/randomwire/Mapthread/releases/tag/v1.3.9
 [1.3.8]: https://github.com/randomwire/Mapthread/releases/tag/v1.3.8
 [1.3.7]: https://github.com/randomwire/Mapthread/releases/tag/v1.3.7

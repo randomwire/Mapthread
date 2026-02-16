@@ -298,6 +298,11 @@ export default function Edit( { attributes, setAttributes, clientId } ) {
                         onChange={ ( value ) => setAttributes( { defaultMapLayer: value } ) }
                         help={ __( 'Choose which map style displays when the page loads', 'mapthread' ) }
                     />
+                    <p className="components-base-control__help">
+                        <a href="/wp-admin/options-general.php?page=mapthread" target="_blank" rel="noopener noreferrer">
+                            { __( 'Configure map providers', 'mapthread' ) }
+                        </a>
+                    </p>
                 </PanelBody>
             </InspectorControls>
             <div { ...blockProps }>
