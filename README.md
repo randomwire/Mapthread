@@ -356,7 +356,7 @@ Mapthread is built with and relies on the following open-source libraries and se
   - Fullscreen map control
 
 - **[Lucide](https://lucide.dev/)** - ISC License
-  - Map control icons (zoom, layers, fullscreen, dismiss, download)
+  - Map control icons
 
 ### External Data Services
 

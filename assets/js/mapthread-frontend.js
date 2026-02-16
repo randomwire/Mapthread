@@ -1999,7 +1999,8 @@ Chart.register( LineController, LineElement, PointElement, LinearScale, Filler, 
 
         // Add custom attribution control in top-left position
         L.control.attribution( {
-            position: 'topleft'
+            position: 'topleft',
+            prefix: '<a href="https://leafletjs.com" title="A JavaScript library for interactive maps">\u{1F1FA}\u{1F1E6} Leaflet</a> | <a href="https://github.com/randomwire/Mapthread">Mapthread</a>'
         } ).addTo( leafletMap );
 
         // Scale bar (metric only) — top-right, CSS-offset to sit left of the button column
