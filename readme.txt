@@ -5,7 +5,7 @@ Tags: maps, gpx, travel, storytelling, hiking
 Requires at least: 6.0
 Tested up to: 6.9
 Requires PHP: 7.4
-Stable tag: 1.5.0
+Stable tag: 1.5.1
 License: GPLv2 or later
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
 
@@ -23,12 +23,12 @@ Perfect for travel bloggers, hiking enthusiasts, and anyone who wants to tell lo
 * **GPX File Upload** - Support for GPS files from any device or app
 * **Multiple Map Styles** - Street, Satellite, Topographic, plus additional providers (Mapbox, Thunderforest, JawgMaps, Stadia Maps)
 * **Fullscreen Maps** - Expand maps to fullscreen for immersive viewing
-* **Numbered Waypoints** - Place markers at key points in your narrative
+* **Waypoints** - Place markers at key points in your narrative
 * **Elevation Profiles** - Visual elevation charts for GPX tracks
 * **Emoji Markers** - Fun, customizable emoji waypoint pins
 * **Address Search** - Find locations by name with autocomplete
 * **Smart Interactions** - Pause/resume following, click markers to jump to content
-* **Beautiful Design** - Modern numbered pins, smooth animations, theme color integration
+* **Beautiful Design** - Modern pins and smooth animations
 * **Mobile Responsive** - Optimized layouts for all screen sizes
 
 = Perfect For =
@@ -212,6 +212,10 @@ All external API calls are made from the user's browser. Additional tile provide
 
 == Changelog ==
 
+= 1.5.1 - 2026-02-17 =
+* Fixed: Smooth zoom transitions in follow mode instead of abrupt jumps
+* Fixed: Missing function in elevation profile causing JS errors
+
 = 1.5.0 - 2026-02-16 =
 * Added: Settings page (Settings > Mapthread) for configuring map tile providers
 * Added: Support for Mapbox, Thunderforest, JawgMaps, and Stadia Maps tile providers
@@ -280,10 +284,12 @@ All external API calls are made from the user's browser. Additional tile provide
 * Map Marker block for waypoints
 * Auto-following map behavior
 * Desktop and mobile responsive layouts
-* Theme color integration
 * Performance optimizations
 
 == Upgrade Notice ==
+
+= 1.5.1 =
+Fixes abrupt zoom jumps when scrolling between markers with different zoom levels in follow mode, and resolves a JS error in the elevation profile.
 
 = 1.5.0 =
 New settings page! Configure additional map providers (Mapbox, Thunderforest, JawgMaps, Stadia Maps) under Settings > Mapthread. Toggle free layers and choose from dozens of map styles.

@@ -7,6 +7,14 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ---
 
+## [1.5.1] - 2026-02-17
+
+### Fixed
+- Smooth zoom transitions in follow mode using flyTo at current camera position instead of abrupt integer zoom jumps
+- Missing `findSegmentAtDistance()` function in elevation profile (removed in v1.5.0 refactor but call site was missed)
+
+---
+
 ## [1.5.0] - 2026-02-16
 
 ### Added
@@ -242,6 +250,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ---
 
+[1.5.1]: https://github.com/randomwire/Mapthread/releases/tag/v1.5.1
 [1.5.0]: https://github.com/randomwire/Mapthread/releases/tag/v1.5.0
 [1.3.9]: https://github.com/randomwire/Mapthread/releases/tag/v1.3.9
 [1.3.8]: https://github.com/randomwire/Mapthread/releases/tag/v1.3.8

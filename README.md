@@ -2,7 +2,7 @@
 
 Interactive map-based storytelling for WordPress.
 
-![Version](https://img.shields.io/badge/version-1.5.0-blue.svg)
+![Version](https://img.shields.io/badge/version-1.5.1-blue.svg)
 ![WordPress](https://img.shields.io/badge/wordpress-6.0%2B-brightgreen.svg)
 ![PHP](https://img.shields.io/badge/php-7.4%2B-purple.svg)
 ![License](https://img.shields.io/badge/license-GPLv2%2B-orange.svg)
@@ -30,7 +30,7 @@ Perfect for:
 - **Smart Follow Mode** - Automatically pauses when readers interact with the map, resumes when they keep scrolling
 - **Markers-Only Mode** - Display maps with just markers, no GPX file required
 - **Elevation Profiles** - Visualize elevation changes with graphs at the bottom of the map
-- **Numbered Waypoints** - Place markers at key points in your narrative
+- **Waypoints** - Place markers at key points in your narrative
 - **Address Search** - Geocode addresses with autocomplete
 - **Emoji Markers** - Choose from any emoji as custom map markers
 - **Click-to-Scroll** - Click any map marker to jump to that part of the story
@@ -118,7 +118,7 @@ npm run build
 **Purpose:** Places waypoints in your story
 
 **Settings:**
-- **Marker Style** - Choose between numbered pin or emoji
+- **Marker Style** - Choose between pins or emoji
   - Default: Clean circular pins
   - Emoji: Choose any emoji as your custom marker icon
 - **Emoji Picker** (when emoji style selected)

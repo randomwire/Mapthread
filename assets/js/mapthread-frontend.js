@@ -61,8 +61,8 @@ Chart.register( LineController, LineElement, PointElement, LinearScale, Filler, 
     let allowGpxDownload = false;       // Whether to show download button
     let lastSmoothedProgress = null;    // For smooth interpolation
     let targetProgress = 0;             // Raw scroll-derived progress target
-    let targetCurrentZoom = 14;         // Zoom at current segment start (matches DEFAULT_ZOOM)
-    let targetNextZoom = 14;            // Zoom at current segment end (matches DEFAULT_ZOOM)
+    let followZoom = 14;                // Current zoom for follow mode (matches DEFAULT_ZOOM)
+    let isZoomTransitioning = false;    // True during flyTo zoom transition
     let animationRafId = null;          // Continuous animation loop RAF ID
     let isMapDismissed = false;         // True when map is collapsed to corner tile
     let mapInteractionScrollListener = null; // Listener for re-enabling follow mode
@@ -566,8 +566,6 @@ Chart.register( LineController, LineElement, PointElement, LinearScale, Filler, 
 
         // Calculate overall progress (0-1) along track
         let progress = 0;
-        let currentZoom = DEFAULT_ZOOM;
-        let nextZoom = DEFAULT_ZOOM;
 
         if ( markerTrackPositions.length === 0 ) {
             return;
@@ -578,36 +576,16 @@ Chart.register( LineController, LineElement, PointElement, LinearScale, Filler, 
             if ( markers.length > 0 && trackCoords.length > 0 ) {
                 const firstMarkerPos = markerTrackPositions[ 1 ]; // First actual marker
                 progress = firstMarkerPos * scrollProgress;
-
-                // Interpolate zoom from initial to first marker zoom
-                currentZoom = initialZoom;
-                nextZoom = markers[ 0 ]?.zoom || DEFAULT_ZOOM;
             } else if ( trackCoords.length > 0 ) {
                 // No markers case
                 progress = scrollProgress;
-                currentZoom = initialZoom;
-                nextZoom = DEFAULT_ZOOM;
             } else {
                 return; // No track data
             }
-        } else if ( activeIndex !== null && markerTrackPositions.length > 0 ) {
+        } else if ( markerTrackPositions.length > 0 ) {
             // Active marker index maps to markerTrackPositions[activeIndex + 1]
-            const currentPosIndex = activeIndex + 1;
-            const nextPosIndex = activeIndex + 2;
-
-            const currentPos = markerTrackPositions[ currentPosIndex ];
-            const nextPos = markerTrackPositions[ nextPosIndex ];
-
-            // Get zoom levels from marker data (or defaults for virtual endpoints)
-            if ( activeIndex < markers.length ) {
-                currentZoom = markers[ activeIndex ]?.zoom || DEFAULT_ZOOM;
-            }
-            if ( activeIndex + 1 < markers.length ) {
-                nextZoom = markers[ activeIndex + 1 ]?.zoom || DEFAULT_ZOOM;
-            } else {
-                // Transitioning to virtual end point - maintain last marker's zoom
-                nextZoom = currentZoom;
-            }
+            const currentPos = markerTrackPositions[ activeIndex + 1 ];
+            const nextPos = markerTrackPositions[ activeIndex + 2 ];
 
             // Interpolate between current and next position
             progress = currentPos + ( nextPos - currentPos ) * scrollProgress;
@@ -618,8 +596,6 @@ Chart.register( LineController, LineElement, PointElement, LinearScale, Filler, 
 
         // Set target state for animation loop
         targetProgress = progress;
-        targetCurrentZoom = currentZoom;
-        targetNextZoom = nextZoom;
 
         // Start continuous loop (no-op if already running)
         startAnimationLoop();
@@ -640,6 +616,8 @@ Chart.register( LineController, LineElement, PointElement, LinearScale, Filler, 
             remainingPolyline.setLatLngs( trackCoords );
         }
         lastSmoothedProgress = null;
+        followZoom = DEFAULT_ZOOM;
+        isZoomTransitioning = false;
 
         // Stop any in-flight animation
         if ( animationRafId !== null ) {
@@ -661,6 +639,14 @@ Chart.register( LineController, LineElement, PointElement, LinearScale, Filler, 
     function animationLoop() {
         animationRafId = null;
 
+        // During flyTo zoom transition, freeze all updates so the map stays
+        // visually consistent. Scroll events still accumulate targetProgress,
+        // so the loop catches up smoothly once the transition ends.
+        if ( isZoomTransitioning ) {
+            animationRafId = requestAnimationFrame( animationLoop );
+            return;
+        }
+
         if ( lastSmoothedProgress === null ) {
             lastSmoothedProgress = targetProgress;
         }
@@ -668,11 +654,10 @@ Chart.register( LineController, LineElement, PointElement, LinearScale, Filler, 
         const smoothedProgress = lerp( lastSmoothedProgress, targetProgress, CAMERA_SMOOTHING );
         lastSmoothedProgress = smoothedProgress;
 
-        // Update camera
+        // Update camera position
         const coord = getCameraCoordinateAtProgress( smoothedProgress );
-        const zoom = lerp( targetCurrentZoom, targetNextZoom, smoothedProgress );
         if ( coord && map && isFollowMode ) {
-            map.setView( coord, zoom, { animate: false } );
+            map.setView( coord, followZoom, { animate: false } );
         }
 
         // Update polyline split
@@ -822,7 +807,18 @@ Chart.register( LineController, LineElement, PointElement, LinearScale, Filler, 
         }
 
         const targetDistance = progress * totalTrackDistance;
-        const segmentIndex = findSegmentAtDistance( targetDistance );
+
+        // Binary search for segment (same logic as interpolateAlongPath)
+        let lo = 0, hi = trackDistances.length - 2;
+        while ( lo < hi ) {
+            const mid = ( lo + hi ) >> 1;
+            if ( trackDistances[ mid + 1 ] < targetDistance ) {
+                lo = mid + 1;
+            } else {
+                hi = mid;
+            }
+        }
+        const segmentIndex = lo;
 
         if ( segmentIndex >= trackElevations.length - 1 ) {
             return trackElevations[ trackElevations.length - 1 ];
@@ -1628,6 +1624,30 @@ Chart.register( LineController, LineElement, PointElement, LinearScale, Filler, 
             updateProgressPosition( activeMarker, scrollProgress );
 
             if ( activeMarker !== activeMarkerIndex ) {
+                const markerData = markers[ activeMarker ];
+                const newZoom = markerData?.zoom || DEFAULT_ZOOM;
+
+                // Smoothly transition zoom using Leaflet's flyTo at the current
+                // camera position (not the marker's position). The animation loop
+                // freezes during this so nothing disconnects visually.
+                if ( map && newZoom !== followZoom && ! isZoomTransitioning ) {
+                    isZoomTransitioning = true;
+                    const currentCoord = getCameraCoordinateAtProgress(
+                        lastSmoothedProgress ?? targetProgress
+                    );
+                    const flyTarget = currentCoord || map.getCenter();
+                    map.once( 'zoomend', () => {
+                        isZoomTransitioning = false;
+                        followZoom = newZoom;
+                    } );
+                    map.flyTo( flyTarget, newZoom, {
+                        duration: 0.4,
+                        easeLinearity: 0.25,
+                    } );
+                } else {
+                    followZoom = newZoom;
+                }
+
                 activeMarkerIndex = activeMarker;
                 updateMarkerIcons( activeMarker );
             }
@@ -1701,8 +1721,10 @@ Chart.register( LineController, LineElement, PointElement, LinearScale, Filler, 
      * to resume following by simply scrolling to the next marker.
      */
     function handleMapInteraction() {
-        // Reset progress smoothing when user manually pans/zooms
+        // Reset smoothing when user manually pans/zooms
         lastSmoothedProgress = null;
+        followZoom = map ? map.getZoom() : DEFAULT_ZOOM;
+        isZoomTransitioning = false;
 
         // Stop any in-flight animation so it doesn't fight user input
         if ( animationRafId !== null ) {
