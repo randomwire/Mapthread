@@ -1066,6 +1066,8 @@ Chart.register( LineController, LineElement, PointElement, LinearScale, Filler, 
                     x: {
                         type: 'linear',
                         display: true,
+                        min: 0,
+                        max: data.length > 0 ? data[ data.length - 1 ].x : 0,
                         ticks: {
                             font: { size: 9 },
                             color: 'rgba(0, 0, 0, 0.65)',
