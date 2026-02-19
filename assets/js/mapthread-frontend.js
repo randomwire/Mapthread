@@ -815,6 +815,12 @@ Chart.register( LineController, LineElement, PointElement, LinearScale, Filler, 
             clearTimeout( autoTimer );
             removeTooltip();
         }, { once: true } );
+
+        // Dismiss on scroll so the tooltip doesn't drift from the tile.
+        window.addEventListener( 'scroll', () => {
+            clearTimeout( autoTimer );
+            removeTooltip();
+        }, { once: true } );
     }
 
     // =========================================================================
