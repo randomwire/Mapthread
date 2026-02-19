@@ -2040,7 +2040,7 @@ Chart.register( LineController, LineElement, PointElement, LinearScale, Filler, 
 
             // Isolate imagery provider by stripping the OSM portion.
             let imagery = attrib
-                .replace( /&copy;\s*<a[^>]*>OpenStreetMap<\/a>\s*contributors?/gi, '' )
+                .replace( /,?\s*(?:Data\s+)?&copy;\s*<a[^>]*>OpenStreetMap<\/a>\s*contributors?/gi, '' )
                 .replace( /[,|]\s*/g, '' )
                 .trim();
 
