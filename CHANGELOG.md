@@ -7,6 +7,17 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ---
 
+## [1.5.2] - 2026-02-19
+
+### Fixed
+- Removed external CDN dependency — replaced `emoji-picker-element` (which fetched data from jsdelivr) with a self-contained curated emoji grid and custom emoji paste input
+- Block apiVersion updated from 2 to 3 for WordPress 7.0+ compatibility
+
+### Improved
+- External services section in readme.txt expanded with per-service data usage details, terms of service, and privacy policy links (WordPress.org review requirement)
+
+---
+
 ## [1.5.1] - 2026-02-17
 
 ### Fixed
@@ -165,7 +176,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   - Default: enabled
   - Setting hidden when no GPX file loaded (UI cleanup)
 - **Emoji Marker Support** - Select emoji icons for map markers
-  - emoji-picker-element integration in block editor
+  - Curated emoji grid in block editor
   - Colorful emoji rendering on frontend map
   - Emoji markers scale and animate on scroll
 - **UI Improvements**
@@ -179,7 +190,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Technical
 - Chart.js ^4.5.1 integration for elevation visualization
-- emoji-picker-element ^1.28.1 for emoji selection UI
+- Custom emoji grid component (no external dependencies)
 - Open-Elevation API for elevation data (https://api.open-elevation.com)
 - Custom Chart.js plugin for marker overlays and progress indicator
 - Improved scroll state management for chart updates
@@ -250,6 +261,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ---
 
+[1.5.2]: https://github.com/randomwire/Mapthread/releases/tag/v1.5.2
 [1.5.1]: https://github.com/randomwire/Mapthread/releases/tag/v1.5.1
 [1.5.0]: https://github.com/randomwire/Mapthread/releases/tag/v1.5.0
 [1.3.9]: https://github.com/randomwire/Mapthread/releases/tag/v1.3.9

@@ -5,7 +5,7 @@ Tags: maps, gpx, travel, storytelling, hiking
 Requires at least: 6.0
 Tested up to: 6.9
 Requires PHP: 7.4
-Stable tag: 1.5.1
+Stable tag: 1.5.2
 License: GPLv2 or later
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
 
@@ -58,27 +58,10 @@ Mapthread includes three free map styles out of the box (Street, Satellite, Topo
 
 Configure providers under **Settings > Mapthread** by entering your API key and selecting which styles to enable. Each provider offers free tiers suitable for most blogs.
 
-= Technical Details =
+= Compatibility =
 
-* Leaflet.js for fast, interactive maps
-* Chart.js for elevation profile visualization
-* OpenStreetMap tiles and Nominatim geocoding (no API key required)
-* Open-Elevation API for elevation data
-* Optional additional tile providers (Mapbox, Thunderforest, JawgMaps, Stadia Maps) with API key configuration
-* Client-side GPX parsing with sessionStorage caching
-* Modern JavaScript with React-based block editor
-
-= Browser Support =
-
-Tested on Chrome 105+ and Safari 15.4+.
-
-= Theme Compatibility =
-
-Tested and working on:
-* Twenty Twenty-Four
-* Twenty Twenty-Five
-
-Should work on most block themes. Classic themes are not tested/supported.
+* Browsers: Chrome 105+, Safari 15.4+
+* Themes: Tested on Twenty Twenty-Four and Twenty Twenty-Five. Should work on most block themes. Classic themes are not supported.
 
 == Installation ==
 
@@ -94,13 +77,6 @@ Should work on most block themes. Classic themes are not tested/supported.
 2. Go to Plugins > Add New > Upload Plugin
 3. Choose the ZIP file and click Install Now
 4. Activate the plugin
-
-= After Installation =
-
-1. Create or edit a post
-2. Add the "Map GPX" block and upload your GPX file
-3. Add "Map Marker" blocks throughout your content
-4. Publish and enjoy!
 
 = Configuring Map Providers =
 
@@ -169,38 +145,59 @@ Mapthread uses the following open-source libraries and external services:
   Fullscreen map control
 * **Chart.js** (MIT) - https://www.chartjs.org/
   Elevation profile visualization
-* **emoji-picker-element** (MIT) - https://github.com/nolanlawson/emoji-picker-element
-  Emoji selection interface
 
 = External Services =
 
-* **OpenStreetMap** (ODbL 1.0) - https://www.openstreetmap.org/
-  Street map tiles and data
-* **Esri World Imagery** - https://www.esri.com/
-  Satellite map tiles
-* **OpenTopoMap** (CC-BY-SA) - https://opentopomap.org/
-  Topographic map tiles
-* **Nominatim** - https://nominatim.org/
-  Address geocoding and search (OpenStreetMap service)
-* **Open-Elevation API** - https://open-elevation.com/
-  Elevation data lookup for GPX tracks
+This plugin connects to third-party services to display map tiles, geocode addresses, and look up elevation data. Below is a full description of each service, what data is sent, and when.
+
+**OpenStreetMap Tile Service**
+Used for: Rendering the default "Street" map layer.
+When: Every time a visitor views a page containing a Mapthread map, the browser requests tile images from OpenStreetMap servers.
+Data sent: Tile coordinate requests (zoom level, x/y tile numbers) indicating the geographic area being viewed. The visitor's IP address is visible to OpenStreetMap servers.
+Terms of Use: https://wiki.osmfoundation.org/wiki/Terms_of_Use
+Privacy Policy: https://wiki.osmfoundation.org/wiki/Privacy_Policy
+Tile Usage Policy: https://operations.osmfoundation.org/policies/tiles/
+
+**Esri / ArcGIS World Imagery**
+Used for: Rendering the optional "Satellite" map layer.
+When: Only when the Satellite layer is enabled in Settings > Mapthread and a visitor selects it. No requests are made if the layer is disabled.
+Data sent: Tile coordinate requests and the visitor's IP address.
+Terms of Use: https://www.esri.com/en-us/legal/terms/full-master-agreement
+Privacy Policy: https://www.esri.com/en-us/privacy/overview
+
+**OpenTopoMap**
+Used for: Rendering the optional "Topographic" map layer.
+When: Only when the Topographic layer is enabled in Settings > Mapthread and a visitor selects it.
+Data sent: Tile coordinate requests and the visitor's IP address.
+About / Terms: https://opentopomap.org/about
+
+**Nominatim (OpenStreetMap Geocoding)**
+Used for: Address search autocomplete when editing a Map Marker block.
+When: Only in the WordPress block editor when an author types into the address search field. Not triggered on the public frontend.
+Data sent: The search query text (partial address or place name) and the editor's IP address.
+Usage Policy: https://operations.osmfoundation.org/policies/nominatim/
+Privacy Policy: https://wiki.osmfoundation.org/wiki/Privacy_Policy
+
+**Open-Elevation API**
+Used for: Looking up elevation data for GPX tracks that lack elevation information.
+When: Server-side only — when a GPX file is uploaded that has no elevation data and the elevation profile feature is enabled. The request is made from the WordPress server, not from the visitor's browser.
+Data sent: GPS coordinates (latitude/longitude pairs) sampled from the GPX track, sent from the WordPress server's IP address.
+Service: https://open-elevation.com/
+Source: https://github.com/Jorl17/open-elevation (open-source, no account required)
+
+**Optional Tile Providers** (each requires an API key configured in Settings > Mapthread)
+
+The following services are only contacted when a site administrator has entered an API key and a visitor selects the corresponding map layer. In each case the browser sends tile coordinate requests, the configured API key/token, and the visitor's IP address.
 
 * **Mapbox** - https://www.mapbox.com/
-  Additional map tiles (optional, requires API key)
+  Terms: https://www.mapbox.com/legal/tos | Privacy: https://www.mapbox.com/legal/privacy
 * **Thunderforest** - https://www.thunderforest.com/
-  Additional map tiles (optional, requires API key)
+  Terms: https://www.thunderforest.com/terms/ | Privacy: https://www.thunderforest.com/privacy/
 * **JawgMaps** - https://www.jawg.io/
-  Additional map tiles (optional, requires API key)
+  Terms: https://www.jawg.io/en/terms/ | Privacy: https://www.jawg.io/en/privacy/
 * **Stadia Maps** - https://stadiamaps.com/
-  Additional map tiles (optional, requires API key)
+  Terms: https://stadiamaps.com/terms-of-service/ | Privacy: https://stadiamaps.com/privacy-policy/
 
-All external API calls are made from the user's browser. Additional tile provider API calls are only made when the corresponding provider is configured with an API key.
-
-= WordPress Integration =
-
-* WordPress Block Editor (Gutenberg)
-* @wordpress/scripts build toolchain
-* WordPress Dashicons (GPLv2+)
 
 == Screenshots ==
 
@@ -211,6 +208,12 @@ All external API calls are made from the user's browser. Additional tile provide
 5. Map markers and tooltips
 
 == Changelog ==
+
+= 1.5.2 - 2026-02-19 =
+* Fixed: Removed external CDN dependency — emoji picker now uses a self-contained curated grid
+* Fixed: Block apiVersion updated from 2 to 3 for WordPress 7.0+ compatibility
+* Improved: External services documentation expanded with data usage details and privacy policy links
+* Note: REST API permission_callback was already fixed in v1.5.1
 
 = 1.5.1 - 2026-02-17 =
 * Fixed: Smooth zoom transitions in follow mode instead of abrupt jumps
@@ -266,11 +269,11 @@ All external API calls are made from the user's browser. Additional tile provide
 = 1.2.0 - 2026-02-09 =
 * Added: Elevation profile chart powered by Chart.js with Open-Elevation API
 * Added: Elevation profile toggle in Map GPX block settings
-* Added: Emoji marker support with emoji-picker-element
+* Added: Emoji marker support for map markers
 * Added: Marker position indicators on elevation chart
 * Changed: Moved Leaflet attribution to top-right corner
 * Fixed: Elevation profile toggle now hidden when no GPX file loaded
-* Technical: Chart.js ^4.5.1 and emoji-picker-element ^1.28.1 integration
+* Technical: Chart.js ^4.5.1 integration for elevation visualization
 
 = 1.1.0 - 2026-02-03 =
 * Added: Address search with Nominatim API autocomplete
@@ -287,6 +290,9 @@ All external API calls are made from the user's browser. Additional tile provide
 * Performance optimizations
 
 == Upgrade Notice ==
+
+= 1.5.2 =
+Addresses WordPress.org plugin review feedback: removes CDN dependency, updates block apiVersion to 3, and expands external service documentation.
 
 = 1.5.1 =
 Fixes abrupt zoom jumps when scrolling between markers with different zoom levels in follow mode, and resolves a JS error in the elevation profile.
@@ -345,8 +351,3 @@ For support, please visit:
 
 Mapthread is open source! Contributions welcome at:
 https://github.com/randomwire/Mapthread
-
-= Credits =
-
-* Maps powered by Leaflet.js
-* Tiles by OpenStreetMap contributors

@@ -1,6 +1,6 @@
 {
   "name": "mapthread",
-  "version": "1.5.1",
+  "version": "1.5.2",
   "description": "WordPress plugin for interactive map-based storytelling",
   "scripts": {
     "build": "wp-scripts build",
@@ -29,7 +29,6 @@
   },
   "dependencies": {
     "chart.js": "^4.5.1",
-    "emoji-picker-element": "^1.28.1",
     "leaflet": "^1.9.4",
     "leaflet.fullscreen": "^5.3.0"
   }

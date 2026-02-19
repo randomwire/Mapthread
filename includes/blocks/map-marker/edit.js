@@ -15,10 +15,10 @@ import {
     Notice,
     __experimentalNumberControl as NumberControl
 } from '@wordpress/components';
-import { useEffect, useCallback, useState, useRef } from '@wordpress/element';
-import 'emoji-picker-element';
+import { useEffect, useCallback, useState } from '@wordpress/element';
 import { useSelect } from '@wordpress/data';
 import AddressSearch from './components/AddressSearch';
+import EmojiGrid from './components/EmojiGrid';
 
 /**
  * Generate a unique ID for the marker
@@ -120,21 +120,6 @@ export default function Edit( { attributes, setAttributes, clientId } ) {
     const blockProps = useBlockProps();
     const { id, title, lat, lng, address, zoom, emoji } = attributes;
     const [ showEmojiPicker, setShowEmojiPicker ] = useState( false );
-    const emojiPickerRef = useRef();
-
-    // Attach emoji-click listener when picker mounts
-    useEffect( () => {
-        const picker = emojiPickerRef.current;
-        if ( ! picker ) {
-            return;
-        }
-        const handleEmojiClick = ( event ) => {
-            setAttributes( { emoji: event.detail.unicode } );
-            setShowEmojiPicker( false );
-        };
-        picker.addEventListener( 'emoji-click', handleEmojiClick );
-        return () => picker.removeEventListener( 'emoji-click', handleEmojiClick );
-    }, [ showEmojiPicker, setAttributes ] );
 
     // Auto-generate ID on mount if not set
     useEffect( () => {
@@ -213,7 +198,10 @@ export default function Edit( { attributes, setAttributes, clientId } ) {
                                 onClose={ () => setShowEmojiPicker( false ) }
                                 placement="left-start"
                             >
-                                <emoji-picker ref={ emojiPickerRef }></emoji-picker>
+                                <EmojiGrid onSelect={ ( emojiChar ) => {
+                                    setAttributes( { emoji: emojiChar } );
+                                    setShowEmojiPicker( false );
+                                } } />
                             </Popover>
                         ) }
                     </BaseControl>
