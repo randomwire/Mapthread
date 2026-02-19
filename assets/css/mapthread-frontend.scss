@@ -228,11 +228,199 @@ $shadow-lg: 0 3px 12px rgba(0, 0, 0, 0.4);
 }
 
 // ============================================================================
-// MAP CONTAINER (Common styles)
+// MAP CONTAINER
+// All map-scoped rules are nested under #mapthread-map for consistent
+// ID-level specificity that beats theme selectors.
 // ============================================================================
 
 #mapthread-map {
     background: #f8f9fa;
+
+    // Reset typography on every descendant — themes aggressively override
+    // font-family, weight, size, spacing on element types (label, input, etc.).
+    &, * {
+        font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif !important;
+        font-weight: 400 !important;
+        font-style: normal !important;
+        letter-spacing: normal !important;
+        text-transform: none !important;
+    }
+
+    // ------------------------------------------------------------------
+    // Elevation stats bar
+    // ------------------------------------------------------------------
+
+    .mapthread-elevation-stats {
+        display: flex;
+        align-items: center;
+        justify-content: flex-end;
+        gap: 16px;
+        font-size: 11px;
+        color: $text-primary;
+        flex-shrink: 0;
+    }
+
+    .mapthread-stat-value {
+        font-weight: 600 !important; // override wildcard reset
+    }
+
+    .mapthread-stat-label {
+        color: $text-secondary;
+    }
+
+    // ------------------------------------------------------------------
+    // Tooltips
+    // ------------------------------------------------------------------
+
+    .leaflet-tooltip {
+        font-size: 13px;
+        font-weight: 500 !important; // override wildcard reset
+        padding: 8px 12px;
+        background: rgba(30, 30, 30, 0.92);
+        color: white;
+        border: none;
+        border-radius: 6px;
+        box-shadow: $shadow-lg;
+        backdrop-filter: blur(4px);
+        white-space: nowrap;
+    }
+
+    .leaflet-tooltip-top::before {
+        display: none; // hide arrow pointer
+    }
+
+    // ------------------------------------------------------------------
+    // Layer control panel
+    // ------------------------------------------------------------------
+
+    .mapthread-layer-panel {
+        position: absolute;
+        right: 100%;
+        top: 0;
+        margin-right: 4px;
+        background: white;
+        border: 1px solid $border-subtle;
+        border-radius: 6px;
+        box-shadow: $shadow-sm;
+        padding: 6px 10px;
+        min-width: 110px;
+        overflow-y: auto;
+        z-index: 1000;
+        white-space: nowrap;
+    }
+
+    .mapthread-layer-option {
+        display: flex;
+        align-items: center;
+        gap: 6px;
+        padding: 3px 0;
+        font-size: 13px;
+        color: $text-primary;
+        cursor: pointer;
+
+        input {
+            margin: 0;
+            cursor: pointer;
+        }
+    }
+
+    // ------------------------------------------------------------------
+    // Scale bar
+    // ------------------------------------------------------------------
+
+    .leaflet-top.leaflet-right .leaflet-control-scale {
+        position: absolute;
+        top: 13px;
+        right: 56px; // 32px button + 10px Leaflet margin + 14px gap
+        margin: 0;
+    }
+
+    // ------------------------------------------------------------------
+    // Attribution control (info button + overlay)
+    // ------------------------------------------------------------------
+
+    .mapthread-attribution-panel {
+        position: absolute;
+        left: 100%;
+        top: 0;
+        margin-left: 4px;
+        background: white;
+        border: 1px solid $border-subtle;
+        border-radius: 6px;
+        box-shadow: $shadow-sm;
+        padding: 8px 12px;
+        min-width: 180px;
+        max-width: 280px;
+        overflow-y: auto;
+        z-index: 1000;
+        font-size: 13px;
+        line-height: 1.4;
+
+        // Reset .leaflet-bar a styles that cascade into panel links
+        a {
+            display: inline;
+            width: auto;
+            height: auto;
+            line-height: inherit;
+            font-size: inherit;
+            color: inherit !important;
+            text-decoration: none !important;
+            border-bottom: none !important;
+            box-shadow: none !important;
+            background-color: transparent;
+            background-image: none;
+            -webkit-tap-highlight-color: transparent;
+
+            &:hover {
+                text-decoration: underline !important;
+            }
+        }
+    }
+
+    .mapthread-attribution-section {
+        margin-bottom: 10px;
+
+        &:last-child {
+            margin-bottom: 0;
+        }
+    }
+
+    .mapthread-attribution-label {
+        font-weight: 600 !important; // override wildcard reset
+        font-size: 11px;
+        color: $text-primary;
+        margin-bottom: 2px;
+    }
+
+    .mapthread-attribution-value {
+        color: $text-secondary;
+
+        a {
+            color: inherit;
+            text-decoration: none;
+
+            &:hover {
+                text-decoration: underline;
+            }
+        }
+    }
+
+    .mapthread-attribution-footer {
+        border-top: 1px solid $border-subtle;
+        padding-top: 8px;
+        margin-top: 8px;
+        font-size: 11px;
+        color: $text-secondary;
+
+        a {
+            color: inherit;
+            text-decoration: none;
+
+            &:hover {
+                text-decoration: underline;
+            }
+        }
+    }
 }
 
 // ============================================================================
@@ -353,29 +541,10 @@ $shadow-lg: 0 3px 12px rgba(0, 0, 0, 0.4);
     }
 }
 
-.mapthread-elevation-stats {
-    display: flex;
-    align-items: center;
-    justify-content: flex-end;
-    gap: 16px;
-    font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;
-    font-size: 11px;
-    color: $text-primary;
-    flex-shrink: 0;
-}
-
 .mapthread-stat {
     display: inline-flex;
     align-items: center;
     gap: 3px;
-}
-
-.mapthread-stat-label {
-    color: $text-secondary;
-}
-
-.mapthread-stat-value {
-    font-weight: 600;
 }
 
 // Hide secondary stats (Max, Min, Distance) when map is narrow
@@ -395,29 +564,6 @@ $shadow-lg: 0 3px 12px rgba(0, 0, 0, 0.4);
 // ============================================================================
 // LEAFLET CUSTOMIZATION
 // ============================================================================
-
-// Map tooltips
-.leaflet-tooltip {
-    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto,
-                 Oxygen-Sans, Ubuntu, Cantarell, 'Helvetica Neue', sans-serif;
-    font-size: 13px;
-    font-weight: 500;
-    padding: 8px 12px;
-    background: rgba(30, 30, 30, 0.92);
-    color: white;
-    border: none;
-    border-radius: 6px;
-    box-shadow: $shadow-lg;
-    backdrop-filter: blur(4px);
-    white-space: nowrap;
-}
-
-.leaflet-tooltip-top {
-    // Hide the arrow pointer
-    &:before {
-        display: none;
-    }
-}
 
 // Map control buttons (consistent styling)
 .leaflet-control-zoom,
@@ -510,48 +656,8 @@ $shadow-lg: 0 3px 12px rgba(0, 0, 0, 0.4);
                                     // a:last-child suppresses it, but our panel div comes after the a so it's not :last-child
 }
 
-.mapthread-layer-panel {
-    position: absolute;
-    right: 100%;
-    top: 0;
-    margin-right: 4px;
-    background: white;
-    border: 1px solid $border-subtle;
-    border-radius: 6px;
-    box-shadow: $shadow-sm;
-    padding: 6px 10px;
-    min-width: 110px;
-    overflow-y: auto;
-    z-index: 1000;
-    white-space: nowrap;
-}
-
-.mapthread-layer-option {
-    display: flex;
-    align-items: center;
-    gap: 6px;
-    padding: 3px 0;
-    font-size: 13px;
-    color: $text-primary;
-    cursor: pointer;
-
-    input {
-        margin: 0;
-        cursor: pointer;
-    }
-}
-
-// Scale bar: offset left of the button column in the top-right corner.
-// Buttons are 32px wide + 10px Leaflet margin = 42px right; top matches first button face.
-#mapthread-map .leaflet-top.leaflet-right .leaflet-control-scale {
-    position: absolute;
-    top: 13px;
-    right: 56px;
-    margin: 0;
-}
-
 // ============================================================================
-// ATTRIBUTION CONTROL (info button + overlay)
+// ATTRIBUTION CONTROL (button overrides — fight Leaflet .leaflet-bar a styles)
 // ============================================================================
 
 // Strip leaflet-bar card styling — button should be discrete (no bg/border/shadow)
@@ -588,90 +694,6 @@ $shadow-lg: 0 3px 12px rgba(0, 0, 0, 0.4);
     }
 }
 
-.mapthread-attribution-panel {
-    position: absolute;
-    left: 100%;
-    top: 0;
-    margin-left: 4px;
-    background: white;
-    border: 1px solid $border-subtle;
-    border-radius: 6px;
-    box-shadow: $shadow-sm;
-    padding: 8px 12px;
-    min-width: 180px;
-    max-width: 280px;
-    overflow-y: auto;
-    z-index: 1000;
-    font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;
-    font-size: 12px;
-    line-height: 1.4;
-
-    // Reset .leaflet-bar a styles that cascade into panel links
-    a {
-        display: inline;
-        width: auto;
-        height: auto;
-        line-height: inherit;
-        font-size: inherit;
-        color: inherit !important;
-        text-decoration: none !important;
-        border-bottom: none !important;
-        box-shadow: none !important;
-        background-color: transparent;
-        background-image: none;
-        -webkit-tap-highlight-color: transparent;
-
-        &:hover {
-            text-decoration: underline !important;
-        }
-    }
-}
-
-.mapthread-attribution-section {
-    margin-bottom: 10px;
-
-    &:last-child {
-        margin-bottom: 0;
-    }
-}
-
-.mapthread-attribution-label {
-    font-weight: 600;
-    font-size: 11px;
-    color: $text-primary;
-    margin-bottom: 2px;
-}
-
-.mapthread-attribution-value {
-    color: $text-secondary;
-
-    a {
-        color: inherit;
-        text-decoration: none;
-
-        &:hover {
-            text-decoration: underline;
-        }
-    }
-}
-
-.mapthread-attribution-footer {
-    border-top: 1px solid $border-subtle;
-    padding-top: 8px;
-    margin-top: 8px;
-    font-size: 11px;
-    color: $text-secondary;
-
-    a {
-        color: inherit;
-        text-decoration: none;
-
-        &:hover {
-            text-decoration: underline;
-        }
-    }
-}
-
 // ============================================================================
 // CTRL+SCROLL HINT OVERLAY
 // Shown briefly when user scrolls over the map without holding Ctrl/Cmd
@@ -687,7 +709,6 @@ $shadow-lg: 0 3px 12px rgba(0, 0, 0, 0.4);
     padding: 8px 16px;
     border-radius: 6px;
     font-size: 13px;
-    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
     pointer-events: none;
     z-index: 1001;
     white-space: nowrap;
@@ -857,7 +878,7 @@ body.has-mapthread-blocks.mapthread-map-dismissed #mapthread-map {
     border-radius: 6px;
     font-size: 13px;
     font-weight: 500;
-    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+    font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;
     white-space: nowrap;
     z-index: 1001;
     pointer-events: auto;
