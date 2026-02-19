@@ -136,6 +136,7 @@ Chart.register( LineController, LineElement, PointElement, LinearScale, Filler, 
     const ICON_DOWNLOAD = '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 15V3"/><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><path d="m7 10 5 5 5-5"/></svg>';
     const ICON_LAYERS  = '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12.83 2.18a2 2 0 0 0-1.66 0L2.6 6.08a1 1 0 0 0 0 1.83l8.58 3.91a2 2 0 0 0 1.66 0l8.58-3.9a1 1 0 0 0 0-1.83z"/><path d="M2 12a1 1 0 0 0 .58.91l8.6 3.91a2 2 0 0 0 1.65 0l8.58-3.9A1 1 0 0 0 22 12"/><path d="M2 17a1 1 0 0 0 .58.91l8.6 3.91a2 2 0 0 0 1.65 0l8.58-3.9A1 1 0 0 0 22 17"/></svg>';
     const ICON_MAP_PIN = '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20 10c0 4.993-5.539 10.193-7.399 11.799a1 1 0 0 1-1.202 0C9.539 20.193 4 14.993 4 10a8 8 0 0 1 16 0"/><circle cx="12" cy="10" r="3"/></svg>';
+    const ICON_INFO    = '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="10"/><path d="M12 16v-4"/><path d="M12 8h.01"/></svg>';
     const ICON_ANCHOR = 7;               // Horizontal and vertical anchor point (center)
     const POPUP_ANCHOR_Y = -7;           // Popup offset above marker
 
@@ -1947,6 +1948,9 @@ Chart.register( LineController, LineElement, PointElement, LinearScale, Filler, 
             if ( this._current ) this._map.removeLayer( this._current );
             next.addTo( this._map );
             this._current = next;
+            if ( this.options.onLayerChange ) {
+                this.options.onLayerChange( next );
+            }
         },
 
         _openPanel() {
@@ -1969,6 +1973,130 @@ Chart.register( LineController, LineElement, PointElement, LinearScale, Filler, 
 
         _onDocClick( e ) {
             if ( this._panelOpen && !this.getContainer().contains( e.target ) ) {
+                this._closePanel();
+            }
+        }
+    } );
+
+    /**
+     * Custom attribution control — replaces Leaflet's default attribution bar
+     * with a discrete info button that opens an overlay panel on click.
+     */
+    const AttributionControl = L.Control.extend( {
+        options: { position: 'topleft' },
+
+        initialize( options ) {
+            L.Util.setOptions( this, options );
+            this._panelOpen    = false;
+            this._btn          = null;
+            this._panel        = null;
+            this._currentLayer = null;
+        },
+
+        onAdd( map ) {
+            this._map = map;
+
+            const container = L.DomUtil.create(
+                'div', 'leaflet-bar leaflet-control mapthread-attribution-control'
+            );
+
+            const btn = this._btn = createControlBtn( container, 'mapthread-attribution-btn', ICON_INFO, 'Map info' );
+            btn.setAttribute( 'aria-expanded', 'false' );
+
+            const panel = this._panel = L.DomUtil.create(
+                'div', 'mapthread-attribution-panel', container
+            );
+            panel.hidden = true;
+
+            this._updatePanel();
+
+            L.DomEvent.on( btn, 'click', ( e ) => {
+                L.DomEvent.preventDefault( e );
+                this._panelOpen ? this._closePanel() : this._openPanel();
+            } );
+
+            L.DomEvent.on( document, 'click', this._onDocClick, this );
+            L.DomEvent.disableClickPropagation( container );
+            L.DomEvent.disableScrollPropagation( container );
+            return container;
+        },
+
+        onRemove() {
+            L.DomEvent.off( document, 'click', this._onDocClick, this );
+        },
+
+        setActiveLayer( layer ) {
+            this._currentLayer = layer;
+            if ( this._panel ) {
+                this._updatePanel();
+            }
+        },
+
+        _updatePanel() {
+            if ( ! this._panel ) return;
+
+            const attrib = this._currentLayer ? ( this._currentLayer.options.attribution || '' ) : '';
+            const hasOSM = attrib.includes( 'OpenStreetMap' );
+
+            // Isolate imagery provider by stripping the OSM portion.
+            let imagery = attrib
+                .replace( /&copy;\s*<a[^>]*>OpenStreetMap<\/a>\s*contributors?/gi, '' )
+                .replace( /[,|]\s*/g, '' )
+                .trim();
+
+            let html = '';
+
+            // Map Data section
+            if ( hasOSM ) {
+                html += '<div class="mapthread-attribution-section">'
+                    + '<div class="mapthread-attribution-label">Map Data</div>'
+                    + '<div class="mapthread-attribution-value">&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors</div>'
+                    + '</div>';
+            } else if ( attrib ) {
+                // Non-OSM layer (e.g. Esri satellite)
+                html += '<div class="mapthread-attribution-section">'
+                    + '<div class="mapthread-attribution-label">Map Data</div>'
+                    + '<div class="mapthread-attribution-value">' + attrib + '</div>'
+                    + '</div>';
+                imagery = ''; // Already shown above
+            }
+
+            // Imagery section (provider other than OSM)
+            if ( imagery ) {
+                html += '<div class="mapthread-attribution-section">'
+                    + '<div class="mapthread-attribution-label">Imagery</div>'
+                    + '<div class="mapthread-attribution-value">' + imagery + '</div>'
+                    + '</div>';
+            }
+
+            // Footer — always shown
+            html += '<div class="mapthread-attribution-footer">'
+                + 'Made with <a href="https://leafletjs.com" title="A JavaScript library for interactive maps">\u{1F1FA}\u{1F1E6} Leaflet</a>'
+                + ' and <a href="https://github.com/randomwire/Mapthread">Mapthread</a>'
+                + '</div>';
+
+            this._panel.innerHTML = html;
+        },
+
+        _openPanel() {
+            this._panelOpen = true;
+            this._panel.hidden = false;
+            this._btn.setAttribute( 'aria-expanded', 'true' );
+
+            const mapRect = this._map.getContainer().getBoundingClientRect();
+            const btnRect = this._btn.getBoundingClientRect();
+            const maxH    = mapRect.bottom - btnRect.top - 8;
+            this._panel.style.maxHeight = maxH > 60 ? maxH + 'px' : '';
+        },
+
+        _closePanel() {
+            this._panelOpen = false;
+            this._panel.hidden = true;
+            this._btn.setAttribute( 'aria-expanded', 'false' );
+        },
+
+        _onDocClick( e ) {
+            if ( this._panelOpen && ! this.getContainer().contains( e.target ) ) {
                 this._closePanel();
             }
         }
@@ -2015,11 +2143,7 @@ Chart.register( LineController, LineElement, PointElement, LinearScale, Filler, 
             zoomOutText: '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12h14"/></svg>'
         } ).addTo( leafletMap );
 
-        // Add custom attribution control in top-left position
-        L.control.attribution( {
-            position: 'topleft',
-            prefix: '<a href="https://leafletjs.com" title="A JavaScript library for interactive maps">\u{1F1FA}\u{1F1E6} Leaflet</a> | <a href="https://github.com/randomwire/Mapthread">Mapthread</a>'
-        } ).addTo( leafletMap );
+        // Attribution is handled by the custom AttributionControl (info button + overlay).
 
         // Scale bar — top-right, CSS-offset to sit left of the button column
         L.control.scale( { position: 'topright', imperial: useImperial, metric: ! useImperial } ).addTo( leafletMap );
@@ -2114,8 +2238,18 @@ Chart.register( LineController, LineElement, PointElement, LinearScale, Filler, 
         const selectedLayer = baseLayers[ defaultMapLayer ] || osmLayer;
         selectedLayer.addTo( leafletMap );
 
-        // Add layer control — topleft, below zoom
-        const layersCtrl = new LayersControl( baseLayers, { position: 'topright' } );
+        // Add attribution control (info button + overlay)
+        const attributionCtrl = new AttributionControl( { position: 'topleft' } );
+        attributionCtrl.setActiveLayer( selectedLayer );
+        leafletMap.addControl( attributionCtrl );
+
+        // Add layer control — topright, below zoom
+        const layersCtrl = new LayersControl( baseLayers, {
+            position: 'topright',
+            onLayerChange( layer ) {
+                attributionCtrl.setActiveLayer( layer );
+            }
+        } );
         layersCtrl.setActiveLayer( selectedLayer );
         leafletMap.addControl( layersCtrl );
 
