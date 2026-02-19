@@ -7,6 +7,29 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ---
 
+## [1.5.4] - 2026-02-19
+
+### Added
+- Attribution info button — replaces the attribution bar (which overlapped the scale indicator on mobile) with a discrete info icon that opens an overlay panel
+- Standardized typography across all map text elements (Helvetica Neue stack) with wildcard reset to isolate from WordPress theme overrides
+
+### Fixed
+- Thunderforest layer attribution parsing leaving stray "Data" text in imagery section
+
+### Improved
+- SCSS refactored — consolidated scattered flat selectors under single `#mapthread-map` nesting block, removed redundant font-family declarations
+
+---
+
+## [1.5.3] - 2026-02-19
+
+### Added
+- Auto-detect imperial units (miles/feet) for US-based readers via browser timezone
+- Elevation stats bar layout updated for longer imperial values
+- Map scale indicator now matches the detected unit system
+
+---
+
 ## [1.5.2] - 2026-02-19
 
 ### Fixed

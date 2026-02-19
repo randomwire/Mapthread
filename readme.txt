@@ -5,7 +5,7 @@ Tags: maps, gpx, travel, storytelling, hiking
 Requires at least: 6.0
 Tested up to: 6.9
 Requires PHP: 7.4
-Stable tag: 1.5.3
+Stable tag: 1.5.4
 License: GPLv2 or later
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
 
@@ -208,6 +208,12 @@ The following services are only contacted when a site administrator has entered 
 5. Map markers and tooltips
 
 == Changelog ==
+
+= 1.5.4 - 2026-02-19 =
+* Added: Attribution info button replaces attribution bar to fix mobile overlap with scale indicator
+* Added: Standardized typography across all map text elements with theme isolation
+* Fixed: Thunderforest layer attribution parsing leaving stray "Data" text in imagery section
+* Improved: SCSS refactored — consolidated selectors under #mapthread-map nesting
 
 = 1.5.3 - 2026-02-19 =
 * Added: Auto-detect imperial units (miles/feet) for US-based readers via browser timezone
