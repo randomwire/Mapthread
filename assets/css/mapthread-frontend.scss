@@ -382,12 +382,6 @@ $shadow-lg: 0 3px 12px rgba(0, 0, 0, 0.4);
     gap: 3px;
 }
 
-.mapthread-stat-icon {
-    display: inline-flex;
-    align-items: center;
-    color: $text-secondary;
-}
-
 .mapthread-stat-label {
     color: $text-secondary;
 }
@@ -397,7 +391,7 @@ $shadow-lg: 0 3px 12px rgba(0, 0, 0, 0.4);
 }
 
 // Hide secondary stats (Max, Min, Distance) when map is narrow
-@container (max-width: 450px) {
+@container (max-width: 480px) {
     .mapthread-stat-secondary {
         display: none;
     }

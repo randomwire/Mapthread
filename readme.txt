@@ -5,7 +5,7 @@ Tags: maps, gpx, travel, storytelling, hiking
 Requires at least: 6.0
 Tested up to: 6.9
 Requires PHP: 7.4
-Stable tag: 1.5.2
+Stable tag: 1.5.3
 License: GPLv2 or later
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
 
@@ -208,6 +208,12 @@ The following services are only contacted when a site administrator has entered 
 5. Map markers and tooltips
 
 == Changelog ==
+
+= 1.5.3 - 2026-02-19 =
+* Added: Auto-detect imperial units (miles/feet) for US-based readers via browser timezone
+* Improved: Elevation stats bar layout — removed gain/loss icons, widened responsive breakpoint for longer imperial values
+* Fixed: Non-Latin numeral systems (e.g. Devanagari) no longer appear in elevation stats
+* Updated: Map scale indicator now matches the detected unit system
 
 = 1.5.2 - 2026-02-19 =
 * Fixed: Removed external CDN dependency — emoji picker now uses a self-contained curated grid

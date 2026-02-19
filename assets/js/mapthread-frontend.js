@@ -97,6 +97,33 @@ Chart.register( LineController, LineElement, PointElement, LinearScale, Filler, 
     const ELEVATION_AVG_WINDOW = 11;     // Points for moving average
     const ELEVATION_GAIN_THRESHOLD = 10; // Min metres to count as gain/loss
 
+    // Unit system — auto-detect from reader's timezone (location-based, not language-based)
+    const US_TIMEZONES = /^(America\/(New_York|Chicago|Denver|Los_Angeles|Phoenix|Anchorage|Adak|Boise|Indiana|Kentucky|Menominee|Nome|North_Dakota|Sitka|Yakutat|Juneau|Detroit|Metlakatla)|Pacific\/Honolulu|US\/)/;
+    const useImperial = US_TIMEZONES.test( ( Intl.DateTimeFormat().resolvedOptions().timeZone || '' ) );
+    const KM_TO_MI = 0.621371;
+    const M_TO_FT = 3.28084;
+
+    function convertDistance( km ) {
+        return useImperial ? km * KM_TO_MI : km;
+    }
+    function convertElevation( m ) {
+        return useImperial ? m * M_TO_FT : m;
+    }
+    function formatDistance( km ) {
+        const val = convertDistance( km );
+        return useImperial ? val.toFixed( 1 ) + ' mi' : val.toFixed( 1 ) + ' km';
+    }
+    function formatElevation( m ) {
+        const val = Math.round( convertElevation( m ) );
+        return val.toLocaleString( 'en' ) + ( useImperial ? ' ft' : ' m' );
+    }
+    function distanceUnit() {
+        return useImperial ? 'mi' : 'km';
+    }
+    function elevationUnit() {
+        return useImperial ? 'ft' : 'm';
+    }
+
     // Marker icon dimensions
     const ICON_SIZE = 14;                // Width and height of marker icon (pixels)
 
@@ -109,8 +136,6 @@ Chart.register( LineController, LineElement, PointElement, LinearScale, Filler, 
     const ICON_DOWNLOAD = '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 15V3"/><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><path d="m7 10 5 5 5-5"/></svg>';
     const ICON_LAYERS  = '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12.83 2.18a2 2 0 0 0-1.66 0L2.6 6.08a1 1 0 0 0 0 1.83l8.58 3.91a2 2 0 0 0 1.66 0l8.58-3.9a1 1 0 0 0 0-1.83z"/><path d="M2 12a1 1 0 0 0 .58.91l8.6 3.91a2 2 0 0 0 1.65 0l8.58-3.9A1 1 0 0 0 22 12"/><path d="M2 17a1 1 0 0 0 .58.91l8.6 3.91a2 2 0 0 0 1.65 0l8.58-3.9A1 1 0 0 0 22 17"/></svg>';
     const ICON_MAP_PIN = '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20 10c0 4.993-5.539 10.193-7.399 11.799a1 1 0 0 1-1.202 0C9.539 20.193 4 14.993 4 10a8 8 0 0 1 16 0"/><circle cx="12" cy="10" r="3"/></svg>';
-    const ICON_TRENDING_UP = '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="22 7 13.5 15.5 8.5 10.5 2 17"/><polyline points="16 7 22 7 22 13"/></svg>';
-    const ICON_TRENDING_DOWN = '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="22 17 13.5 8.5 8.5 13.5 2 7"/><polyline points="16 17 22 17 22 11"/></svg>';
     const ICON_ANCHOR = 7;               // Horizontal and vertical anchor point (center)
     const POPUP_ANCHOR_Y = -7;           // Popup offset above marker
 
@@ -1070,7 +1095,7 @@ Chart.register( LineController, LineElement, PointElement, LinearScale, Filler, 
                             font: { size: 9 },
                             color: 'rgba(0, 0, 0, 0.65)',
                             maxTicksLimit: 6,
-                            callback: ( value ) => `${ value.toFixed( 0 ) } km`
+                            callback: ( value ) => `${ Math.round( value ) } ${ distanceUnit() }`
                         },
                         grid: { display: false },
                         border: { display: false },
@@ -1081,7 +1106,7 @@ Chart.register( LineController, LineElement, PointElement, LinearScale, Filler, 
                             font: { size: 9 },
                             color: 'rgba(0, 0, 0, 0.65)',
                             maxTicksLimit: 4,
-                            callback: ( value ) => `${ Math.round( value ) } m`
+                            callback: ( value ) => `${ Math.round( value ) } ${ elevationUnit() }`
                         },
                         grid: {
                             color: 'rgba(0, 0, 0, 0.05)',
@@ -1101,12 +1126,12 @@ Chart.register( LineController, LineElement, PointElement, LinearScale, Filler, 
                         callbacks: {
                             title: ( items ) => {
                                 if ( items.length > 0 ) {
-                                    return `${ items[ 0 ].parsed.x.toFixed( 1 ) } km`;
+                                    return `${ items[ 0 ].parsed.x.toFixed( 1 ) } ${ distanceUnit() }`;
                                 }
                                 return '';
                             },
                             label: ( item ) => {
-                                return `${ Math.round( item.parsed.y ) } m`;
+                                return `${ Math.round( item.parsed.y ) } ${ elevationUnit() }`;
                             }
                         },
                         displayColors: false,
@@ -1144,33 +1169,29 @@ Chart.register( LineController, LineElement, PointElement, LinearScale, Filler, 
         const validElevations = trackElevations.filter( ( e ) => e !== null && ! isNaN( e ) );
         const maxEle = validElevations.length > 0 ? Math.round( Math.max( ...validElevations ) ) : 0;
         const minEle = validElevations.length > 0 ? Math.round( Math.min( ...validElevations ) ) : 0;
-        const distanceKm = ( totalTrackDistance / 1000 ).toFixed( 1 );
-
         // Build stats bar
         const statsBar = document.createElement( 'div' );
         statsBar.className = 'mapthread-elevation-stats';
         statsBar.innerHTML =
             '<span class="mapthread-stat">' +
-                '<span class="mapthread-stat-icon">' + ICON_TRENDING_UP + '</span>' +
                 '<span class="mapthread-stat-label">Gain:</span> ' +
-                '<span class="mapthread-stat-value">' + elevationStats.gain.toLocaleString() + 'm</span>' +
+                '<span class="mapthread-stat-value">' + formatElevation( elevationStats.gain ) + '</span>' +
             '</span>' +
             '<span class="mapthread-stat">' +
-                '<span class="mapthread-stat-icon">' + ICON_TRENDING_DOWN + '</span>' +
                 '<span class="mapthread-stat-label">Loss:</span> ' +
-                '<span class="mapthread-stat-value">' + elevationStats.loss.toLocaleString() + 'm</span>' +
+                '<span class="mapthread-stat-value">' + formatElevation( elevationStats.loss ) + '</span>' +
             '</span>' +
             '<span class="mapthread-stat mapthread-stat-secondary">' +
                 '<span class="mapthread-stat-label">Max:</span> ' +
-                '<span class="mapthread-stat-value">' + maxEle.toLocaleString() + 'm</span>' +
+                '<span class="mapthread-stat-value">' + formatElevation( maxEle ) + '</span>' +
             '</span>' +
             '<span class="mapthread-stat mapthread-stat-secondary">' +
                 '<span class="mapthread-stat-label">Min:</span> ' +
-                '<span class="mapthread-stat-value">' + minEle.toLocaleString() + 'm</span>' +
+                '<span class="mapthread-stat-value">' + formatElevation( minEle ) + '</span>' +
             '</span>' +
             '<span class="mapthread-stat mapthread-stat-secondary">' +
                 '<span class="mapthread-stat-label">Distance:</span> ' +
-                '<span class="mapthread-stat-value">' + distanceKm + 'km</span>' +
+                '<span class="mapthread-stat-value">' + formatDistance( totalTrackDistance / 1000 ) + '</span>' +
             '</span>';
         chartWrapper.appendChild( statsBar );
 
@@ -1182,8 +1203,9 @@ Chart.register( LineController, LineElement, PointElement, LinearScale, Filler, 
         mapContainer.appendChild( chartWrapper );
 
         // Build chart data
-        const distancesKm = trackDistances.map( ( d ) => d / 1000 );
-        const data = downsampleElevation( distancesKm, trackElevations );
+        const distancesDisplay = trackDistances.map( ( d ) => convertDistance( d / 1000 ) );
+        const elevationsDisplay = trackElevations.map( ( e ) => e !== null && ! isNaN( e ) ? convertElevation( e ) : e );
+        const data = downsampleElevation( distancesDisplay, elevationsDisplay );
 
         // Create chart
         elevationChart = new Chart( canvas, getElevationChartConfig( data ) );
@@ -1999,8 +2021,8 @@ Chart.register( LineController, LineElement, PointElement, LinearScale, Filler, 
             prefix: '<a href="https://leafletjs.com" title="A JavaScript library for interactive maps">\u{1F1FA}\u{1F1E6} Leaflet</a> | <a href="https://github.com/randomwire/Mapthread">Mapthread</a>'
         } ).addTo( leafletMap );
 
-        // Scale bar (metric only) — top-right, CSS-offset to sit left of the button column
-        L.control.scale( { position: 'topright', imperial: false } ).addTo( leafletMap );
+        // Scale bar — top-right, CSS-offset to sit left of the button column
+        L.control.scale( { position: 'topright', imperial: useImperial, metric: ! useImperial } ).addTo( leafletMap );
 
         // Ctrl/Cmd+scroll hint overlay — shown briefly when user scrolls without modifier
         const isMac = navigator.userAgentData
