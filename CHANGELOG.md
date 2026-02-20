@@ -7,6 +7,15 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ---
 
+## [1.5.6] - 2026-02-20
+
+### Improved
+- External services section reformatted to match WordPress.org scanner expectations — renamed header to `== External services ==`, added explicit `Privacy Policy:` URLs for every service
+- Third-party libraries separated into dedicated `== Third-Party Libraries ==` readme section
+- Source code repository link added to plugin Description section for reviewer visibility
+
+---
+
 ## [1.5.5] - 2026-02-20
 
 ### Fixed
@@ -297,6 +306,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ---
 
+[1.5.6]: https://github.com/randomwire/Mapthread/releases/tag/v1.5.6
 [1.5.5]: https://github.com/randomwire/Mapthread/releases/tag/v1.5.5
 [1.5.4]: https://github.com/randomwire/Mapthread/releases/tag/v1.5.4
 [1.5.3]: https://github.com/randomwire/Mapthread/releases/tag/v1.5.3

@@ -5,7 +5,7 @@ Tags: maps, gpx, travel, storytelling, hiking
 Requires at least: 6.0
 Tested up to: 6.9
 Requires PHP: 7.4
-Stable tag: 1.5.5
+Stable tag: 1.5.6
 License: GPLv2 or later
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
 
@@ -232,6 +232,11 @@ This uses `@wordpress/scripts` (webpack) to compile the source files in `assets/
 
 == Changelog ==
 
+= 1.5.6 - 2026-02-20 =
+* Improved: External services section reformatted to match WordPress.org scanner expectations — renamed header, added explicit Privacy Policy URLs for every service
+* Improved: Third-party libraries separated into dedicated readme section
+* Improved: Source code repository link added to plugin Description for reviewer visibility
+
 = 1.5.5 - 2026-02-20 =
 * Fixed: Replaced inline script on settings page with properly enqueued JavaScript via wp_enqueue_script
 * Added: Source code and build instructions section in readme for compiled assets
@@ -330,6 +335,9 @@ This uses `@wordpress/scripts` (webpack) to compile the source files in `assets/
 * Performance optimizations
 
 == Upgrade Notice ==
+
+= 1.5.6 =
+Addresses remaining WordPress.org review scanner issues: reformatted external services section with explicit Privacy Policy URLs for every service, separated third-party libraries, and added source code link in Description.
 
 = 1.5.5 =
 Addresses WordPress.org plugin review feedback: enqueues settings JS properly, documents source code location, and adds explicit service URLs and terms/privacy links for all external services.
