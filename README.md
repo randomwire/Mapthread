@@ -2,7 +2,7 @@
 
 Interactive map-based storytelling for WordPress.
 
-![Version](https://img.shields.io/badge/version-1.5.2-blue.svg)
+![Version](https://img.shields.io/badge/version-1.5.5-blue.svg)
 ![WordPress](https://img.shields.io/badge/wordpress-6.0%2B-brightgreen.svg)
 ![PHP](https://img.shields.io/badge/php-7.4%2B-purple.svg)
 ![License](https://img.shields.io/badge/license-GPLv2%2B-orange.svg)
@@ -24,25 +24,26 @@ Perfect for:
 
 ## Features
 
-### Core Functionality
-- **GPX Upload** - Upload your GPS files (tracks or routes) from any device or app
-- **Auto-Following Mode** - Map pans and zooms as readers scroll through your story
-- **Smart Follow Mode** - Automatically pauses when readers interact with the map, resumes when they keep scrolling
-- **Markers-Only Mode** - Display maps with just markers, no GPX file required
-- **Elevation Profiles** - Visualize elevation changes with graphs at the bottom of the map
-- **Waypoints** - Place markers at key points in your narrative
-- **Address Search** - Geocode addresses with autocomplete
-- **Emoji Markers** - Choose from any emoji as custom map markers
-- **Click-to-Scroll** - Click any map marker to jump to that part of the story
-- **Additional Map Providers** - Connect Mapbox, Thunderforest, JawgMaps, or Stadia Maps for additional styles
+### Storytelling
+- Map automatically follows your narrative as readers scroll
+- Pauses when readers explore the map themselves, resumes when they scroll on
+- Click any marker to jump to that part of the story text
 
-### Design & Layout
-- **Desktop Layout** - 2-column layout (story 60%, sticky map 40%)
-- **Mobile Responsive** - Sticky map at top (~35vh), starts hidden with "Show map" button
+### Maps
+- Upload a GPX file from any hiking, cycling, or fitness app
+- Elevation profile with distance and gain/loss stats
+- Street, Satellite, Topographic map styles plus more from Mapbox, Thunderforest, JawgMaps, and Stadia Maps (with API key)
+- Fullscreen mode, layer switcher, and optional GPX download for readers
 
-### Performance
-- **Client-Side Rendering** - Fast, no server processing required
-- **Smart Caching** - GPX tracks/routes cached in sessionStorage for instant reloads
+### Markers
+- Place waypoints anywhere in your story with optional emoji pins
+- Find locations by address or paste coordinates
+- Without a GPX file, markers are connected together using a straight line
+
+### Layout
+- Two-column desktop view: story on the left, sticky map on the right
+- Mobile-friendly: map tucks away so the story loads first
+- Readers can dismiss and restore the map at any time
 
 ---
 
@@ -81,9 +82,8 @@ npm run build
 
 ### Blocks
 
-**Map GPX** — Uploads and displays your GPS track. Settings: progress indicator (auto-follow on/off), elevation profile, default map style, GPX download toggle.
-
-**Map Marker** — Places waypoints in your story. Settings: title, coordinates (with address search autocomplete), zoom level, optional emoji icon.
+- **Map GPX:** Uploads and displays your GPS track. Settings: progress indicator (auto-follow on/off), elevation profile, default map style, GPX download toggle.
+- **Map Marker:** Places waypoints in your story. Settings: title, coordinates (with address search autocomplete), zoom level, optional emoji icon.
 
 GPX files aren't required — Mapthread also works with just markers. Adding a Map GPX block without a file connects markers with straight lines.
 

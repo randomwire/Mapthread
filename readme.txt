@@ -5,7 +5,7 @@ Tags: maps, gpx, travel, storytelling, hiking
 Requires at least: 6.0
 Tested up to: 6.9
 Requires PHP: 7.4
-Stable tag: 1.5.4
+Stable tag: 1.5.5
 License: GPLv2 or later
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
 
@@ -17,19 +17,30 @@ Transform your travel stories into interactive map experiences. Upload GPX files
 
 Perfect for travel bloggers, hiking enthusiasts, and anyone who wants to tell location-based stories that engage readers.
 
-= Core Features =
+= Storytelling =
 
-* **Auto-Following Maps** - Map pans and zooms as readers scroll through your story
-* **GPX File Upload** - Support for GPS files from any device or app
-* **Multiple Map Styles** - Street, Satellite, Topographic, plus additional providers (Mapbox, Thunderforest, JawgMaps, Stadia Maps)
-* **Fullscreen Maps** - Expand maps to fullscreen for immersive viewing
-* **Waypoints** - Place markers at key points in your narrative
-* **Elevation Profiles** - Visual elevation charts for GPX tracks
-* **Emoji Markers** - Fun, customizable emoji waypoint pins
-* **Address Search** - Find locations by name with autocomplete
-* **Smart Interactions** - Pause/resume following, click markers to jump to content
-* **Beautiful Design** - Modern pins and smooth animations
-* **Mobile Responsive** - Optimized layouts for all screen sizes
+* Map automatically follows your narrative as readers scroll
+* Pauses when readers explore the map themselves, resumes when they scroll on
+* Click any marker to jump to that part of the story text
+
+= Maps =
+
+* Upload a GPX file from any hiking, cycling, or fitness app
+* Elevation profile with distance and gain/loss stats
+* Street, Satellite, Topographic map styles plus more from Mapbox, Thunderforest, JawgMaps, and Stadia Maps (with API key)
+* Fullscreen mode, layer switcher, and optional GPX download for readers
+
+= Markers =
+
+* Place waypoints anywhere in your story with optional emoji pins
+* Find locations by address or paste coordinates
+* Without a GPX file, markers are connected together using a straight line
+
+= Layout =
+
+* Two-column desktop view: story on the left, sticky map on the right
+* Mobile-friendly: map tucks away so the story loads first
+* Readers can dismiss and restore the map at any time
 
 = Perfect For =
 
@@ -97,7 +108,7 @@ You can export GPX files from:
 * Fitness apps (Strava, Garmin Connect, etc.)
 * Hiking apps (Gaia GPS, AllTrails, etc.)
 * GPS devices (Garmin, Suunto, etc.)
-* Google Maps (via third-party tools)
+* Google Maps (via Google My Maps)
 
 = Can I use multiple GPX files in one post? =
 
@@ -111,7 +122,7 @@ Not currently. Only the first Map GPX block per post is used.
 
 = Does it work with my theme? =
 
-Mapthread is designed for block themes. It should work on most block themes.
+Mapthread is designed for block themes. It has not been tested with classic themes.
 
 = Is there a file size limit for GPX? =
 
@@ -131,13 +142,9 @@ The tile provider API keys used by Mapthread are publishable tokens designed for
 
 = Does this work offline? =
 
-No, Mapthread requires an internet connection to load map tiles from OpenStreetMap.
+No, Mapthread requires an internet connection to load map tiles.
 
-== Third-Party Services & Attribution ==
-
-Mapthread uses the following open-source libraries and external services:
-
-= JavaScript Libraries =
+== Third-Party Libraries ==
 
 * **Leaflet.js** (BSD-2-Clause) - https://leafletjs.com/
   Interactive map rendering
@@ -146,7 +153,7 @@ Mapthread uses the following open-source libraries and external services:
 * **Chart.js** (MIT) - https://www.chartjs.org/
   Elevation profile visualization
 
-= External Services =
+== External services ==
 
 This plugin connects to third-party services to display map tiles, geocode addresses, and look up elevation data. Below is a full description of each service, what data is sent, and when.
 
@@ -159,6 +166,7 @@ Privacy Policy: https://wiki.osmfoundation.org/wiki/Privacy_Policy
 Tile Usage Policy: https://operations.osmfoundation.org/policies/tiles/
 
 **Esri / ArcGIS World Imagery**
+Service URL: https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer
 Used for: Rendering the optional "Satellite" map layer.
 When: Only when the Satellite layer is enabled in Settings > Mapthread and a visitor selects it. No requests are made if the layer is disabled.
 Data sent: Tile coordinate requests and the visitor's IP address.
@@ -169,7 +177,8 @@ Privacy Policy: https://www.esri.com/en-us/privacy/overview
 Used for: Rendering the optional "Topographic" map layer.
 When: Only when the Topographic layer is enabled in Settings > Mapthread and a visitor selects it.
 Data sent: Tile coordinate requests and the visitor's IP address.
-About / Terms: https://opentopomap.org/about
+Terms of Use: https://opentopomap.org/about
+Privacy Policy: https://opentopomap.org/about
 
 **Nominatim (OpenStreetMap Geocoding)**
 Used for: Address search autocomplete when editing a Map Marker block.
@@ -180,10 +189,12 @@ Privacy Policy: https://wiki.osmfoundation.org/wiki/Privacy_Policy
 
 **Open-Elevation API**
 Used for: Looking up elevation data for GPX tracks that lack elevation information.
-When: Server-side only — when a GPX file is uploaded that has no elevation data and the elevation profile feature is enabled. The request is made from the WordPress server, not from the visitor's browser.
-Data sent: GPS coordinates (latitude/longitude pairs) sampled from the GPX track, sent from the WordPress server's IP address.
+When: Server-side only — when a GPX file is uploaded that has no elevation data and the elevation profile feature is enabled. The request is made from the WordPress server to https://api.open-elevation.com/api/v1/lookup, not from the visitor's browser.
+Data sent: GPS coordinates (latitude/longitude pairs) sampled from the GPX track, sent from the WordPress server's IP address. No user accounts or personal data involved.
 Service: https://open-elevation.com/
-Source: https://github.com/Jorl17/open-elevation (open-source, no account required)
+Source: https://github.com/Jorl17/open-elevation
+Terms of Use: https://github.com/Jorl17/open-elevation/blob/master/license.md (open-source, GPL-2.0 license)
+Privacy Policy: https://github.com/Jorl17/open-elevation (open-source project; no user accounts; only receives GPS coordinates from the server)
 
 **Optional Tile Providers** (each requires an API key configured in Settings > Mapthread)
 
@@ -196,8 +207,20 @@ The following services are only contacted when a site administrator has entered 
 * **JawgMaps** - https://www.jawg.io/
   Terms: https://www.jawg.io/en/terms/ | Privacy: https://www.jawg.io/en/privacy/
 * **Stadia Maps** - https://stadiamaps.com/
-  Terms: https://stadiamaps.com/terms-of-service/ | Privacy: https://stadiamaps.com/privacy-policy/
+  Terms: https://stadiamaps.com/terms-of-service/ | Privacy: https://stadiamaps.com/privacy/privacy-policy/
 
+
+== Source Code & Build Instructions ==
+
+The compiled JavaScript and CSS files in the `build/` directory are generated from human-readable source files. The full source code is available at:
+https://github.com/randomwire/Mapthread
+
+To build from source:
+1. Clone the repository
+2. Run `npm install`
+3. Run `npm run build`
+
+This uses `@wordpress/scripts` (webpack) to compile the source files in `assets/js/` and `assets/css/` into the production `build/` directory.
 
 == Screenshots ==
 
@@ -208,6 +231,11 @@ The following services are only contacted when a site administrator has entered 
 5. Map markers and tooltips
 
 == Changelog ==
+
+= 1.5.5 - 2026-02-20 =
+* Fixed: Replaced inline script on settings page with properly enqueued JavaScript via wp_enqueue_script
+* Added: Source code and build instructions section in readme for compiled assets
+* Improved: External services documentation — added explicit service URLs and terms/privacy links for Esri and Open-Elevation
 
 = 1.5.4 - 2026-02-19 =
 * Added: Attribution info button replaces attribution bar to fix mobile overlap with scale indicator
@@ -302,6 +330,9 @@ The following services are only contacted when a site administrator has entered 
 * Performance optimizations
 
 == Upgrade Notice ==
+
+= 1.5.5 =
+Addresses WordPress.org plugin review feedback: enqueues settings JS properly, documents source code location, and adds explicit service URLs and terms/privacy links for all external services.
 
 = 1.5.2 =
 Addresses WordPress.org plugin review feedback: removes CDN dependency, updates block apiVersion to 3, and expands external service documentation.

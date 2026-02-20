@@ -7,6 +7,19 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ---
 
+## [1.5.5] - 2026-02-20
+
+### Fixed
+- Replaced inline `<script>` on settings page with properly enqueued JavaScript via `wp_enqueue_script()` (new file: `includes/js/mapthread-settings.js`)
+
+### Added
+- Source code and build instructions section in readme for compiled/minified assets (links to GitHub repository)
+
+### Improved
+- External services documentation — added explicit service URLs for Esri (`server.arcgisonline.com`) and Open-Elevation (`api.open-elevation.com`), plus terms of use and privacy links
+
+---
+
 ## [1.5.4] - 2026-02-19
 
 ### Added
@@ -284,9 +297,14 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ---
 
+[1.5.5]: https://github.com/randomwire/Mapthread/releases/tag/v1.5.5
+[1.5.4]: https://github.com/randomwire/Mapthread/releases/tag/v1.5.4
+[1.5.3]: https://github.com/randomwire/Mapthread/releases/tag/v1.5.3
 [1.5.2]: https://github.com/randomwire/Mapthread/releases/tag/v1.5.2
 [1.5.1]: https://github.com/randomwire/Mapthread/releases/tag/v1.5.1
 [1.5.0]: https://github.com/randomwire/Mapthread/releases/tag/v1.5.0
+[1.4.1]: https://github.com/randomwire/Mapthread/releases/tag/v1.4.1
+[1.4.0]: https://github.com/randomwire/Mapthread/releases/tag/v1.4.0
 [1.3.9]: https://github.com/randomwire/Mapthread/releases/tag/v1.3.9
 [1.3.8]: https://github.com/randomwire/Mapthread/releases/tag/v1.3.8
 [1.3.7]: https://github.com/randomwire/Mapthread/releases/tag/v1.3.7

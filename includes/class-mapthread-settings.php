@@ -105,6 +105,25 @@ class Mapthread_Settings {
 	public function run() {
 		add_action( 'admin_menu', array( $this, 'add_settings_page' ) );
 		add_action( 'admin_init', array( $this, 'register_settings' ) );
+		add_action( 'admin_enqueue_scripts', array( $this, 'enqueue_settings_scripts' ) );
+	}
+
+	/**
+	 * Enqueue settings page scripts.
+	 *
+	 * @param string $hook The current admin page hook suffix.
+	 */
+	public function enqueue_settings_scripts( $hook ) {
+		if ( 'settings_page_mapthread' !== $hook ) {
+			return;
+		}
+		wp_enqueue_script(
+			'mapthread-settings',
+			MAPTHREAD_PLUGIN_URL . 'includes/js/mapthread-settings.js',
+			array(),
+			MAPTHREAD_VERSION,
+			true
+		);
 	}
 
 	/**
@@ -201,25 +220,6 @@ class Mapthread_Settings {
 				?>
 			</form>
 		</div>
-		<script>
-		( function() {
-			document.querySelectorAll( '.mapthread-api-key' ).forEach( function( input ) {
-				var provider = input.getAttribute( 'data-provider' );
-				var group = document.querySelector( '.mapthread-styles-group[data-provider="' + provider + '"]' );
-				if ( ! group ) return;
-				var checkboxes = group.querySelectorAll( 'input[type="checkbox"]' );
-
-				function toggle() {
-					var hasKey = input.value.trim().length > 0;
-					checkboxes.forEach( function( cb ) {
-						cb.disabled = ! hasKey;
-					} );
-				}
-
-				input.addEventListener( 'input', toggle );
-			} );
-		} )();
-		</script>
 		<?php
 	}
 
