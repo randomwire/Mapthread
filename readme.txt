@@ -5,7 +5,7 @@ Tags: maps, gpx, travel, storytelling, hiking
 Requires at least: 6.0
 Tested up to: 6.9
 Requires PHP: 7.4
-Stable tag: 1.5.6
+Stable tag: 1.5.7
 License: GPLv2 or later
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
 
@@ -232,6 +232,9 @@ This uses `@wordpress/scripts` (webpack) to compile the source files in `assets/
 
 == Changelog ==
 
+= 1.5.7 - 2026-02-21 =
+* Added: Elevation chart crosshair syncs with map track hover — a dashed indicator and dot appear on the elevation profile when hovering over the GPX track, showing elevation at the cursor position
+
 = 1.5.6 - 2026-02-20 =
 * Improved: External services section reformatted to match WordPress.org scanner expectations — renamed header, added explicit Privacy Policy URLs for every service
 * Improved: Third-party libraries separated into dedicated readme section
@@ -335,6 +338,9 @@ This uses `@wordpress/scripts` (webpack) to compile the source files in `assets/
 * Performance optimizations
 
 == Upgrade Notice ==
+
+= 1.5.7 =
+Adds an elevation chart indicator that syncs with GPX track hover — hover over the track on the map to see your position and elevation on the chart.
 
 = 1.5.6 =
 Addresses remaining WordPress.org review scanner issues: reformatted external services section with explicit Privacy Policy URLs for every service, separated third-party libraries, and added source code link in Description.

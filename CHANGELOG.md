@@ -7,6 +7,13 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ---
 
+## [1.5.7] - 2026-02-21
+
+### Added
+- Elevation chart crosshair syncs with map track hover position — a dashed indicator and dot appear on the elevation profile when hovering over the GPX track, showing elevation at the cursor's position
+
+---
+
 ## [1.5.6] - 2026-02-20
 
 ### Improved
