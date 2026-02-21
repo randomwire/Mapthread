@@ -55,6 +55,7 @@ Chart.register( LineController, LineElement, PointElement, LinearScale, Filler, 
     let markerTrackPositions = [];      // Each marker's position ratio (0-1) along track
     let walkedPolyline = null;          // Polyline for walked portion
     let remainingPolyline = null;       // Polyline for remaining portion
+    let trackHoverProgress = null;      // Progress (0–1) when hovering map track, null when not hovering
     let showProgressIndicator = true;   // Setting from block
     let showElevationProfile = true;    // Setting from block
     let defaultMapLayer = 'Street';     // Which layer to show on load
@@ -468,6 +469,23 @@ Chart.register( LineController, LineElement, PointElement, LinearScale, Filler, 
             dashArray: TRACK_WALKED_DASH,
         } ).addTo( map );
 
+        // Invisible wider polyline for generous hover hit area (avoids blinking on thin track)
+        const trackHitPolyline = L.polyline( trackCoords, {
+            color: 'transparent',
+            weight: 20,
+            opacity: 0,
+        } ).addTo( map );
+        trackHitPolyline.on( 'mousemove', ( e ) => {
+            if ( ! elevationChart ) return;
+            trackHoverProgress = findNearestTrackProgress( e.latlng );
+            elevationChart.update( 'none' );
+        } );
+        trackHitPolyline.on( 'mouseout', () => {
+            if ( ! elevationChart ) return;
+            trackHoverProgress = null;
+            elevationChart.update( 'none' );
+        } );
+
         // Remove original gpxLayer and its overlay (replaced by split polylines)
         if ( gpxLayer ) {
             map.removeLayer( gpxLayer );
@@ -828,6 +846,28 @@ Chart.register( LineController, LineElement, PointElement, LinearScale, Filler, 
     // =========================================================================
 
     /**
+     * Find the nearest track point to a map latlng and return its progress (0–1)
+     *
+     * @param {L.LatLng} latlng - Leaflet LatLng from a map event
+     * @return {number|null} Progress ratio along the track, or null if unavailable
+     */
+    function findNearestTrackProgress( latlng ) {
+        if ( trackCoords.length === 0 || totalTrackDistance === 0 ) {
+            return null;
+        }
+        let minDist = Infinity;
+        let nearestIdx = 0;
+        for ( let i = 0; i < trackCoords.length; i++ ) {
+            const d = calculateDistance( latlng.lat, latlng.lng, trackCoords[ i ][ 0 ], trackCoords[ i ][ 1 ] );
+            if ( d < minDist ) {
+                minDist = d;
+                nearestIdx = i;
+            }
+        }
+        return trackDistances[ nearestIdx ] / totalTrackDistance;
+    }
+
+    /**
      * Get elevation at a specific progress position along the track
      *
      * @param {number} progress - Fractional position (0 to 1)
@@ -1019,6 +1059,37 @@ Chart.register( LineController, LineElement, PointElement, LinearScale, Filler, 
                         ctx.fillStyle = PROGRESS_INDICATOR_COLOR;
                         ctx.fill();
                         ctx.strokeStyle = '#fff';
+                        ctx.lineWidth = 1.5;
+                        ctx.stroke();
+                    }
+                    ctx.restore();
+                }
+            }
+
+            // Draw map-hover indicator on elevation chart
+            if ( trackHoverProgress !== null ) {
+                const hoverKm = ( trackHoverProgress * totalTrackDistance ) / 1000;
+                const hx = scales.x.getPixelForValue( hoverKm );
+
+                if ( hx >= chartArea.left && hx <= chartArea.right ) {
+                    ctx.save();
+                    ctx.beginPath();
+                    ctx.setLineDash( [ 4, 3 ] );
+                    ctx.strokeStyle = 'rgba(228, 87, 46, 0.45)';
+                    ctx.lineWidth = 1.5;
+                    ctx.moveTo( hx, chartArea.top );
+                    ctx.lineTo( hx, chartArea.bottom );
+                    ctx.stroke();
+
+                    const hoverEle = getElevationAtProgress( trackHoverProgress );
+                    if ( hoverEle !== null ) {
+                        const hy = scales.y.getPixelForValue( hoverEle );
+                        ctx.beginPath();
+                        ctx.setLineDash( [] );
+                        ctx.arc( hx, hy, 3, 0, Math.PI * 2 );
+                        ctx.fillStyle = '#fff';
+                        ctx.fill();
+                        ctx.strokeStyle = PROGRESS_INDICATOR_COLOR;
                         ctx.lineWidth = 1.5;
                         ctx.stroke();
                     }
@@ -2360,6 +2431,21 @@ Chart.register( LineController, LineElement, PointElement, LinearScale, Filler, 
             opacity: TRACK_WALKED_OPACITY,
             dashArray: TRACK_WALKED_DASH
         } ).addTo( map );
+
+        // Invisible wider polyline for generous hover hit area (avoids blinking on thin track)
+        L.polyline( coords, {
+            color: 'transparent',
+            weight: 20,
+            opacity: 0,
+        } ).addTo( map ).on( 'mousemove', ( e ) => {
+            if ( ! elevationChart ) return;
+            trackHoverProgress = findNearestTrackProgress( e.latlng );
+            elevationChart.update( 'none' );
+        } ).on( 'mouseout', () => {
+            if ( ! elevationChart ) return;
+            trackHoverProgress = null;
+            elevationChart.update( 'none' );
+        } );
     }
 
     /**
