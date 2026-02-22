@@ -1,0 +1,372 @@
+# Copyright (C) 2026 David Gilbert
+# This file is distributed under the GPL v2 or later.
+msgid ""
+msgstr ""
+"Project-Id-Version: Mapthread 1.5.7\n"
+"Report-Msgid-Bugs-To: https://wordpress.org/support/plugin/Mapthread\n"
+"Last-Translator: Claude (AI), 2026\n"
+"Language-Team: Spanish\n"
+"Language: es_ES\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"PO-Revision-Date: 2026-02-21 12:00+0000\n"
+"Plural-Forms: nplurals=2; plural=(n != 1);\n"
+"X-Generator: Claude\n"
+"X-Domain: mapthread\n"
+
+#. Plugin Name of the plugin
+#: mapthread.php
+#: includes/class-mapthread-settings.php:135
+msgid "Mapthread"
+msgstr ""
+
+#. Plugin URI of the plugin
+#: mapthread.php
+msgid "https://github.com/randomwire/Mapthread"
+msgstr ""
+
+#. Description of the plugin
+#: mapthread.php
+msgid "Interactive map-based storytelling for WordPress. Combine narratives with GPX tracks and waypoints."
+msgstr "Narración interactiva basada en mapas para WordPress. Combina narrativas con rutas GPX y puntos de paso."
+
+#. Author of the plugin
+#: mapthread.php
+msgid "David Gilbert"
+msgstr ""
+
+#. Author URI of the plugin
+#: mapthread.php
+msgid "https://randomwire.com"
+msgstr ""
+
+#: includes/class-mapthread-settings.php:134
+msgid "Mapthread Settings"
+msgstr "Ajustes de Mapthread"
+
+#: includes/class-mapthread-settings.php:155
+msgid "Free Map Providers"
+msgstr "Proveedores de mapas gratuitos"
+
+#: includes/class-mapthread-settings.php:162
+msgid "Available Layers"
+msgstr "Capas disponibles"
+
+#: includes/class-mapthread-settings.php:183
+msgid "API Key"
+msgstr "Clave API"
+
+#: includes/class-mapthread-settings.php:192
+msgid "Map Styles"
+msgstr "Estilos de mapa"
+
+#: includes/class-mapthread-settings.php:214
+msgid "Configure which map tile providers and styles are available in the Mapthread layers dropdown. Add an API key for a provider, then select the styles you want to offer your readers."
+msgstr "Configura qué proveedores de teselas de mapa y estilos están disponibles en el menú desplegable de capas de Mapthread. Añade una clave API para un proveedor y, a continuación, selecciona los estilos que quieres ofrecer a tus lectores."
+
+#: includes/class-mapthread-settings.php:230
+msgid "Street Map (OpenStreetMap) is always available as the default fallback layer."
+msgstr "El mapa de calles (OpenStreetMap) siempre está disponible como capa de reserva predeterminada."
+
+#: includes/class-mapthread-settings.php:246
+#: includes/class-mapthread-settings.php:426
+#: includes/blocks/map-gpx/edit.js:296
+msgid "Street Map"
+msgstr "Mapa de calles"
+
+#: includes/class-mapthread-settings.php:254
+#: includes/class-mapthread-settings.php:433
+msgid "Satellite View"
+msgstr "Vista satélite"
+
+#: includes/class-mapthread-settings.php:262
+#: includes/class-mapthread-settings.php:439
+msgid "Topographic Map"
+msgstr "Mapa topográfico"
+
+#: includes/class-mapthread.php:125
+msgid "Show map"
+msgstr "Mostrar mapa"
+
+#: includes/class-mapthread.php:126
+msgid "Hide map"
+msgstr "Ocultar mapa"
+
+#: includes/class-mapthread.php:127
+msgid "Use ⌘ or Ctrl + scroll to zoom"
+msgstr "Usa ⌘ o Ctrl + desplazamiento para hacer zoom"
+
+#: includes/class-mapthread.php:128
+msgid "Use Ctrl + scroll to zoom"
+msgstr "Usa Ctrl + desplazamiento para hacer zoom"
+
+#: includes/class-mapthread.php:193
+msgid "Donate"
+msgstr "Donar"
+
+#: includes/blocks/map-gpx/edit.js:36
+msgid "Invalid GPX format - XML parsing failed"
+msgstr "Formato GPX no válido - error en el análisis XML"
+
+#: includes/blocks/map-gpx/edit.js:46
+msgid "No track or route points found in GPX file"
+msgstr "No se encontraron puntos de ruta o track en el archivo GPX"
+
+#: includes/blocks/map-gpx/edit.js:67
+msgid "Failed to parse GPX file"
+msgstr "No se pudo analizar el archivo GPX"
+
+#: includes/blocks/map-gpx/edit.js:129
+msgid "Please select a valid GPX file"
+msgstr "Por favor, selecciona un archivo GPX válido"
+
+#: includes/blocks/map-gpx/edit.js:135
+msgid "Warning: File size exceeds 10MB. This may cause performance issues."
+msgstr "Advertencia: El tamaño del archivo supera los 10 MB. Esto puede causar problemas de rendimiento."
+
+#: includes/blocks/map-gpx/edit.js:164
+msgid "Warning: Track has more than 50,000 points. This may cause performance issues."
+msgstr "Advertencia: El track tiene más de 50 000 puntos. Esto puede causar problemas de rendimiento."
+
+#: includes/blocks/map-gpx/edit.js:179
+msgid "Error loading GPX file. Please try again."
+msgstr "Error al cargar el archivo GPX. Inténtalo de nuevo."
+
+#: includes/blocks/map-gpx/edit.js:205
+#: includes/blocks/map-gpx/edit.js:237
+msgid "Map GPX"
+msgstr "Mapa GPX"
+
+#: includes/blocks/map-gpx/edit.js:208
+msgid "Processing GPX file..."
+msgstr "Procesando archivo GPX..."
+
+#: includes/blocks/map-gpx/edit.js:219
+#: includes/blocks/map-gpx/edit.js:271
+msgid "Map Settings"
+msgstr "Ajustes del mapa"
+
+#: includes/blocks/map-gpx/edit.js:221
+#: includes/blocks/map-gpx/edit.js:273
+msgid "Show progress indicator"
+msgstr "Mostrar indicador de progreso"
+
+#: includes/blocks/map-gpx/edit.js:224
+#: includes/blocks/map-gpx/edit.js:276
+msgid "Animate position along track as readers scroll"
+msgstr "Animar la posición a lo largo del track mientras los lectores se desplazan"
+
+#: includes/blocks/map-gpx/edit.js:227
+#: includes/blocks/map-gpx/edit.js:285
+msgid "Allow GPX download"
+msgstr "Permitir descarga GPX"
+
+#: includes/blocks/map-gpx/edit.js:230
+#: includes/blocks/map-gpx/edit.js:288
+msgid "Show a download button so visitors can save the GPX file"
+msgstr "Mostrar un botón de descarga para que los visitantes puedan guardar el archivo GPX"
+
+#: includes/blocks/map-gpx/edit.js:238
+msgid "Upload a GPX file to display your route or track on an interactive map."
+msgstr "Sube un archivo GPX para mostrar tu ruta o track en un mapa interactivo."
+
+#: includes/blocks/map-gpx/edit.js:256
+msgid "Upload GPX File"
+msgstr "Subir archivo GPX"
+
+#: includes/blocks/map-gpx/edit.js:279
+msgid "Show elevation profile"
+msgstr "Mostrar perfil de elevación"
+
+#: includes/blocks/map-gpx/edit.js:282
+msgid "Display elevation chart at bottom of map"
+msgstr "Mostrar gráfico de elevación en la parte inferior del mapa"
+
+#: includes/blocks/map-gpx/edit.js:291
+msgid "Default Map Style"
+msgstr "Estilo de mapa predeterminado"
+
+#: includes/blocks/map-gpx/edit.js:299
+msgid "Choose which map style displays when the page loads"
+msgstr "Elige qué estilo de mapa se muestra cuando se carga la página"
+
+#: includes/blocks/map-gpx/edit.js:303
+msgid "Configure map providers"
+msgstr "Configurar proveedores de mapas"
+
+#: includes/blocks/map-gpx/edit.js:312
+msgid "Multiple Map GPX blocks detected. Only the first block will be used on the frontend."
+msgstr "Se detectaron varios bloques de Mapa GPX. Solo se usará el primer bloque en el frontend."
+
+#: includes/blocks/map-gpx/edit.js:333
+msgid "GPX uploaded:"
+msgstr "GPX cargado:"
+
+#: includes/blocks/map-gpx/edit.js:336
+msgid "track points"
+msgstr "puntos de track"
+
+#: includes/blocks/map-gpx/edit.js:338
+msgid "Bounds:"
+msgstr "Límites:"
+
+#: includes/blocks/map-gpx/edit.js:352
+msgid "Replace GPX"
+msgstr "Reemplazar GPX"
+
+#: includes/blocks/map-gpx/edit.js:358
+msgid "Remove GPX"
+msgstr "Eliminar GPX"
+
+#: includes/blocks/map-marker/components/AddressSearch.js:215
+msgid "Address (optional)"
+msgstr "Dirección (opcional)"
+
+#: includes/blocks/map-marker/components/AddressSearch.js:218
+msgid "Search for a location..."
+msgstr "Buscar una ubicación..."
+
+#: includes/blocks/map-marker/components/AddressSearch.js:219
+msgid "Type to search and auto-fill coordinates"
+msgstr "Escribe para buscar y rellenar coordenadas automáticamente"
+
+#: includes/blocks/map-marker/components/AddressSearch.js:256
+msgid "No results found"
+msgstr "No se encontraron resultados"
+
+#: includes/blocks/map-marker/components/AddressSearch.js:265
+msgid "Location preview"
+msgstr "Vista previa de la ubicación"
+
+#: includes/blocks/map-marker/components/EmojiGrid.js:54
+msgid "Please paste a single emoji character"
+msgstr "Por favor, pega un solo carácter emoji"
+
+#: includes/blocks/map-marker/components/EmojiGrid.js:73
+msgid "Paste any emoji…"
+msgstr "Pega cualquier emoji…"
+
+#. translators: %d is the distance in kilometers
+#: includes/blocks/map-marker/edit.js:159
+#, js-format
+msgid "This marker is %d km from the GPX track. Is this intentional?"
+msgstr "Este marcador está a %d km del track GPX. ¿Es esto intencionado?"
+
+#: includes/blocks/map-marker/edit.js:168
+msgid "Marker Settings"
+msgstr "Ajustes del marcador"
+
+#: includes/blocks/map-marker/edit.js:170
+msgid "Title"
+msgstr "Título"
+
+#: includes/blocks/map-marker/edit.js:173
+msgid "Enter marker title..."
+msgstr "Introducir título del marcador..."
+
+#: includes/blocks/map-marker/edit.js:174
+msgid "This will be displayed above the map pin"
+msgstr "Esto se mostrará encima del pin del mapa"
+
+#: includes/blocks/map-marker/edit.js:177
+msgid "Marker Design (optional)"
+msgstr "Diseño del marcador (opcional)"
+
+#: includes/blocks/map-marker/edit.js:184
+msgid "Pick Emoji"
+msgstr "Elegir emoji"
+
+#: includes/blocks/map-marker/edit.js:192
+msgid "Clear"
+msgstr "Limpiar"
+
+#: includes/blocks/map-marker/edit.js:217
+msgid "Coordinates"
+msgstr "Coordenadas"
+
+#: includes/blocks/map-marker/edit.js:230
+msgid "Latitude, longitude (e.g. 35.31909, 139.55064)"
+msgstr "Latitud, longitud (p. ej. 35.31909, 139.55064)"
+
+#: includes/blocks/map-marker/edit.js:234
+msgid "Zoom Level"
+msgstr "Nivel de zoom"
+
+#: includes/blocks/map-marker/edit.js:239
+msgid "Map zoom when this marker is active (1-18, default: 14)"
+msgstr "Zoom del mapa cuando este marcador está activo (1-18, predeterminado: 14)"
+
+#: includes/blocks/map-marker/edit.js:248
+msgid "Please enter latitude and longitude in the block settings (sidebar)."
+msgstr "Por favor, introduce la latitud y la longitud en los ajustes del bloque (barra lateral)."
+
+#: includes/blocks/map-marker/edit.js:271
+msgid "Untitled Marker"
+msgstr "Marcador sin título"
+
+#: includes/blocks/map-marker/edit.js:288
+msgid "No coordinates set"
+msgstr "Sin coordenadas establecidas"
+
+#: includes/blocks/map-gpx/block.json
+msgctxt "block title"
+msgid "Map GPX"
+msgstr "Mapa GPX"
+
+#: includes/blocks/map-gpx/block.json
+msgctxt "block description"
+msgid "Upload and display a GPX track on an interactive map."
+msgstr "Sube y muestra un track GPX en un mapa interactivo."
+
+#: includes/blocks/map-gpx/block.json
+#: includes/blocks/map-marker/block.json
+msgctxt "block keyword"
+msgid "map"
+msgstr "mapa"
+
+#: includes/blocks/map-gpx/block.json
+msgctxt "block keyword"
+msgid "gpx"
+msgstr ""
+
+#: includes/blocks/map-gpx/block.json
+msgctxt "block keyword"
+msgid "track"
+msgstr "track"
+
+#: includes/blocks/map-gpx/block.json
+msgctxt "block keyword"
+msgid "route"
+msgstr "ruta"
+
+#: includes/blocks/map-gpx/block.json
+#: includes/blocks/map-marker/block.json
+msgctxt "block keyword"
+msgid "mapthread"
+msgstr ""
+
+#: includes/blocks/map-marker/block.json
+msgctxt "block title"
+msgid "Map Marker"
+msgstr "Marcador de mapa"
+
+#: includes/blocks/map-marker/block.json
+msgctxt "block description"
+msgid "Mark a location on the map that corresponds to this point in your story."
+msgstr "Marca una ubicación en el mapa que corresponda a este punto de tu historia."
+
+#: includes/blocks/map-marker/block.json
+msgctxt "block keyword"
+msgid "marker"
+msgstr "marcador"
+
+#: includes/blocks/map-marker/block.json
+msgctxt "block keyword"
+msgid "waypoint"
+msgstr "punto de paso"
+
+#: includes/blocks/map-marker/block.json
+msgctxt "block keyword"
+msgid "location"
+msgstr "ubicación"

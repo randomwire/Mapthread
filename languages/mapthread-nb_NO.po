@@ -1,0 +1,372 @@
+# Copyright (C) 2026 David Gilbert
+# This file is distributed under the GPL v2 or later.
+msgid ""
+msgstr ""
+"Project-Id-Version: Mapthread 1.5.7\n"
+"Report-Msgid-Bugs-To: https://wordpress.org/support/plugin/Mapthread\n"
+"Last-Translator: Claude (AI), 2026\n"
+"Language-Team: Norwegian Bokmål\n"
+"Language: nb_NO\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"PO-Revision-Date: 2026-02-21 12:00+0000\n"
+"Plural-Forms: nplurals=2; plural=(n != 1);\n"
+"X-Generator: Claude\n"
+"X-Domain: mapthread\n"
+
+#. Plugin Name of the plugin
+#: mapthread.php
+#: includes/class-mapthread-settings.php:135
+msgid "Mapthread"
+msgstr ""
+
+#. Plugin URI of the plugin
+#: mapthread.php
+msgid "https://github.com/randomwire/Mapthread"
+msgstr ""
+
+#. Description of the plugin
+#: mapthread.php
+msgid "Interactive map-based storytelling for WordPress. Combine narratives with GPX tracks and waypoints."
+msgstr "Interaktiv kartebasert historiefortelling for WordPress. Kombiner fortellinger med GPX-spor og veipunkter."
+
+#. Author of the plugin
+#: mapthread.php
+msgid "David Gilbert"
+msgstr ""
+
+#. Author URI of the plugin
+#: mapthread.php
+msgid "https://randomwire.com"
+msgstr ""
+
+#: includes/class-mapthread-settings.php:134
+msgid "Mapthread Settings"
+msgstr "Mapthread-innstillinger"
+
+#: includes/class-mapthread-settings.php:155
+msgid "Free Map Providers"
+msgstr "Gratis kartleverandører"
+
+#: includes/class-mapthread-settings.php:162
+msgid "Available Layers"
+msgstr "Tilgjengelige lag"
+
+#: includes/class-mapthread-settings.php:183
+msgid "API Key"
+msgstr "API-nøkkel"
+
+#: includes/class-mapthread-settings.php:192
+msgid "Map Styles"
+msgstr "Kartstiler"
+
+#: includes/class-mapthread-settings.php:214
+msgid "Configure which map tile providers and styles are available in the Mapthread layers dropdown. Add an API key for a provider, then select the styles you want to offer your readers."
+msgstr "Konfigurer hvilke kartflateleverandører og stiler som er tilgjengelige i Mapthread-lagmenyen. Legg til en API-nøkkel for en leverandør og velg deretter stilene du vil tilby leserne dine."
+
+#: includes/class-mapthread-settings.php:230
+msgid "Street Map (OpenStreetMap) is always available as the default fallback layer."
+msgstr "Gatekart (OpenStreetMap) er alltid tilgjengelig som standard reservelag."
+
+#: includes/class-mapthread-settings.php:246
+#: includes/class-mapthread-settings.php:426
+#: includes/blocks/map-gpx/edit.js:296
+msgid "Street Map"
+msgstr "Gatekart"
+
+#: includes/class-mapthread-settings.php:254
+#: includes/class-mapthread-settings.php:433
+msgid "Satellite View"
+msgstr "Satellittvisning"
+
+#: includes/class-mapthread-settings.php:262
+#: includes/class-mapthread-settings.php:439
+msgid "Topographic Map"
+msgstr "Topografisk kart"
+
+#: includes/class-mapthread.php:125
+msgid "Show map"
+msgstr "Vis kart"
+
+#: includes/class-mapthread.php:126
+msgid "Hide map"
+msgstr "Skjul kart"
+
+#: includes/class-mapthread.php:127
+msgid "Use ⌘ or Ctrl + scroll to zoom"
+msgstr "Bruk ⌘ eller Ctrl + rulling for å zoome"
+
+#: includes/class-mapthread.php:128
+msgid "Use Ctrl + scroll to zoom"
+msgstr "Bruk Ctrl + rulling for å zoome"
+
+#: includes/class-mapthread.php:193
+msgid "Donate"
+msgstr "Doner"
+
+#: includes/blocks/map-gpx/edit.js:36
+msgid "Invalid GPX format - XML parsing failed"
+msgstr "Ugyldig GPX-format - XML-parsing mislyktes"
+
+#: includes/blocks/map-gpx/edit.js:46
+msgid "No track or route points found in GPX file"
+msgstr "Ingen spor- eller rutepunkter funnet i GPX-filen"
+
+#: includes/blocks/map-gpx/edit.js:67
+msgid "Failed to parse GPX file"
+msgstr "Kunne ikke analysere GPX-filen"
+
+#: includes/blocks/map-gpx/edit.js:129
+msgid "Please select a valid GPX file"
+msgstr "Velg en gyldig GPX-fil"
+
+#: includes/blocks/map-gpx/edit.js:135
+msgid "Warning: File size exceeds 10MB. This may cause performance issues."
+msgstr "Advarsel: Filstørrelsen overskrider 10 MB. Dette kan forårsake ytelsesproblemer."
+
+#: includes/blocks/map-gpx/edit.js:164
+msgid "Warning: Track has more than 50,000 points. This may cause performance issues."
+msgstr "Advarsel: Sporet har mer enn 50 000 punkter. Dette kan forårsake ytelsesproblemer."
+
+#: includes/blocks/map-gpx/edit.js:179
+msgid "Error loading GPX file. Please try again."
+msgstr "Feil ved lasting av GPX-fil. Prøv igjen."
+
+#: includes/blocks/map-gpx/edit.js:205
+#: includes/blocks/map-gpx/edit.js:237
+msgid "Map GPX"
+msgstr "Kart GPX"
+
+#: includes/blocks/map-gpx/edit.js:208
+msgid "Processing GPX file..."
+msgstr "Behandler GPX-fil..."
+
+#: includes/blocks/map-gpx/edit.js:219
+#: includes/blocks/map-gpx/edit.js:271
+msgid "Map Settings"
+msgstr "Kartinnstillinger"
+
+#: includes/blocks/map-gpx/edit.js:221
+#: includes/blocks/map-gpx/edit.js:273
+msgid "Show progress indicator"
+msgstr "Vis fremdriftsindikator"
+
+#: includes/blocks/map-gpx/edit.js:224
+#: includes/blocks/map-gpx/edit.js:276
+msgid "Animate position along track as readers scroll"
+msgstr "Animer posisjon langs spor mens leserne ruller"
+
+#: includes/blocks/map-gpx/edit.js:227
+#: includes/blocks/map-gpx/edit.js:285
+msgid "Allow GPX download"
+msgstr "Tillat GPX-nedlasting"
+
+#: includes/blocks/map-gpx/edit.js:230
+#: includes/blocks/map-gpx/edit.js:288
+msgid "Show a download button so visitors can save the GPX file"
+msgstr "Vis en nedlastingsknapp slik at besøkende kan lagre GPX-filen"
+
+#: includes/blocks/map-gpx/edit.js:238
+msgid "Upload a GPX file to display your route or track on an interactive map."
+msgstr "Last opp en GPX-fil for å vise ruten eller sporet ditt på et interaktivt kart."
+
+#: includes/blocks/map-gpx/edit.js:256
+msgid "Upload GPX File"
+msgstr "Last opp GPX-fil"
+
+#: includes/blocks/map-gpx/edit.js:279
+msgid "Show elevation profile"
+msgstr "Vis høydeprofil"
+
+#: includes/blocks/map-gpx/edit.js:282
+msgid "Display elevation chart at bottom of map"
+msgstr "Vis høydediagram nederst på kartet"
+
+#: includes/blocks/map-gpx/edit.js:291
+msgid "Default Map Style"
+msgstr "Standard kartstil"
+
+#: includes/blocks/map-gpx/edit.js:299
+msgid "Choose which map style displays when the page loads"
+msgstr "Velg hvilken kartstil som vises når siden lastes inn"
+
+#: includes/blocks/map-gpx/edit.js:303
+msgid "Configure map providers"
+msgstr "Konfigurer kartleverandører"
+
+#: includes/blocks/map-gpx/edit.js:312
+msgid "Multiple Map GPX blocks detected. Only the first block will be used on the frontend."
+msgstr "Flere Kart GPX-blokker oppdaget. Bare den første blokken vil bli brukt i frontend."
+
+#: includes/blocks/map-gpx/edit.js:333
+msgid "GPX uploaded:"
+msgstr "GPX lastet opp:"
+
+#: includes/blocks/map-gpx/edit.js:336
+msgid "track points"
+msgstr "spornpunkter"
+
+#: includes/blocks/map-gpx/edit.js:338
+msgid "Bounds:"
+msgstr "Grenser:"
+
+#: includes/blocks/map-gpx/edit.js:352
+msgid "Replace GPX"
+msgstr "Erstatt GPX"
+
+#: includes/blocks/map-gpx/edit.js:358
+msgid "Remove GPX"
+msgstr "Fjern GPX"
+
+#: includes/blocks/map-marker/components/AddressSearch.js:215
+msgid "Address (optional)"
+msgstr "Adresse (valgfritt)"
+
+#: includes/blocks/map-marker/components/AddressSearch.js:218
+msgid "Search for a location..."
+msgstr "Søk etter et sted..."
+
+#: includes/blocks/map-marker/components/AddressSearch.js:219
+msgid "Type to search and auto-fill coordinates"
+msgstr "Skriv for å søke og fylle ut koordinater automatisk"
+
+#: includes/blocks/map-marker/components/AddressSearch.js:256
+msgid "No results found"
+msgstr "Ingen resultater funnet"
+
+#: includes/blocks/map-marker/components/AddressSearch.js:265
+msgid "Location preview"
+msgstr "Stedsforhåndsvisning"
+
+#: includes/blocks/map-marker/components/EmojiGrid.js:54
+msgid "Please paste a single emoji character"
+msgstr "Lim inn ett enkelt emoji-tegn"
+
+#: includes/blocks/map-marker/components/EmojiGrid.js:73
+msgid "Paste any emoji…"
+msgstr "Lim inn en emoji…"
+
+#. translators: %d is the distance in kilometers
+#: includes/blocks/map-marker/edit.js:159
+#, js-format
+msgid "This marker is %d km from the GPX track. Is this intentional?"
+msgstr "Denne markøren er %d km fra GPX-sporet. Er dette tilsiktet?"
+
+#: includes/blocks/map-marker/edit.js:168
+msgid "Marker Settings"
+msgstr "Markørinnstillinger"
+
+#: includes/blocks/map-marker/edit.js:170
+msgid "Title"
+msgstr "Tittel"
+
+#: includes/blocks/map-marker/edit.js:173
+msgid "Enter marker title..."
+msgstr "Skriv inn markørtittel..."
+
+#: includes/blocks/map-marker/edit.js:174
+msgid "This will be displayed above the map pin"
+msgstr "Dette vises over kartpinnen"
+
+#: includes/blocks/map-marker/edit.js:177
+msgid "Marker Design (optional)"
+msgstr "Markørdesign (valgfritt)"
+
+#: includes/blocks/map-marker/edit.js:184
+msgid "Pick Emoji"
+msgstr "Velg emoji"
+
+#: includes/blocks/map-marker/edit.js:192
+msgid "Clear"
+msgstr "Tøm"
+
+#: includes/blocks/map-marker/edit.js:217
+msgid "Coordinates"
+msgstr "Koordinater"
+
+#: includes/blocks/map-marker/edit.js:230
+msgid "Latitude, longitude (e.g. 35.31909, 139.55064)"
+msgstr "Breddegrad, lengdegrad (f.eks. 35.31909, 139.55064)"
+
+#: includes/blocks/map-marker/edit.js:234
+msgid "Zoom Level"
+msgstr "Zoomnivå"
+
+#: includes/blocks/map-marker/edit.js:239
+msgid "Map zoom when this marker is active (1-18, default: 14)"
+msgstr "Kartzoom når denne markøren er aktiv (1-18, standard: 14)"
+
+#: includes/blocks/map-marker/edit.js:248
+msgid "Please enter latitude and longitude in the block settings (sidebar)."
+msgstr "Angi breddegrad og lengdegrad i blokkinnstillingene (sidepanel)."
+
+#: includes/blocks/map-marker/edit.js:271
+msgid "Untitled Marker"
+msgstr "Uten navn markør"
+
+#: includes/blocks/map-marker/edit.js:288
+msgid "No coordinates set"
+msgstr "Ingen koordinater angitt"
+
+#: includes/blocks/map-gpx/block.json
+msgctxt "block title"
+msgid "Map GPX"
+msgstr "Kart GPX"
+
+#: includes/blocks/map-gpx/block.json
+msgctxt "block description"
+msgid "Upload and display a GPX track on an interactive map."
+msgstr "Last opp og vis et GPX-spor på et interaktivt kart."
+
+#: includes/blocks/map-gpx/block.json
+#: includes/blocks/map-marker/block.json
+msgctxt "block keyword"
+msgid "map"
+msgstr "kart"
+
+#: includes/blocks/map-gpx/block.json
+msgctxt "block keyword"
+msgid "gpx"
+msgstr ""
+
+#: includes/blocks/map-gpx/block.json
+msgctxt "block keyword"
+msgid "track"
+msgstr "spor"
+
+#: includes/blocks/map-gpx/block.json
+msgctxt "block keyword"
+msgid "route"
+msgstr "rute"
+
+#: includes/blocks/map-gpx/block.json
+#: includes/blocks/map-marker/block.json
+msgctxt "block keyword"
+msgid "mapthread"
+msgstr ""
+
+#: includes/blocks/map-marker/block.json
+msgctxt "block title"
+msgid "Map Marker"
+msgstr "Kartmarkør"
+
+#: includes/blocks/map-marker/block.json
+msgctxt "block description"
+msgid "Mark a location on the map that corresponds to this point in your story."
+msgstr "Merk en plassering på kartet som tilsvarer dette punktet i historien din."
+
+#: includes/blocks/map-marker/block.json
+msgctxt "block keyword"
+msgid "marker"
+msgstr "markør"
+
+#: includes/blocks/map-marker/block.json
+msgctxt "block keyword"
+msgid "waypoint"
+msgstr "veipunkt"
+
+#: includes/blocks/map-marker/block.json
+msgctxt "block keyword"
+msgid "location"
+msgstr "sted"

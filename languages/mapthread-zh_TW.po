@@ -1,0 +1,372 @@
+# Copyright (C) 2026 David Gilbert
+# This file is distributed under the GPL v2 or later.
+msgid ""
+msgstr ""
+"Project-Id-Version: Mapthread 1.5.7\n"
+"Report-Msgid-Bugs-To: https://wordpress.org/support/plugin/Mapthread\n"
+"Last-Translator: Claude (AI), 2026\n"
+"Language-Team: Chinese (Traditional)\n"
+"Language: zh_TW\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"PO-Revision-Date: 2026-02-21 12:00+0000\n"
+"Plural-Forms: nplurals=1; plural=0;\n"
+"X-Generator: Claude\n"
+"X-Domain: mapthread\n"
+
+#. Plugin Name of the plugin
+#: mapthread.php
+#: includes/class-mapthread-settings.php:135
+msgid "Mapthread"
+msgstr ""
+
+#. Plugin URI of the plugin
+#: mapthread.php
+msgid "https://github.com/randomwire/Mapthread"
+msgstr ""
+
+#. Description of the plugin
+#: mapthread.php
+msgid "Interactive map-based storytelling for WordPress. Combine narratives with GPX tracks and waypoints."
+msgstr "WordPress 的互動式地圖敘事工具。將故事與 GPX 路徑和航點結合。"
+
+#. Author of the plugin
+#: mapthread.php
+msgid "David Gilbert"
+msgstr ""
+
+#. Author URI of the plugin
+#: mapthread.php
+msgid "https://randomwire.com"
+msgstr ""
+
+#: includes/class-mapthread-settings.php:134
+msgid "Mapthread Settings"
+msgstr "Mapthread 設定"
+
+#: includes/class-mapthread-settings.php:155
+msgid "Free Map Providers"
+msgstr "免費地圖提供商"
+
+#: includes/class-mapthread-settings.php:162
+msgid "Available Layers"
+msgstr "可用圖層"
+
+#: includes/class-mapthread-settings.php:183
+msgid "API Key"
+msgstr "API 金鑰"
+
+#: includes/class-mapthread-settings.php:192
+msgid "Map Styles"
+msgstr "地圖樣式"
+
+#: includes/class-mapthread-settings.php:214
+msgid "Configure which map tile providers and styles are available in the Mapthread layers dropdown. Add an API key for a provider, then select the styles you want to offer your readers."
+msgstr "設定哪些地圖圖磚提供商和樣式可在 Mapthread 圖層下拉選單中使用。為提供商新增 API 金鑰，然後選擇您想提供給讀者的樣式。"
+
+#: includes/class-mapthread-settings.php:230
+msgid "Street Map (OpenStreetMap) is always available as the default fallback layer."
+msgstr "街道地圖（OpenStreetMap）永遠作為預設備用圖層提供。"
+
+#: includes/class-mapthread-settings.php:246
+#: includes/class-mapthread-settings.php:426
+#: includes/blocks/map-gpx/edit.js:296
+msgid "Street Map"
+msgstr "街道地圖"
+
+#: includes/class-mapthread-settings.php:254
+#: includes/class-mapthread-settings.php:433
+msgid "Satellite View"
+msgstr "衛星視圖"
+
+#: includes/class-mapthread-settings.php:262
+#: includes/class-mapthread-settings.php:439
+msgid "Topographic Map"
+msgstr "地形圖"
+
+#: includes/class-mapthread.php:125
+msgid "Show map"
+msgstr "顯示地圖"
+
+#: includes/class-mapthread.php:126
+msgid "Hide map"
+msgstr "隱藏地圖"
+
+#: includes/class-mapthread.php:127
+msgid "Use ⌘ or Ctrl + scroll to zoom"
+msgstr "使用 ⌘ 或 Ctrl + 捲動縮放"
+
+#: includes/class-mapthread.php:128
+msgid "Use Ctrl + scroll to zoom"
+msgstr "使用 Ctrl + 捲動縮放"
+
+#: includes/class-mapthread.php:193
+msgid "Donate"
+msgstr "捐款"
+
+#: includes/blocks/map-gpx/edit.js:36
+msgid "Invalid GPX format - XML parsing failed"
+msgstr "無效的 GPX 格式 - XML 解析失敗"
+
+#: includes/blocks/map-gpx/edit.js:46
+msgid "No track or route points found in GPX file"
+msgstr "GPX 檔案中找不到路徑或航線點"
+
+#: includes/blocks/map-gpx/edit.js:67
+msgid "Failed to parse GPX file"
+msgstr "無法解析 GPX 檔案"
+
+#: includes/blocks/map-gpx/edit.js:129
+msgid "Please select a valid GPX file"
+msgstr "請選擇有效的 GPX 檔案"
+
+#: includes/blocks/map-gpx/edit.js:135
+msgid "Warning: File size exceeds 10MB. This may cause performance issues."
+msgstr "警告：檔案大小超過 10MB，可能會影響效能。"
+
+#: includes/blocks/map-gpx/edit.js:164
+msgid "Warning: Track has more than 50,000 points. This may cause performance issues."
+msgstr "警告：路徑超過 50,000 個點，可能會影響效能。"
+
+#: includes/blocks/map-gpx/edit.js:179
+msgid "Error loading GPX file. Please try again."
+msgstr "載入 GPX 檔案時發生錯誤，請重試。"
+
+#: includes/blocks/map-gpx/edit.js:205
+#: includes/blocks/map-gpx/edit.js:237
+msgid "Map GPX"
+msgstr "地圖 GPX"
+
+#: includes/blocks/map-gpx/edit.js:208
+msgid "Processing GPX file..."
+msgstr "正在處理 GPX 檔案..."
+
+#: includes/blocks/map-gpx/edit.js:219
+#: includes/blocks/map-gpx/edit.js:271
+msgid "Map Settings"
+msgstr "地圖設定"
+
+#: includes/blocks/map-gpx/edit.js:221
+#: includes/blocks/map-gpx/edit.js:273
+msgid "Show progress indicator"
+msgstr "顯示進度指示器"
+
+#: includes/blocks/map-gpx/edit.js:224
+#: includes/blocks/map-gpx/edit.js:276
+msgid "Animate position along track as readers scroll"
+msgstr "讀者捲動時沿路徑動畫顯示位置"
+
+#: includes/blocks/map-gpx/edit.js:227
+#: includes/blocks/map-gpx/edit.js:285
+msgid "Allow GPX download"
+msgstr "允許下載 GPX"
+
+#: includes/blocks/map-gpx/edit.js:230
+#: includes/blocks/map-gpx/edit.js:288
+msgid "Show a download button so visitors can save the GPX file"
+msgstr "顯示下載按鈕，讓訪客可以儲存 GPX 檔案"
+
+#: includes/blocks/map-gpx/edit.js:238
+msgid "Upload a GPX file to display your route or track on an interactive map."
+msgstr "上傳 GPX 檔案，在互動式地圖上顯示您的路線或路徑。"
+
+#: includes/blocks/map-gpx/edit.js:256
+msgid "Upload GPX File"
+msgstr "上傳 GPX 檔案"
+
+#: includes/blocks/map-gpx/edit.js:279
+msgid "Show elevation profile"
+msgstr "顯示海拔剖面圖"
+
+#: includes/blocks/map-gpx/edit.js:282
+msgid "Display elevation chart at bottom of map"
+msgstr "在地圖底部顯示海拔圖表"
+
+#: includes/blocks/map-gpx/edit.js:291
+msgid "Default Map Style"
+msgstr "預設地圖樣式"
+
+#: includes/blocks/map-gpx/edit.js:299
+msgid "Choose which map style displays when the page loads"
+msgstr "選擇頁面載入時顯示的地圖樣式"
+
+#: includes/blocks/map-gpx/edit.js:303
+msgid "Configure map providers"
+msgstr "設定地圖提供商"
+
+#: includes/blocks/map-gpx/edit.js:312
+msgid "Multiple Map GPX blocks detected. Only the first block will be used on the frontend."
+msgstr "偵測到多個地圖 GPX 區塊。前端只會使用第一個區塊。"
+
+#: includes/blocks/map-gpx/edit.js:333
+msgid "GPX uploaded:"
+msgstr "GPX 已上傳："
+
+#: includes/blocks/map-gpx/edit.js:336
+msgid "track points"
+msgstr "路徑點"
+
+#: includes/blocks/map-gpx/edit.js:338
+msgid "Bounds:"
+msgstr "範圍："
+
+#: includes/blocks/map-gpx/edit.js:352
+msgid "Replace GPX"
+msgstr "取代 GPX"
+
+#: includes/blocks/map-gpx/edit.js:358
+msgid "Remove GPX"
+msgstr "移除 GPX"
+
+#: includes/blocks/map-marker/components/AddressSearch.js:215
+msgid "Address (optional)"
+msgstr "地址（選填）"
+
+#: includes/blocks/map-marker/components/AddressSearch.js:218
+msgid "Search for a location..."
+msgstr "搜尋位置..."
+
+#: includes/blocks/map-marker/components/AddressSearch.js:219
+msgid "Type to search and auto-fill coordinates"
+msgstr "輸入以搜尋並自動填入座標"
+
+#: includes/blocks/map-marker/components/AddressSearch.js:256
+msgid "No results found"
+msgstr "未找到結果"
+
+#: includes/blocks/map-marker/components/AddressSearch.js:265
+msgid "Location preview"
+msgstr "位置預覽"
+
+#: includes/blocks/map-marker/components/EmojiGrid.js:54
+msgid "Please paste a single emoji character"
+msgstr "請貼上單一表情符號字元"
+
+#: includes/blocks/map-marker/components/EmojiGrid.js:73
+msgid "Paste any emoji…"
+msgstr "貼上任何表情符號…"
+
+#. translators: %d is the distance in kilometers
+#: includes/blocks/map-marker/edit.js:159
+#, js-format
+msgid "This marker is %d km from the GPX track. Is this intentional?"
+msgstr "此標記距 GPX 路徑 %d 公里，是否為有意設定？"
+
+#: includes/blocks/map-marker/edit.js:168
+msgid "Marker Settings"
+msgstr "標記設定"
+
+#: includes/blocks/map-marker/edit.js:170
+msgid "Title"
+msgstr "標題"
+
+#: includes/blocks/map-marker/edit.js:173
+msgid "Enter marker title..."
+msgstr "輸入標記標題..."
+
+#: includes/blocks/map-marker/edit.js:174
+msgid "This will be displayed above the map pin"
+msgstr "這將顯示在地圖圖釘上方"
+
+#: includes/blocks/map-marker/edit.js:177
+msgid "Marker Design (optional)"
+msgstr "標記設計（選填）"
+
+#: includes/blocks/map-marker/edit.js:184
+msgid "Pick Emoji"
+msgstr "選擇表情符號"
+
+#: includes/blocks/map-marker/edit.js:192
+msgid "Clear"
+msgstr "清除"
+
+#: includes/blocks/map-marker/edit.js:217
+msgid "Coordinates"
+msgstr "座標"
+
+#: includes/blocks/map-marker/edit.js:230
+msgid "Latitude, longitude (e.g. 35.31909, 139.55064)"
+msgstr "緯度、經度（例如：35.31909, 139.55064）"
+
+#: includes/blocks/map-marker/edit.js:234
+msgid "Zoom Level"
+msgstr "縮放等級"
+
+#: includes/blocks/map-marker/edit.js:239
+msgid "Map zoom when this marker is active (1-18, default: 14)"
+msgstr "此標記啟用時的地圖縮放比例（1-18，預設值：14）"
+
+#: includes/blocks/map-marker/edit.js:248
+msgid "Please enter latitude and longitude in the block settings (sidebar)."
+msgstr "請在區塊設定（側邊欄）中輸入緯度和經度。"
+
+#: includes/blocks/map-marker/edit.js:271
+msgid "Untitled Marker"
+msgstr "未命名標記"
+
+#: includes/blocks/map-marker/edit.js:288
+msgid "No coordinates set"
+msgstr "未設定座標"
+
+#: includes/blocks/map-gpx/block.json
+msgctxt "block title"
+msgid "Map GPX"
+msgstr "地圖 GPX"
+
+#: includes/blocks/map-gpx/block.json
+msgctxt "block description"
+msgid "Upload and display a GPX track on an interactive map."
+msgstr "上傳並在互動式地圖上顯示 GPX 路徑。"
+
+#: includes/blocks/map-gpx/block.json
+#: includes/blocks/map-marker/block.json
+msgctxt "block keyword"
+msgid "map"
+msgstr "地圖"
+
+#: includes/blocks/map-gpx/block.json
+msgctxt "block keyword"
+msgid "gpx"
+msgstr ""
+
+#: includes/blocks/map-gpx/block.json
+msgctxt "block keyword"
+msgid "track"
+msgstr "路徑"
+
+#: includes/blocks/map-gpx/block.json
+msgctxt "block keyword"
+msgid "route"
+msgstr "路線"
+
+#: includes/blocks/map-gpx/block.json
+#: includes/blocks/map-marker/block.json
+msgctxt "block keyword"
+msgid "mapthread"
+msgstr ""
+
+#: includes/blocks/map-marker/block.json
+msgctxt "block title"
+msgid "Map Marker"
+msgstr "地圖標記"
+
+#: includes/blocks/map-marker/block.json
+msgctxt "block description"
+msgid "Mark a location on the map that corresponds to this point in your story."
+msgstr "在地圖上標記對應故事中此段落的位置。"
+
+#: includes/blocks/map-marker/block.json
+msgctxt "block keyword"
+msgid "marker"
+msgstr "標記"
+
+#: includes/blocks/map-marker/block.json
+msgctxt "block keyword"
+msgid "waypoint"
+msgstr "航點"
+
+#: includes/blocks/map-marker/block.json
+msgctxt "block keyword"
+msgid "location"
+msgstr "位置"

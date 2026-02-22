@@ -62,9 +62,11 @@ class Mapthread {
     public function register_blocks() {
         // Register Map GPX block
         register_block_type( MAPTHREAD_PLUGIN_DIR . 'includes/blocks/map-gpx' );
+        wp_set_script_translations( 'mapthread-map-gpx-editor-script', 'mapthread', MAPTHREAD_PLUGIN_DIR . 'languages' );
 
         // Register Map Marker block
         register_block_type( MAPTHREAD_PLUGIN_DIR . 'includes/blocks/map-marker' );
+        wp_set_script_translations( 'mapthread-map-marker-editor-script', 'mapthread', MAPTHREAD_PLUGIN_DIR . 'languages' );
     }
 
     /**
@@ -113,6 +115,18 @@ class Mapthread {
             'mapthread-frontend',
             'mapthreadConfig',
             array( 'layers' => $this->settings->get_layers_config() )
+        );
+
+        // Pass translated strings to frontend JS.
+        wp_localize_script(
+            'mapthread-frontend',
+            'mapthreadStrings',
+            array(
+                'showMap'         => __( 'Show map', 'mapthread' ),
+                'hideMap'         => __( 'Hide map', 'mapthread' ),
+                'scrollZoomMac'   => __( 'Use ⌘ or Ctrl + scroll to zoom', 'mapthread' ),
+                'scrollZoomOther' => __( 'Use Ctrl + scroll to zoom', 'mapthread' ),
+            )
         );
     }
 

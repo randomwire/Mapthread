@@ -9,6 +9,7 @@ const path = require( 'path' );
 
 module.exports = {
     ...defaultConfig,
+    devtool: 'source-map',
     entry: {
         // Block entry points
         'blocks/map-gpx/index': path.resolve( __dirname, 'includes/blocks/map-gpx/index.js' ),

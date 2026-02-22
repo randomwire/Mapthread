@@ -17,6 +17,10 @@ assets/css
 assets/icon.svg
 assets/icon-128x128.png
 assets/icon-256x256.png
+assets/mapthread-map-gpx-block.png
+assets/mapthread-map-marker-block.png
+assets/mapthread-post-light.png
+assets/mapthread-post-satellite.png
 
 # IDE and editor files
 .vscode
@@ -40,6 +44,7 @@ docs/
 # Build artifacts (will be regenerated)
 *.log
 npm-debug.log*
+build/**/*.map
 
 # Test files
 test-files/
