@@ -7,6 +7,14 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ---
 
+## [1.5.8] - 2026-02-22
+
+### Added
+- Source repository link (`= Source Code =` subsection) added to the plugin Description section in `readme.txt` for immediate reviewer visibility
+- Webpack `BannerPlugin` + `TerserPlugin` config to prepend `/*! Mapthread | Source: https://github.com/randomwire/Mapthread | Build: npm run build */` to all compiled JavaScript files
+
+---
+
 ## [1.5.7] - 2026-02-21
 
 ### Added
@@ -313,6 +321,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ---
 
+[1.5.8]: https://github.com/randomwire/Mapthread/releases/tag/v1.5.8
 [1.5.7]: https://github.com/randomwire/Mapthread/releases/tag/v1.5.7
 [1.5.6]: https://github.com/randomwire/Mapthread/releases/tag/v1.5.6
 [1.5.5]: https://github.com/randomwire/Mapthread/releases/tag/v1.5.5

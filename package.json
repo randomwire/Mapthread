@@ -1,6 +1,6 @@
 {
   "name": "mapthread",
-  "version": "1.5.7",
+  "version": "1.5.8",
   "description": "WordPress plugin for interactive map-based storytelling",
   "scripts": {
     "build": "wp-scripts build",
@@ -9,7 +9,8 @@
     "format": "wp-scripts format",
     "packages-update": "wp-scripts packages-update",
     "package": "npm run build && npm run create-zip",
-    "create-zip": "node scripts/create-package.js"
+    "create-zip": "node scripts/create-package.js",
+    "make-pot": "wp i18n make-pot . languages/mapthread.pot --exclude=node_modules,build,vendor"
   },
   "keywords": [
     "map",

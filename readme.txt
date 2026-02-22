@@ -5,7 +5,7 @@ Tags: maps, gpx, travel, storytelling, hiking
 Requires at least: 6.0
 Tested up to: 6.9
 Requires PHP: 7.4
-Stable tag: 1.5.7
+Stable tag: 1.5.8
 License: GPLv2 or later
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
 
@@ -73,6 +73,13 @@ Configure providers under **Settings > Mapthread** by entering your API key and 
 
 * Browsers: Chrome 105+, Safari 15.4+
 * Themes: Tested on Twenty Twenty-Four and Twenty Twenty-Five. Should work on most block themes. Classic themes are not supported.
+
+= Source Code =
+
+The compiled JavaScript and CSS files in this plugin are generated from human-readable source files. The full source code is publicly available at:
+https://github.com/randomwire/Mapthread
+
+To build from source: clone the repository, run `npm install`, then `npm run build` (requires Node.js).
 
 == Installation ==
 
@@ -232,6 +239,10 @@ This uses `@wordpress/scripts` (webpack) to compile the source files in `assets/
 
 == Changelog ==
 
+= 1.5.8 - 2026-02-22 =
+* Added: Source code link added to Description section of readme for immediate visibility to reviewers
+* Added: Source repository comment prepended to all compiled JavaScript files via webpack
+
 = 1.5.7 - 2026-02-21 =
 * Added: Elevation chart crosshair syncs with map track hover — a dashed indicator and dot appear on the elevation profile when hovering over the GPX track, showing elevation at the cursor position
 
@@ -338,6 +349,9 @@ This uses `@wordpress/scripts` (webpack) to compile the source files in `assets/
 * Performance optimizations
 
 == Upgrade Notice ==
+
+= 1.5.8 =
+Adds source repository link to the plugin Description and prepends a source comment to all compiled JavaScript files to address WordPress.org review guidelines.
 
 = 1.5.7 =
 Adds an elevation chart indicator that syncs with GPX track hover — hover over the track on the map to see your position and elevation on the chart.
