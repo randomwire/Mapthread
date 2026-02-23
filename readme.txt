@@ -64,7 +64,6 @@ https://www.youtube.com/watch?v=LBp_favwZVs
 
 * [Maling Ancient Road](https://randomwire.com/maling-ancient-road/)
 * [Jiyugaoka's Green Roads](https://randomwire.com/jiyugaoka-green-roads/)
-* [Ise-ji Day 4: Furusato Onsen to Owase](https://randomwire.com/iseji-day-4/)
 * [Hakuba: Into The Abyss](https://randomwire.com/hakuba/)
 * [Cycling the Shimanami Kaido](https://randomwire.com/shimanami-kaido/)
 
@@ -138,15 +137,15 @@ Post in the [plugin support forum](https://wordpress.org/support/plugin/mapthrea
 
 Yes! Mapthread is open source — contributions are welcome at [github.com/randomwire/Mapthread](https://github.com/randomwire/Mapthread)
 
-== Third-Party Libraries ==
+= What third-party libraries does Mapthread use? =
 
 * [Leaflet.js](https://leafletjs.com/) (BSD-2-Clause) — Interactive map rendering
 * [Leaflet.fullscreen](https://github.com/brunob/leaflet.fullscreen) (MIT) — Fullscreen map control
 * [Chart.js](https://www.chartjs.org/) (MIT) — Elevation profile visualization
 
-== External services ==
+= Does Mapthread connect to any external services? =
 
-This plugin connects to third-party services to display map tiles, geocode addresses, and look up elevation data. Below is a full description of each service, what data is sent, and when.
+Yes. Mapthread connects to third-party services to display map tiles, geocode addresses, and look up elevation data. Below is a full description of each service, what data is sent, and when.
 
 **OpenStreetMap Tile Service**
 Used for: Rendering the default "Street" map layer.
@@ -155,7 +154,6 @@ Data sent: Tile coordinate requests (zoom level, x/y tile numbers) indicating th
 [Terms of Use](https://wiki.osmfoundation.org/wiki/Terms_of_Use) | [Privacy Policy](https://wiki.osmfoundation.org/wiki/Privacy_Policy) | [Tile Usage Policy](https://operations.osmfoundation.org/policies/tiles/)
 
 **Esri / ArcGIS World Imagery**
-Service: [server.arcgisonline.com](https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer)
 Used for: Rendering the optional "Satellite" map layer.
 When: Only when the Satellite layer is enabled in Settings > Mapthread and a visitor selects it. No requests are made if the layer is disabled.
 Data sent: Tile coordinate requests and the visitor's IP address.
@@ -188,8 +186,7 @@ The following services are only contacted when a site administrator has entered 
 * **JawgMaps** | [Terms](https://www.jawg.io/en/terms/) | [Privacy](https://www.jawg.io/en/privacy/)
 * **Stadia Maps** | [Terms](https://stadiamaps.com/terms-of-service/) | [Privacy](https://stadiamaps.com/privacy/privacy-policy/)
 
-
-== Source Code & Build Instructions ==
+= Where can I find the source code? =
 
 The compiled JavaScript and CSS files in the `build/` directory are generated from human-readable source files. The full source code is available at [github.com/randomwire/Mapthread](https://github.com/randomwire/Mapthread)
 
