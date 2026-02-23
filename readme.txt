@@ -60,12 +60,7 @@ Perfect for travel bloggers, hiking enthusiasts, and anyone who wants to tell lo
 
 = Map Providers =
 
-Mapthread includes three free map styles out of the box (Street, Satellite, Topographic). You can also connect additional tile providers for additional styles:
-
-* **Mapbox** - Streets, Outdoors, Light, Dark, Satellite, Satellite Streets
-* **Thunderforest** - Cycle, Transport, Landscape, Outdoors, Atlas, Pioneer, Neighbourhood
-* **JawgMaps** - Streets, Sunny, Terrain, Dark, Light
-* **Stadia Maps** - Smooth, Smooth Dark, Satellite, Outdoors, OSM Bright, Stamen Toner, Stamen Terrain, Stamen Watercolor
+Mapthread includes three free map styles out of the box (Street, Satellite, Topographic). You can also connect additional tile providers for additional styles: **Mapbox**, **Thunderforest**, **JawgMaps**, **Stadia Maps**.
 
 Configure providers under **Settings > Mapthread** by entering your API key and selecting which styles to enable. Each provider offers free tiers suitable for most blogs.
 
