@@ -52,3 +52,6 @@ scripts/
 
 # CI/CD
 .github/
+
+# SVN working copy
+mapthread-svn

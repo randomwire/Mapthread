@@ -40,3 +40,6 @@ docs/
 
 # Local screenshot/preview assets
 assets/
+
+# SVN working copy
+mapthread-svn/
