@@ -147,12 +147,9 @@ Yes! Mapthread is open source — contributions are welcome at https://github.co
 
 == Third-Party Libraries ==
 
-* **Leaflet.js** (BSD-2-Clause) - https://leafletjs.com/
-  Interactive map rendering
-* **Leaflet.fullscreen** (MIT) - https://github.com/brunob/leaflet.fullscreen
-  Fullscreen map control
-* **Chart.js** (MIT) - https://www.chartjs.org/
-  Elevation profile visualization
+* [Leaflet.js](https://leafletjs.com/) (BSD-2-Clause) — Interactive map rendering
+* [Leaflet.fullscreen](https://github.com/brunob/leaflet.fullscreen) (MIT) — Fullscreen map control
+* [Chart.js](https://www.chartjs.org/) (MIT) — Elevation profile visualization
 
 == External services ==
 
@@ -162,53 +159,41 @@ This plugin connects to third-party services to display map tiles, geocode addre
 Used for: Rendering the default "Street" map layer.
 When: Every time a visitor views a page containing a Mapthread map, the browser requests tile images from OpenStreetMap servers.
 Data sent: Tile coordinate requests (zoom level, x/y tile numbers) indicating the geographic area being viewed. The visitor's IP address is visible to OpenStreetMap servers.
-Terms of Use: https://wiki.osmfoundation.org/wiki/Terms_of_Use
-Privacy Policy: https://wiki.osmfoundation.org/wiki/Privacy_Policy
-Tile Usage Policy: https://operations.osmfoundation.org/policies/tiles/
+[Terms of Use](https://wiki.osmfoundation.org/wiki/Terms_of_Use) | [Privacy Policy](https://wiki.osmfoundation.org/wiki/Privacy_Policy) | [Tile Usage Policy](https://operations.osmfoundation.org/policies/tiles/)
 
 **Esri / ArcGIS World Imagery**
-Service URL: https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer
+Service: [server.arcgisonline.com](https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer)
 Used for: Rendering the optional "Satellite" map layer.
 When: Only when the Satellite layer is enabled in Settings > Mapthread and a visitor selects it. No requests are made if the layer is disabled.
 Data sent: Tile coordinate requests and the visitor's IP address.
-Terms of Use: https://www.esri.com/en-us/legal/terms/full-master-agreement
-Privacy Policy: https://www.esri.com/en-us/privacy/overview
+[Terms of Use](https://www.esri.com/en-us/legal/terms/full-master-agreement) | [Privacy Policy](https://www.esri.com/en-us/privacy/overview)
 
 **OpenTopoMap**
 Used for: Rendering the optional "Topographic" map layer.
 When: Only when the Topographic layer is enabled in Settings > Mapthread and a visitor selects it.
 Data sent: Tile coordinate requests and the visitor's IP address.
-Terms of Use: https://opentopomap.org/about
-Privacy Policy: https://opentopomap.org/about
+[Terms of Use / Privacy Policy](https://opentopomap.org/about)
 
 **Nominatim (OpenStreetMap Geocoding)**
 Used for: Address search autocomplete when editing a Map Marker block.
 When: Only in the WordPress block editor when an author types into the address search field. Not triggered on the public frontend.
 Data sent: The search query text (partial address or place name) and the editor's IP address.
-Usage Policy: https://operations.osmfoundation.org/policies/nominatim/
-Privacy Policy: https://wiki.osmfoundation.org/wiki/Privacy_Policy
+[Usage Policy](https://operations.osmfoundation.org/policies/nominatim/) | [Privacy Policy](https://wiki.osmfoundation.org/wiki/Privacy_Policy)
 
 **Open-Elevation API**
 Used for: Looking up elevation data for GPX tracks that lack elevation information.
-When: Server-side only — when a GPX file is uploaded that has no elevation data and the elevation profile feature is enabled. The request is made from the WordPress server to https://api.open-elevation.com/api/v1/lookup, not from the visitor's browser.
+When: Server-side only — when a GPX file is uploaded that has no elevation data and the elevation profile feature is enabled. The request is made from the WordPress server to [api.open-elevation.com](https://api.open-elevation.com/api/v1/lookup), not from the visitor's browser.
 Data sent: GPS coordinates (latitude/longitude pairs) sampled from the GPX track, sent from the WordPress server's IP address. No user accounts or personal data involved.
-Service: https://open-elevation.com/
-Source: https://github.com/Jorl17/open-elevation
-Terms of Use: https://github.com/Jorl17/open-elevation/blob/master/license.md (open-source, GPL-2.0 license)
-Privacy Policy: https://github.com/Jorl17/open-elevation (open-source project; no user accounts; only receives GPS coordinates from the server)
+[Service](https://open-elevation.com/) | [Source](https://github.com/Jorl17/open-elevation) | [License (GPL-2.0)](https://github.com/Jorl17/open-elevation/blob/master/license.md)
 
 **Optional Tile Providers** (each requires an API key configured in Settings > Mapthread)
 
 The following services are only contacted when a site administrator has entered an API key and a visitor selects the corresponding map layer. In each case the browser sends tile coordinate requests, the configured API key/token, and the visitor's IP address.
 
-* **Mapbox** - https://www.mapbox.com/
-  Terms: https://www.mapbox.com/legal/tos | Privacy: https://www.mapbox.com/legal/privacy
-* **Thunderforest** - https://www.thunderforest.com/
-  Terms: https://www.thunderforest.com/terms/ | Privacy: https://www.thunderforest.com/privacy/
-* **JawgMaps** - https://www.jawg.io/
-  Terms: https://www.jawg.io/en/terms/ | Privacy: https://www.jawg.io/en/privacy/
-* **Stadia Maps** - https://stadiamaps.com/
-  Terms: https://stadiamaps.com/terms-of-service/ | Privacy: https://stadiamaps.com/privacy/privacy-policy/
+* **Mapbox** | [Terms](https://www.mapbox.com/legal/tos) | [Privacy](https://www.mapbox.com/legal/privacy)
+* **Thunderforest** | [Terms](https://www.thunderforest.com/terms/) | [Privacy](https://www.thunderforest.com/privacy/)
+* **JawgMaps** | [Terms](https://www.jawg.io/en/terms/) | [Privacy](https://www.jawg.io/en/privacy/)
+* **Stadia Maps** | [Terms](https://stadiamaps.com/terms-of-service/) | [Privacy](https://stadiamaps.com/privacy/privacy-policy/)
 
 
 == Source Code & Build Instructions ==
