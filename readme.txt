@@ -69,6 +69,14 @@ Mapthread includes three free map styles out of the box (Street, Satellite, Topo
 
 Configure providers under **Settings > Mapthread** by entering your API key and selecting which styles to enable. Each provider offers free tiers suitable for most blogs.
 
+= Examples =
+
+* [Maling Ancient Road](https://randomwire.com/maling-ancient-road/)
+* [Jiyugaoka's Green Roads](https://randomwire.com/jiyugaoka-green-roads/)
+* [Ise-ji Day 4: Furusato Onsen to Owase](https://randomwire.com/iseji-day-4/)
+* [Hakuba: Into The Abyss](https://randomwire.com/hakuba/)
+* [Cycling the Shimanami Kaido](https://randomwire.com/shimanami-kaido/)
+
 = Compatibility =
 
 * Browsers: Chrome 105+, Safari 15.4+
