@@ -5,7 +5,7 @@ Tags: map, gpx, travel, route, hiking
 Requires at least: 6.0
 Tested up to: 6.9
 Requires PHP: 7.4
-Stable tag: 1.5.8
+Stable tag: 1.6.0
 License: GPLv2 or later
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
 
@@ -226,6 +226,9 @@ This uses `@wordpress/scripts` (webpack) to compile the source files in `assets/
 
 == Changelog ==
 
+= 1.6.0 - 2026-02-23 =
+* First official release on the WordPress.org plugin directory
+
 = 1.5.8 - 2026-02-22 =
 * Added: Source code link added to Description section of readme for immediate visibility to reviewers
 * Added: Source repository comment prepended to all compiled JavaScript files via webpack
@@ -336,6 +339,9 @@ This uses `@wordpress/scripts` (webpack) to compile the source files in `assets/
 * Performance optimizations
 
 == Upgrade Notice ==
+
+= 1.6.0 =
+First official release on the WordPress.org plugin directory.
 
 = 1.5.8 =
 Adds source repository link to the plugin Description and prepends a source comment to all compiled JavaScript files to address WordPress.org review guidelines.

@@ -7,6 +7,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ---
 
+## [1.6.0] - 2026-02-23
+
+First official release on the WordPress.org plugin directory.
+
+---
+
 ## [1.5.8] - 2026-02-22
 
 ### Added
@@ -321,6 +327,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ---
 
+[1.6.0]: https://github.com/randomwire/Mapthread/releases/tag/v1.6.0
 [1.5.8]: https://github.com/randomwire/Mapthread/releases/tag/v1.5.8
 [1.5.7]: https://github.com/randomwire/Mapthread/releases/tag/v1.5.7
 [1.5.6]: https://github.com/randomwire/Mapthread/releases/tag/v1.5.6
