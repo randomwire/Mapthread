@@ -58,12 +58,6 @@ Perfect for travel bloggers, hiking enthusiasts, and anyone who wants to tell lo
 4. Add coordinates and titles to each marker
 5. Publish - the map automatically follows as readers scroll!
 
-= Map Providers =
-
-Mapthread includes three free map styles out of the box (Street, Satellite, Topographic). You can also connect additional tile providers for additional styles: **Mapbox**, **Thunderforest**, **JawgMaps**, **Stadia Maps**.
-
-Configure providers under **Settings > Mapthread** by entering your API key and selecting which styles to enable. Each provider offers free tiers suitable for most blogs.
-
 = Examples =
 
 * [Maling Ancient Road](https://randomwire.com/maling-ancient-road/)
@@ -77,7 +71,9 @@ Configure providers under **Settings > Mapthread** by entering your API key and 
 * Browsers: Chrome 105+, Safari 15.4+
 * Themes: Tested on Twenty Twenty-Four and Twenty Twenty-Five. Should work on most block themes. Classic themes are not supported.
 
-== Configuring Map Providers (Optional) ==
+== Configuring Additional Map Providers (Optional) ==
+
+Mapthread includes three free map styles out of the box (Street, Satellite, Topographic). You can also connect additional tile providers with an API key for more map styles: **Mapbox**, **Thunderforest**, **JawgMaps**, **Stadia Maps**.
 
 1. Go to Settings > Mapthread
 2. Enter your API key for any supported provider (Mapbox, Thunderforest, JawgMaps, Stadia Maps)
