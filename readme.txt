@@ -130,11 +130,11 @@ No, Mapthread requires an internet connection to load map tiles.
 
 = Where can I get support? =
 
-Post in the [plugin support forum](https://wordpress.org/support/plugin/mapthread/) or open an issue at https://github.com/randomwire/Mapthread/issues
+Post in the [plugin support forum](https://wordpress.org/support/plugin/mapthread/) or [open an issue on GitHub](https://github.com/randomwire/Mapthread/issues)
 
 = Can I contribute to the plugin? =
 
-Yes! Mapthread is open source — contributions are welcome at https://github.com/randomwire/Mapthread
+Yes! Mapthread is open source — contributions are welcome at [github.com/randomwire/Mapthread](https://github.com/randomwire/Mapthread)
 
 == Third-Party Libraries ==
 
@@ -189,8 +189,7 @@ The following services are only contacted when a site administrator has entered 
 
 == Source Code & Build Instructions ==
 
-The compiled JavaScript and CSS files in the `build/` directory are generated from human-readable source files. The full source code is available at:
-https://github.com/randomwire/Mapthread
+The compiled JavaScript and CSS files in the `build/` directory are generated from human-readable source files. The full source code is available at [github.com/randomwire/Mapthread](https://github.com/randomwire/Mapthread)
 
 To build from source:
 1. Clone the repository
