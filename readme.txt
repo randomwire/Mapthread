@@ -17,6 +17,8 @@ Transform your travel stories into interactive map experiences. Upload GPX files
 
 Perfect for travel bloggers, hiking enthusiasts, and anyone who wants to tell location-based stories that engage readers.
 
+https://www.youtube.com/watch?v=LBp_favwZVs
+
 = Storytelling =
 
 * Map automatically follows your narrative as readers scroll
