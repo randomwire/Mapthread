@@ -1,7 +1,7 @@
 === Mapthread ===
 Contributors: randomwire
 Donate link: https://ko-fi.com/randomwire
-Tags: maps, gpx, travel, storytelling, hiking
+Tags: map, gpx, travel, route, hiking
 Requires at least: 6.0
 Tested up to: 6.9
 Requires PHP: 7.4
@@ -27,7 +27,7 @@ Perfect for travel bloggers, hiking enthusiasts, and anyone who wants to tell lo
 
 * Upload a GPX file from any hiking, cycling, or fitness app
 * Elevation profile with distance and gain/loss stats
-* Street, Satellite, Topographic map styles plus more from Mapbox, Thunderforest, JawgMaps, and Stadia Maps (with API key)
+* Street, Satellite, Topographic map styles plus more from other providers (with API keys)
 * Fullscreen mode, layer switcher, and optional GPX download for readers
 
 = Markers =
@@ -39,7 +39,7 @@ Perfect for travel bloggers, hiking enthusiasts, and anyone who wants to tell lo
 = Layout =
 
 * Two-column desktop view: story on the left, sticky map on the right
-* Mobile-friendly: map tucks away so the story loads first
+* Mobile: map sticky at top (hidden by default)
 * Readers can dismiss and restore the map at any time
 
 = Perfect For =
@@ -74,29 +74,7 @@ Configure providers under **Settings > Mapthread** by entering your API key and 
 * Browsers: Chrome 105+, Safari 15.4+
 * Themes: Tested on Twenty Twenty-Four and Twenty Twenty-Five. Should work on most block themes. Classic themes are not supported.
 
-= Source Code =
-
-The compiled JavaScript and CSS files in this plugin are generated from human-readable source files. The full source code is publicly available at:
-https://github.com/randomwire/Mapthread
-
-To build from source: clone the repository, run `npm install`, then `npm run build` (requires Node.js).
-
-== Installation ==
-
-= From WordPress.org =
-
-1. Go to Plugins > Add New in your WordPress admin
-2. Search for "Mapthread"
-3. Click Install Now, then Activate
-
-= Manual Installation =
-
-1. Download the plugin ZIP file
-2. Go to Plugins > Add New > Upload Plugin
-3. Choose the ZIP file and click Install Now
-4. Activate the plugin
-
-= Configuring Map Providers =
+== Configuring Map Providers (Optional) ==
 
 1. Go to Settings > Mapthread
 2. Enter your API key for any supported provider (Mapbox, Thunderforest, JawgMaps, Stadia Maps)
@@ -107,13 +85,13 @@ To build from source: clone the repository, run `npm install`, then `npm run bui
 
 = What is a GPX file? =
 
-GPX (GPS Exchange Format) is a standard file format for GPS data. Most fitness trackers, hiking apps, and GPS devices can export GPX files.
+GPX (GPS Exchange Format) is a standard file format for GPS data. Most hiking apps, fitness trackers, and GPS devices can export GPX files.
 
 = Where do I get GPX files? =
 
 You can export GPX files from:
-* Fitness apps (Strava, Garmin Connect, etc.)
 * Hiking apps (Gaia GPS, AllTrails, etc.)
+* Fitness apps (Strava, Garmin Connect, etc.)
 * GPS devices (Garmin, Suunto, etc.)
 * Google Maps (via Google My Maps)
 
@@ -150,6 +128,14 @@ The tile provider API keys used by Mapthread are publishable tokens designed for
 = Does this work offline? =
 
 No, Mapthread requires an internet connection to load map tiles.
+
+= Where can I get support? =
+
+Post in the [plugin support forum](https://wordpress.org/support/plugin/mapthread/) or open an issue at https://github.com/randomwire/Mapthread/issues
+
+= Can I contribute to the plugin? =
+
+Yes! Mapthread is open source — contributions are welcome at https://github.com/randomwire/Mapthread
 
 == Third-Party Libraries ==
 
@@ -231,11 +217,12 @@ This uses `@wordpress/scripts` (webpack) to compile the source files in `assets/
 
 == Screenshots ==
 
-1. Editor view - Map GPX block with uploaded track
+1. Editor view - Map GPX block settings
 2. Editor view - Map Marker block settings
-3. Frontend desktop layout - Story on left, sticky map on right
-4. Frontend mobile layout - Sticky map at top
-5. Map markers and tooltips
+3. Map desktop layout - Story on left, sticky map on right
+4. Map desktop layout - Additional map styles
+5. Mapthread settings - API keys for additional map providers
+6. Map mobile layout - Sticky map at top (hidden by default)
 
 == Changelog ==
 
@@ -408,17 +395,5 @@ Major update with elevation profiles, emoji markers, and UI improvements. All th
 Adds address search and markers-only mode for enhanced flexibility.
 
 = 1.0.0 =
-Initial release of Mapthread. Install and start creating interactive map stories!
+Initial release of Mapthread.
 
-== Additional Info ==
-
-= Support =
-
-For support, please visit:
-* Plugin support forum: https://wordpress.org/support/plugin/mapthread/
-* GitHub issues: https://github.com/randomwire/Mapthread/issues
-
-= Contributing =
-
-Mapthread is open source! Contributions welcome at:
-https://github.com/randomwire/Mapthread

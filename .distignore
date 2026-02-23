@@ -14,9 +14,8 @@ assets/js
 assets/css
 
 # WordPress.org plugin directory assets (not needed in installed plugin)
-assets/icon.svg
-assets/icon-128x128.png
-assets/icon-256x256.png
+assets/icon*
+assets/screenshot*
 
 # IDE and editor files
 .vscode
@@ -36,6 +35,7 @@ CLAUDE.md
 README.md
 CHANGELOG.md
 docs/
+assets/
 
 # Build artifacts (will be regenerated)
 *.log
@@ -43,10 +43,6 @@ npm-debug.log*
 
 # Test files
 test-files/
-
-# Project planning (local only)
-02_Phase_1_Scaffold_Prompt.md
-Pathway Plugin Requirements v2.md
 
 # Distribution directory
 dist/

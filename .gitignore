@@ -37,3 +37,6 @@ test-files/
 # Project planning documents (local only)
 CLAUDE.md
 docs/
+
+# Local screenshot/preview assets
+assets/
