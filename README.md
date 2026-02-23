@@ -45,6 +45,12 @@ Perfect for:
 - Mobile-friendly: map tucks away so the story loads first
 - Readers can dismiss and restore the map at any time
 
+### Examples
+- [Maling Ancient Road](https://randomwire.com/maling-ancient-road/)
+- [Jiyugaoka's Green Roads](https://randomwire.com/jiyugaoka-green-roads/)
+- [Hakuba: Into The Abyss](https://randomwire.com/hakuba/)
+- [Cycling the Shimanami Kaido](https://randomwire.com/shimanami-kaido/)
+
 ---
 
 ## Installation
@@ -86,13 +92,6 @@ npm run build
 - **Map Marker:** Places waypoints in your story. Settings: title, coordinates (with address search autocomplete), zoom level, optional emoji icon.
 
 GPX files aren't required — Mapthread also works with just markers. Adding a Map GPX block without a file connects markers with straight lines.
-
-### Examples
-
-- [Maling Ancient Road](https://randomwire.com/maling-ancient-road/)
-- [Jiyugaoka's Green Roads](https://randomwire.com/jiyugaoka-green-roads/)
-- [Hakuba: Into The Abyss](https://randomwire.com/hakuba/)
-- [Cycling the Shimanami Kaido](https://randomwire.com/shimanami-kaido/)
 
 ---
 
