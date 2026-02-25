@@ -38,8 +38,12 @@ test-files/
 CLAUDE.md
 docs/
 
-# Local screenshot/preview assets
-assets/
+# Local working/SVN-only assets (not source files)
+assets/banner-*.png
+assets/screenshot-*.png
+assets/icon.png
+assets/icon.pxd
+assets/icon-inkscape.svg
 
 # SVN working copy
 mapthread-svn/
