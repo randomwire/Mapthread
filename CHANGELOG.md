@@ -7,6 +7,13 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ---
 
+## [1.6.1] - 2026-02-25
+
+### Added
+- GPX waypoint import: after uploading a GPX file, the Map GPX block editor shows an "Import as Map Markers" button when the file contains named `<wpt>` elements. Clicking it inserts Map Marker blocks for all waypoints not already present, placed immediately after the Map GPX block. Already-imported waypoints are detected by coordinates (~11m tolerance) and skipped. Re-importing is safe.
+
+---
+
 ## [1.6.0] - 2026-02-23
 
 First official release on the WordPress.org plugin directory.
@@ -327,6 +334,7 @@ First official release on the WordPress.org plugin directory.
 
 ---
 
+[1.6.1]: https://github.com/randomwire/Mapthread/releases/tag/v1.6.1
 [1.6.0]: https://github.com/randomwire/Mapthread/releases/tag/v1.6.0
 [1.5.8]: https://github.com/randomwire/Mapthread/releases/tag/v1.5.8
 [1.5.7]: https://github.com/randomwire/Mapthread/releases/tag/v1.5.7
