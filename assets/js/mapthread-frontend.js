@@ -2149,7 +2149,7 @@ Chart.register( LineController, LineElement, PointElement, LinearScale, Filler, 
             // Footer — always shown
             html += '<div class="mapthread-attribution-footer">'
                 + 'Made with <a href="https://leafletjs.com" title="A JavaScript library for interactive maps">\u{1F1FA}\u{1F1E6} Leaflet</a>'
-                + ' and <a href="https://github.com/randomwire/Mapthread">Mapthread</a>'
+                + ' and <a href="https://wordpress.org/plugins/mapthread/">Mapthread</a>'
                 + '</div>';
 
             this._panel.innerHTML = html;
