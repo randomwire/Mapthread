@@ -102,9 +102,14 @@ Not currently. Only the first Map GPX block per post is used.
 
 = How do I get coordinates for markers? =
 
+* **Import from GPX** — if your GPX file has named waypoints, click "Import as Map Markers" in the Map GPX block to create markers automatically
 * Use the built-in address search (type any place name)
 * Paste coordinates from Google Maps (right-click a location)
 * Use coordinates from your GPS device or app
+
+= Can I import waypoints from my GPX file? =
+
+Yes, if your GPX file contains named waypoints (`<wpt>` elements with a `<name>` tag). After uploading your GPX file, the Map GPX block will show an "Import as Map Markers" button with a count of available waypoints. Clicking it creates Map Marker blocks for all waypoints not already present in the post, inserted immediately after the Map GPX block. Re-clicking is safe — already-imported waypoints are detected by coordinates and skipped.
 
 = Does it work with my theme? =
 
