@@ -5,7 +5,7 @@ Tags: map, gpx, travel, route, hiking
 Requires at least: 6.0
 Tested up to: 6.9
 Requires PHP: 7.4
-Stable tag: 1.6.0
+Stable tag: 1.6.1
 License: GPLv2 or later
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
 
@@ -36,6 +36,7 @@ https://www.youtube.com/watch?v=LBp_favwZVs
 
 * Place waypoints anywhere in your story with optional emoji pins
 * Find locations by address or paste coordinates
+* Import named waypoints directly from your GPX file as Map Marker blocks in one click
 * Without a GPX file, markers are connected together using a straight line
 
 = Layout =
@@ -56,8 +57,8 @@ https://www.youtube.com/watch?v=LBp_favwZVs
 
 1. Create a post and add the **Map GPX** block
 2. Upload your GPX file from the media library
-3. Write your story, inserting **Map Marker** blocks at key points
-4. Add coordinates and titles to each marker
+3. If your GPX contains named waypoints, click **Import as Map Markers** to add them automatically — or insert **Map Marker** blocks manually at key points in your story
+4. Add coordinates and titles to any markers, then arrange them in your story
 5. Publish - the map automatically follows as readers scroll!
 
 = Examples =
@@ -101,9 +102,14 @@ Not currently. Only the first Map GPX block per post is used.
 
 = How do I get coordinates for markers? =
 
+* **Import from GPX** — if your GPX file has named waypoints, click "Import as Map Markers" in the Map GPX block to create markers automatically
 * Use the built-in address search (type any place name)
 * Paste coordinates from Google Maps (right-click a location)
 * Use coordinates from your GPS device or app
+
+= Can I import waypoints from my GPX file? =
+
+Yes, if your GPX file contains named waypoints (`<wpt>` elements with a `<name>` tag). After uploading your GPX file, the Map GPX block will show an "Import as Map Markers" button with a count of available waypoints. Clicking it creates Map Marker blocks for all waypoints not already present in the post, inserted immediately after the Map GPX block. Re-clicking is safe — already-imported waypoints are detected by coordinates and skipped.
 
 = Does it work with my theme? =
 
@@ -207,6 +213,9 @@ This uses `@wordpress/scripts` (webpack) to compile the source files in `assets/
 6. Map mobile layout - Sticky map at top (hidden by default)
 
 == Changelog ==
+
+= 1.6.1 - 2026-02-25 =
+* Added: Import named waypoints from GPX as Map Marker blocks — after uploading a GPX file, a button appears in the block editor to instantly create Map Marker blocks from any named `<wpt>` elements in the file. Already-imported waypoints are detected by coordinates and skipped to prevent duplicates.
 
 = 1.6.0 - 2026-02-23 =
 * First official release on the WordPress.org plugin directory
@@ -321,6 +330,9 @@ This uses `@wordpress/scripts` (webpack) to compile the source files in `assets/
 * Performance optimizations
 
 == Upgrade Notice ==
+
+= 1.6.1 =
+GPX files with named waypoints can now be imported as Map Marker blocks in one click from the Map GPX block editor.
 
 = 1.6.0 =
 First official release on the WordPress.org plugin directory.
