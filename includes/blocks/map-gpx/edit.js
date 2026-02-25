@@ -66,7 +66,7 @@ function parseGPX( gpxContent ) {
             const lat = parseFloat( wpt.getAttribute( 'lat' ) );
             const lon = parseFloat( wpt.getAttribute( 'lon' ) );
             const nameEl = wpt.querySelector( 'name' );
-            const name = nameEl ? nameEl.textContent.trim() : '';
+            const name = nameEl ? nameEl.textContent.trim().slice( 0, 200 ) : '';
             if ( ! isNaN( lat ) && ! isNaN( lon ) && name ) {
                 waypoints.push( { name, lat, lon } );
             }
@@ -272,9 +272,10 @@ export default function Edit( { attributes, setAttributes, clientId } ) {
             return;
         }
 
-        const newBlocks = newWaypoints.map( ( wp ) =>
+        const timestamp = Date.now();
+        const newBlocks = newWaypoints.map( ( wp, idx ) =>
             createBlock( 'mapthread/map-marker', {
-                id: `marker-${ Date.now() }-${ Math.random().toString( 36 ).substr( 2, 9 ) }`,
+                id: `marker-${ timestamp }-${ idx }-${ Math.random().toString( 36 ).slice( 2, 11 ) }`,
                 title: wp.name,
                 lat: wp.lat,
                 lng: wp.lon,
@@ -354,6 +355,16 @@ export default function Edit( { attributes, setAttributes, clientId } ) {
             </>
         );
     }
+
+    // Compute waypoint import counts for UI and handler
+    const importedWaypointCount = gpxWaypoints.filter( ( wp ) =>
+        existingMarkers.some(
+            ( m ) =>
+                Math.abs( ( m.attributes.lat || 0 ) - wp.lat ) < LAT_LNG_TOLERANCE &&
+                Math.abs( ( m.attributes.lng || 0 ) - wp.lon ) < LAT_LNG_TOLERANCE
+        )
+    ).length;
+    const newWaypointCount = gpxWaypoints.length - importedWaypointCount;
 
     // Show GPX info with replace/remove options
     return (
@@ -450,48 +461,38 @@ export default function Edit( { attributes, setAttributes, clientId } ) {
                     </Button>
                 </div>
 
-                { gpxWaypoints.length > 0 && ( () => {
-                    const alreadyImported = gpxWaypoints.filter( ( wp ) =>
-                        existingMarkers.some(
-                            ( m ) =>
-                                Math.abs( ( m.attributes.lat || 0 ) - wp.lat ) < LAT_LNG_TOLERANCE &&
-                                Math.abs( ( m.attributes.lng || 0 ) - wp.lon ) < LAT_LNG_TOLERANCE
-                        )
-                    ).length;
-                    const newCount = gpxWaypoints.length - alreadyImported;
-                    return (
-                        <div className="mapthread-map-gpx-waypoints">
-                            <p className="mapthread-map-gpx-waypoints-info">
-                                { sprintf(
-                                    /* translators: %d: number of named waypoints */
-                                    __( '%d named waypoints found in GPX.', 'mapthread' ),
-                                    gpxWaypoints.length
-                                ) }
-                                { alreadyImported > 0 && (
-                                    ' ' + sprintf(
-                                        /* translators: %d: number of already-imported waypoints */
-                                        __( '%d already imported.', 'mapthread' ),
-                                        alreadyImported
-                                    )
-                                ) }
-                            </p>
-                            <Button
-                                onClick={ onImportWaypoints }
-                                variant="secondary"
-                                disabled={ newCount === 0 }
-                            >
-                                { newCount === 0
-                                    ? __( 'All waypoints imported', 'mapthread' )
-                                    : sprintf(
-                                        /* translators: %d: number of waypoints to import */
-                                        __( 'Import %d as Map Markers', 'mapthread' ),
-                                        newCount
-                                    )
-                                }
-                            </Button>
-                        </div>
-                    );
-                } )() }
+                { gpxWaypoints.length > 0 && (
+                    <div className="mapthread-map-gpx-waypoints">
+                        <p className="mapthread-map-gpx-waypoints-info">
+                            { sprintf(
+                                /* translators: %d: number of named waypoints */
+                                __( '%d named waypoints found in GPX.', 'mapthread' ),
+                                gpxWaypoints.length
+                            ) }
+                            { importedWaypointCount > 0 && (
+                                ' ' + sprintf(
+                                    /* translators: %d: number of already-imported waypoints */
+                                    __( '%d already imported.', 'mapthread' ),
+                                    importedWaypointCount
+                                )
+                            ) }
+                        </p>
+                        <Button
+                            onClick={ onImportWaypoints }
+                            variant="secondary"
+                            disabled={ newWaypointCount === 0 }
+                        >
+                            { newWaypointCount === 0
+                                ? __( 'All waypoints imported', 'mapthread' )
+                                : sprintf(
+                                    /* translators: %d: number of waypoints to import */
+                                    __( 'Import %d as Map Markers', 'mapthread' ),
+                                    newWaypointCount
+                                )
+                            }
+                        </Button>
+                    </div>
+                ) }
             </div>
         </div>
         </>
