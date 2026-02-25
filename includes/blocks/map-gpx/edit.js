@@ -4,7 +4,7 @@
  * @package Mapthread
  */
 
-import { __ } from '@wordpress/i18n';
+import { __, sprintf } from '@wordpress/i18n';
 import { useBlockProps, MediaUpload, MediaUploadCheck, InspectorControls } from '@wordpress/block-editor';
 import {
     Button,
@@ -15,9 +15,10 @@ import {
     ToggleControl,
     SelectControl
 } from '@wordpress/components';
-import { useSelect } from '@wordpress/data';
+import { useSelect, useDispatch } from '@wordpress/data';
 import { useState, useEffect } from '@wordpress/element';
 import { upload } from '@wordpress/icons';
+import { createBlock } from '@wordpress/blocks';
 
 /**
  * Parse GPX file and extract track data
@@ -59,13 +60,42 @@ function parseGPX( gpxContent ) {
             if ( lon < west ) west = lon;
         } );
 
+        // Extract named waypoints (<wpt> elements)
+        const waypoints = [];
+        xmlDoc.querySelectorAll( 'wpt' ).forEach( ( wpt ) => {
+            const lat = parseFloat( wpt.getAttribute( 'lat' ) );
+            const lon = parseFloat( wpt.getAttribute( 'lon' ) );
+            const nameEl = wpt.querySelector( 'name' );
+            const name = nameEl ? nameEl.textContent.trim() : '';
+            if ( ! isNaN( lat ) && ! isNaN( lon ) && name ) {
+                waypoints.push( { name, lat, lon } );
+            }
+        } );
+
         return {
             pointCount: trkpts.length,
-            bounds: { north, south, east, west }
+            bounds: { north, south, east, west },
+            waypoints,
         };
     } catch ( error ) {
         return { error: __( 'Failed to parse GPX file', 'mapthread' ) };
     }
+}
+
+/**
+ * Recursively flatten a nested block list into a single array
+ *
+ * @param {Array} blocks - Array of block objects (may have innerBlocks)
+ * @return {Array} Flat array of all blocks
+ */
+function flattenBlocks( blocks ) {
+    return blocks.reduce( ( acc, block ) => {
+        acc.push( block );
+        if ( block.innerBlocks && block.innerBlocks.length ) {
+            acc.push( ...flattenBlocks( block.innerBlocks ) );
+        }
+        return acc;
+    }, [] );
 }
 
 /**
@@ -95,12 +125,16 @@ function hasMultipleGPXBlocks( clientId ) {
  */
 export default function Edit( { attributes, setAttributes, clientId } ) {
     const blockProps = useBlockProps();
-    const { attachmentId, fileName, pointCount, bounds, showProgressIndicator, showElevationProfile, defaultMapLayer, allowGpxDownload } = attributes;
+    const { attachmentId, fileName, gpxUrl, pointCount, bounds, showProgressIndicator, showElevationProfile, defaultMapLayer, allowGpxDownload } = attributes;
 
     const [ isProcessing, setIsProcessing ] = useState( false );
     const [ validationError, setValidationError ] = useState( '' );
     const [ validationWarning, setValidationWarning ] = useState( '' );
     const [ multipleBlockWarning, setMultipleBlockWarning ] = useState( false );
+    const [ gpxWaypoints, setGpxWaypoints ] = useState( [] );
+
+    // Coordinate tolerance for duplicate detection (~11 metres)
+    const LAT_LNG_TOLERANCE = 0.0001;
 
     // Get attachment data from media library
     const attachment = useSelect(
@@ -113,10 +147,34 @@ export default function Edit( { attributes, setAttributes, clientId } ) {
         [ attachmentId ]
     );
 
+    // Existing Map Marker blocks in this post (reactive — updates as blocks are added/removed)
+    const existingMarkers = useSelect( ( select ) => {
+        const allBlocks = select( 'core/block-editor' ).getBlocks();
+        return flattenBlocks( allBlocks ).filter( ( b ) => b.name === 'mapthread/map-marker' );
+    } );
+
+    const { insertBlocks } = useDispatch( 'core/block-editor' );
+
     // Check for multiple GPX blocks on mount and when blocks change
     useEffect( () => {
         setMultipleBlockWarning( hasMultipleGPXBlocks( clientId ) );
     }, [] );
+
+    // When editing an existing post, fetch the GPX to discover waypoints
+    useEffect( () => {
+        if ( ! gpxUrl || gpxWaypoints.length > 0 ) {
+            return;
+        }
+        fetch( gpxUrl )
+            .then( ( r ) => r.text() )
+            .then( ( content ) => {
+                const parsed = parseGPX( content );
+                if ( parsed && ! parsed.error ) {
+                    setGpxWaypoints( parsed.waypoints || [] );
+                }
+            } )
+            .catch( () => {} );
+    }, [ gpxUrl ] );
 
     /**
      * Handle GPX file selection from media library
@@ -174,6 +232,7 @@ export default function Edit( { attributes, setAttributes, clientId } ) {
                 bounds: parsed.bounds
             } );
 
+            setGpxWaypoints( parsed.waypoints || [] );
             setIsProcessing( false );
         } catch ( error ) {
             setValidationError( __( 'Error loading GPX file. Please try again.', 'mapthread' ) );
@@ -194,6 +253,38 @@ export default function Edit( { attributes, setAttributes, clientId } ) {
         } );
         setValidationError( '' );
         setValidationWarning( '' );
+        setGpxWaypoints( [] );
+    };
+
+    /**
+     * Import GPX waypoints as Map Marker blocks, inserted immediately after this block
+     */
+    const onImportWaypoints = () => {
+        const newWaypoints = gpxWaypoints.filter( ( wp ) =>
+            ! existingMarkers.some(
+                ( m ) =>
+                    Math.abs( ( m.attributes.lat || 0 ) - wp.lat ) < LAT_LNG_TOLERANCE &&
+                    Math.abs( ( m.attributes.lng || 0 ) - wp.lon ) < LAT_LNG_TOLERANCE
+            )
+        );
+
+        if ( newWaypoints.length === 0 ) {
+            return;
+        }
+
+        const newBlocks = newWaypoints.map( ( wp ) =>
+            createBlock( 'mapthread/map-marker', {
+                id: `marker-${ Date.now() }-${ Math.random().toString( 36 ).substr( 2, 9 ) }`,
+                title: wp.name,
+                lat: wp.lat,
+                lng: wp.lon,
+                zoom: 14,
+            } )
+        );
+
+        const rootClientId = wp.data.select( 'core/block-editor' ).getBlockRootClientId( clientId );
+        const index = wp.data.select( 'core/block-editor' ).getBlockIndex( clientId ) + 1;
+        insertBlocks( newBlocks, index, rootClientId );
     };
 
     // Show processing state
@@ -358,6 +449,49 @@ export default function Edit( { attributes, setAttributes, clientId } ) {
                         { __( 'Remove GPX', 'mapthread' ) }
                     </Button>
                 </div>
+
+                { gpxWaypoints.length > 0 && ( () => {
+                    const alreadyImported = gpxWaypoints.filter( ( wp ) =>
+                        existingMarkers.some(
+                            ( m ) =>
+                                Math.abs( ( m.attributes.lat || 0 ) - wp.lat ) < LAT_LNG_TOLERANCE &&
+                                Math.abs( ( m.attributes.lng || 0 ) - wp.lon ) < LAT_LNG_TOLERANCE
+                        )
+                    ).length;
+                    const newCount = gpxWaypoints.length - alreadyImported;
+                    return (
+                        <div className="mapthread-map-gpx-waypoints">
+                            <p className="mapthread-map-gpx-waypoints-info">
+                                { sprintf(
+                                    /* translators: %d: number of named waypoints */
+                                    __( '%d named waypoints found in GPX.', 'mapthread' ),
+                                    gpxWaypoints.length
+                                ) }
+                                { alreadyImported > 0 && (
+                                    ' ' + sprintf(
+                                        /* translators: %d: number of already-imported waypoints */
+                                        __( '%d already imported.', 'mapthread' ),
+                                        alreadyImported
+                                    )
+                                ) }
+                            </p>
+                            <Button
+                                onClick={ onImportWaypoints }
+                                variant="secondary"
+                                disabled={ newCount === 0 }
+                            >
+                                { newCount === 0
+                                    ? __( 'All waypoints imported', 'mapthread' )
+                                    : sprintf(
+                                        /* translators: %d: number of waypoints to import */
+                                        __( 'Import %d as Map Markers', 'mapthread' ),
+                                        newCount
+                                    )
+                                }
+                            </Button>
+                        </div>
+                    );
+                } )() }
             </div>
         </div>
         </>
