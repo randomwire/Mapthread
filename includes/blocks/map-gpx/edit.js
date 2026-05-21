@@ -1,19 +1,24 @@
 /**
  * Map GPX Block - Editor Component
  *
- * @package Mapthread
+ * @package
  */
 
 import { __, sprintf } from '@wordpress/i18n';
-import { useBlockProps, MediaUpload, MediaUploadCheck, InspectorControls } from '@wordpress/block-editor';
 import {
-    Button,
-    Placeholder,
-    Notice,
-    Spinner,
-    PanelBody,
-    ToggleControl,
-    SelectControl
+	useBlockProps,
+	MediaUpload,
+	MediaUploadCheck,
+	InspectorControls,
+} from '@wordpress/block-editor';
+import {
+	Button,
+	Placeholder,
+	Notice,
+	Spinner,
+	PanelBody,
+	ToggleControl,
+	SelectControl,
 } from '@wordpress/components';
 import { useSelect, useDispatch } from '@wordpress/data';
 import { useState, useEffect } from '@wordpress/element';
@@ -27,59 +32,82 @@ import { createBlock } from '@wordpress/blocks';
  * @return {Object|null} Parsed data or null if invalid
  */
 function parseGPX( gpxContent ) {
-    try {
-        const parser = new DOMParser();
-        const xmlDoc = parser.parseFromString( gpxContent, 'text/xml' );
+	try {
+		const parser = new DOMParser();
+		const xmlDoc = parser.parseFromString( gpxContent, 'text/xml' );
 
-        // Check for parsing errors
-        const parserError = xmlDoc.querySelector( 'parsererror' );
-        if ( parserError ) {
-            return { error: __( 'Invalid GPX format - XML parsing failed', 'mapthread' ) };
-        }
+		// Check for parsing errors
+		const parserError = xmlDoc.querySelector( 'parsererror' );
+		if ( parserError ) {
+			return {
+				error: __(
+					'Invalid GPX format - XML parsing failed',
+					'mapthread'
+				),
+			};
+		}
 
-        // Find all track points (fall back to route points)
-        let trkpts = xmlDoc.querySelectorAll( 'trkpt' );
-        if ( trkpts.length === 0 ) {
-            trkpts = xmlDoc.querySelectorAll( 'rtept' );
-        }
+		// Find all track points (fall back to route points)
+		let trkpts = xmlDoc.querySelectorAll( 'trkpt' );
+		if ( trkpts.length === 0 ) {
+			trkpts = xmlDoc.querySelectorAll( 'rtept' );
+		}
 
-        if ( trkpts.length === 0 ) {
-            return { error: __( 'No track or route points found in GPX file', 'mapthread' ) };
-        }
+		if ( trkpts.length === 0 ) {
+			return {
+				error: __(
+					'No track or route points found in GPX file',
+					'mapthread'
+				),
+			};
+		}
 
-        // Extract coordinates and calculate bounds
-        let north = -90, south = 90, east = -180, west = 180;
+		// Extract coordinates and calculate bounds
+		let north = -90,
+			south = 90,
+			east = -180,
+			west = 180;
 
-        trkpts.forEach( ( trkpt ) => {
-            const lat = parseFloat( trkpt.getAttribute( 'lat' ) );
-            const lon = parseFloat( trkpt.getAttribute( 'lon' ) );
+		trkpts.forEach( ( trkpt ) => {
+			const lat = parseFloat( trkpt.getAttribute( 'lat' ) );
+			const lon = parseFloat( trkpt.getAttribute( 'lon' ) );
 
-            if ( lat > north ) north = lat;
-            if ( lat < south ) south = lat;
-            if ( lon > east ) east = lon;
-            if ( lon < west ) west = lon;
-        } );
+			if ( lat > north ) {
+				north = lat;
+			}
+			if ( lat < south ) {
+				south = lat;
+			}
+			if ( lon > east ) {
+				east = lon;
+			}
+			if ( lon < west ) {
+				west = lon;
+			}
+		} );
 
-        // Extract named waypoints (<wpt> elements)
-        const waypoints = [];
-        xmlDoc.querySelectorAll( 'wpt' ).forEach( ( wpt ) => {
-            const lat = parseFloat( wpt.getAttribute( 'lat' ) );
-            const lon = parseFloat( wpt.getAttribute( 'lon' ) );
-            const nameEl = wpt.querySelector( 'name' );
-            const name = nameEl ? nameEl.textContent.trim().slice( 0, 200 ) : '';
-            if ( ! isNaN( lat ) && ! isNaN( lon ) && name ) {
-                waypoints.push( { name, lat, lon } );
-            }
-        } );
+		// Extract named waypoints (<wpt> elements)
+		const waypoints = [];
+		xmlDoc.querySelectorAll( 'wpt' ).forEach( ( wpt ) => {
+			const lat = parseFloat( wpt.getAttribute( 'lat' ) );
+			const lon = parseFloat( wpt.getAttribute( 'lon' ) );
+			const nameEl = wpt.querySelector( 'name' );
+			const name = nameEl
+				? nameEl.textContent.trim().slice( 0, 200 )
+				: '';
+			if ( ! isNaN( lat ) && ! isNaN( lon ) && name ) {
+				waypoints.push( { name, lat, lon } );
+			}
+		} );
 
-        return {
-            pointCount: trkpts.length,
-            bounds: { north, south, east, west },
-            waypoints,
-        };
-    } catch ( error ) {
-        return { error: __( 'Failed to parse GPX file', 'mapthread' ) };
-    }
+		return {
+			pointCount: trkpts.length,
+			bounds: { north, south, east, west },
+			waypoints,
+		};
+	} catch {
+		return { error: __( 'Failed to parse GPX file', 'mapthread' ) };
+	}
 }
 
 /**
@@ -89,13 +117,13 @@ function parseGPX( gpxContent ) {
  * @return {Array} Flat array of all blocks
  */
 function flattenBlocks( blocks ) {
-    return blocks.reduce( ( acc, block ) => {
-        acc.push( block );
-        if ( block.innerBlocks && block.innerBlocks.length ) {
-            acc.push( ...flattenBlocks( block.innerBlocks ) );
-        }
-        return acc;
-    }, [] );
+	return blocks.reduce( ( acc, block ) => {
+		acc.push( block );
+		if ( block.innerBlocks && block.innerBlocks.length ) {
+			acc.push( ...flattenBlocks( block.innerBlocks ) );
+		}
+		return acc;
+	}, [] );
 }
 
 /**
@@ -105,396 +133,510 @@ function flattenBlocks( blocks ) {
  * @return {boolean} True if multiple blocks exist
  */
 function hasMultipleGPXBlocks( clientId ) {
-    const blocks = wp.data.select( 'core/block-editor' ).getBlocks();
-    const gpxBlocks = blocks.filter( block => block.name === 'mapthread/map-gpx' );
+	const blocks = wp.data.select( 'core/block-editor' ).getBlocks();
+	const gpxBlocks = blocks.filter(
+		( block ) => block.name === 'mapthread/map-gpx'
+	);
 
-    // If more than one GPX block exists, and this isn't the first one
-    if ( gpxBlocks.length > 1 ) {
-        const firstBlockId = gpxBlocks[0].clientId;
-        return clientId !== firstBlockId;
-    }
+	// If more than one GPX block exists, and this isn't the first one
+	if ( gpxBlocks.length > 1 ) {
+		const firstBlockId = gpxBlocks[ 0 ].clientId;
+		return clientId !== firstBlockId;
+	}
 
-    return false;
+	return false;
 }
 
 /**
  * Edit component for Map GPX block
  *
- * @param {Object} props Block props
+ * @param {Object} props               Block props
+ * @param          props.attributes
+ * @param          props.setAttributes
+ * @param          props.clientId
  * @return {Element} Block editor element
  */
 export default function Edit( { attributes, setAttributes, clientId } ) {
-    const blockProps = useBlockProps();
-    const { attachmentId, fileName, gpxUrl, pointCount, bounds, showProgressIndicator, showElevationProfile, defaultMapLayer, allowGpxDownload } = attributes;
+	const blockProps = useBlockProps();
+	const {
+		attachmentId,
+		fileName,
+		gpxUrl,
+		pointCount,
+		bounds,
+		showProgressIndicator,
+		showElevationProfile,
+		defaultMapLayer,
+		allowGpxDownload,
+	} = attributes;
 
-    const [ isProcessing, setIsProcessing ] = useState( false );
-    const [ validationError, setValidationError ] = useState( '' );
-    const [ validationWarning, setValidationWarning ] = useState( '' );
-    const [ multipleBlockWarning, setMultipleBlockWarning ] = useState( false );
-    const [ gpxWaypoints, setGpxWaypoints ] = useState( [] );
+	const [ isProcessing, setIsProcessing ] = useState( false );
+	const [ validationError, setValidationError ] = useState( '' );
+	const [ validationWarning, setValidationWarning ] = useState( '' );
+	const [ multipleBlockWarning, setMultipleBlockWarning ] = useState( false );
+	const [ gpxWaypoints, setGpxWaypoints ] = useState( [] );
 
-    // Coordinate tolerance for duplicate detection (~11 metres)
-    const LAT_LNG_TOLERANCE = 0.0001;
+	// Coordinate tolerance for duplicate detection (~11 metres)
+	const LAT_LNG_TOLERANCE = 0.0001;
 
-    // Get attachment data from media library
-    const attachment = useSelect(
-        ( select ) => {
-            if ( ! attachmentId ) {
-                return null;
-            }
-            return select( 'core' ).getMedia( attachmentId );
-        },
-        [ attachmentId ]
-    );
+	// Existing Map Marker blocks in this post (reactive — updates as blocks are added/removed)
+	const existingMarkers = useSelect( ( select ) => {
+		const allBlocks = select( 'core/block-editor' ).getBlocks();
+		return flattenBlocks( allBlocks ).filter(
+			( b ) => b.name === 'mapthread/map-marker'
+		);
+	} );
 
-    // Existing Map Marker blocks in this post (reactive — updates as blocks are added/removed)
-    const existingMarkers = useSelect( ( select ) => {
-        const allBlocks = select( 'core/block-editor' ).getBlocks();
-        return flattenBlocks( allBlocks ).filter( ( b ) => b.name === 'mapthread/map-marker' );
-    } );
+	const { insertBlocks } = useDispatch( 'core/block-editor' );
 
-    const { insertBlocks } = useDispatch( 'core/block-editor' );
+	// Check for multiple GPX blocks on mount and when blocks change
+	useEffect( () => {
+		setMultipleBlockWarning( hasMultipleGPXBlocks( clientId ) );
+	}, [] );
 
-    // Check for multiple GPX blocks on mount and when blocks change
-    useEffect( () => {
-        setMultipleBlockWarning( hasMultipleGPXBlocks( clientId ) );
-    }, [] );
+	// When editing an existing post, fetch the GPX to discover waypoints
+	useEffect( () => {
+		if ( ! gpxUrl || gpxWaypoints.length > 0 ) {
+			return;
+		}
+		fetch( gpxUrl )
+			.then( ( r ) => r.text() )
+			.then( ( content ) => {
+				const parsed = parseGPX( content );
+				if ( parsed && ! parsed.error ) {
+					setGpxWaypoints( parsed.waypoints || [] );
+				}
+			} )
+			.catch( () => {} );
+	}, [ gpxUrl ] );
 
-    // When editing an existing post, fetch the GPX to discover waypoints
-    useEffect( () => {
-        if ( ! gpxUrl || gpxWaypoints.length > 0 ) {
-            return;
-        }
-        fetch( gpxUrl )
-            .then( ( r ) => r.text() )
-            .then( ( content ) => {
-                const parsed = parseGPX( content );
-                if ( parsed && ! parsed.error ) {
-                    setGpxWaypoints( parsed.waypoints || [] );
-                }
-            } )
-            .catch( () => {} );
-    }, [ gpxUrl ] );
+	/**
+	 * Handle GPX file selection from media library
+	 *
+	 * @param {Object} media - Selected media object
+	 */
+	const onSelectGPX = async ( media ) => {
+		// Validate file type
+		if (
+			media.mime !== 'application/gpx+xml' &&
+			! media.url.endsWith( '.gpx' )
+		) {
+			setValidationError(
+				__( 'Please select a valid GPX file', 'mapthread' )
+			);
+			return;
+		}
 
-    /**
-     * Handle GPX file selection from media library
-     *
-     * @param {Object} media - Selected media object
-     */
-    const onSelectGPX = async ( media ) => {
-        // Validate file type
-        if ( media.mime !== 'application/gpx+xml' && ! media.url.endsWith( '.gpx' ) ) {
-            setValidationError( __( 'Please select a valid GPX file', 'mapthread' ) );
-            return;
-        }
+		// Check file size (10MB = 10485760 bytes)
+		const fileSizeWarning =
+			media.filesizeInBytes > 10485760
+				? __(
+						'Warning: File size exceeds 10MB. This may cause performance issues.',
+						'mapthread'
+				  )
+				: '';
 
-        // Check file size (10MB = 10485760 bytes)
-        const fileSizeWarning = media.filesizeInBytes > 10485760
-            ? __( 'Warning: File size exceeds 10MB. This may cause performance issues.', 'mapthread' )
-            : '';
+		setIsProcessing( true );
+		setValidationError( '' );
+		setValidationWarning( fileSizeWarning );
 
-        setIsProcessing( true );
-        setValidationError( '' );
-        setValidationWarning( fileSizeWarning );
+		try {
+			// Fetch GPX file content
+			const response = await fetch( media.url );
+			if ( ! response.ok ) {
+				throw new Error( 'Failed to fetch GPX file' );
+			}
 
-        try {
-            // Fetch GPX file content
-            const response = await fetch( media.url );
-            if ( ! response.ok ) {
-                throw new Error( 'Failed to fetch GPX file' );
-            }
+			const gpxContent = await response.text();
 
-            const gpxContent = await response.text();
+			// Parse GPX
+			const parsed = parseGPX( gpxContent );
 
-            // Parse GPX
-            const parsed = parseGPX( gpxContent );
+			if ( parsed.error ) {
+				setValidationError( parsed.error );
+				setIsProcessing( false );
+				return;
+			}
 
-            if ( parsed.error ) {
-                setValidationError( parsed.error );
-                setIsProcessing( false );
-                return;
-            }
+			// Check point count
+			if ( parsed.pointCount > 50000 ) {
+				setValidationWarning(
+					fileSizeWarning +
+						' ' +
+						__(
+							'Warning: Track has more than 50,000 points. This may cause performance issues.',
+							'mapthread'
+						)
+				);
+			}
 
-            // Check point count
-            if ( parsed.pointCount > 50000 ) {
-                setValidationWarning(
-                    fileSizeWarning + ' ' +
-                    __( 'Warning: Track has more than 50,000 points. This may cause performance issues.', 'mapthread' )
-                );
-            }
+			// Update block attributes
+			setAttributes( {
+				attachmentId: media.id,
+				fileName: media.filename,
+				gpxUrl: media.url,
+				pointCount: parsed.pointCount,
+				bounds: parsed.bounds,
+			} );
 
-            // Update block attributes
-            setAttributes( {
-                attachmentId: media.id,
-                fileName: media.filename,
-                gpxUrl: media.url,
-                pointCount: parsed.pointCount,
-                bounds: parsed.bounds
-            } );
+			setGpxWaypoints( parsed.waypoints || [] );
+			setIsProcessing( false );
+		} catch {
+			setValidationError(
+				__( 'Error loading GPX file. Please try again.', 'mapthread' )
+			);
+			setIsProcessing( false );
+		}
+	};
 
-            setGpxWaypoints( parsed.waypoints || [] );
-            setIsProcessing( false );
-        } catch ( error ) {
-            setValidationError( __( 'Error loading GPX file. Please try again.', 'mapthread' ) );
-            setIsProcessing( false );
-        }
-    };
+	/**
+	 * Handle GPX file removal
+	 */
+	const onRemoveGPX = () => {
+		setAttributes( {
+			attachmentId: 0,
+			fileName: '',
+			gpxUrl: '',
+			pointCount: 0,
+			bounds: { north: 0, south: 0, east: 0, west: 0 },
+		} );
+		setValidationError( '' );
+		setValidationWarning( '' );
+		setGpxWaypoints( [] );
+	};
 
-    /**
-     * Handle GPX file removal
-     */
-    const onRemoveGPX = () => {
-        setAttributes( {
-            attachmentId: 0,
-            fileName: '',
-            gpxUrl: '',
-            pointCount: 0,
-            bounds: { north: 0, south: 0, east: 0, west: 0 }
-        } );
-        setValidationError( '' );
-        setValidationWarning( '' );
-        setGpxWaypoints( [] );
-    };
+	/**
+	 * Import GPX waypoints as Map Marker blocks, inserted immediately after this block
+	 */
+	const onImportWaypoints = () => {
+		const newWaypoints = gpxWaypoints.filter(
+			( wp ) =>
+				! existingMarkers.some(
+					( m ) =>
+						Math.abs( ( m.attributes.lat || 0 ) - wp.lat ) <
+							LAT_LNG_TOLERANCE &&
+						Math.abs( ( m.attributes.lng || 0 ) - wp.lon ) <
+							LAT_LNG_TOLERANCE
+				)
+		);
 
-    /**
-     * Import GPX waypoints as Map Marker blocks, inserted immediately after this block
-     */
-    const onImportWaypoints = () => {
-        const newWaypoints = gpxWaypoints.filter( ( wp ) =>
-            ! existingMarkers.some(
-                ( m ) =>
-                    Math.abs( ( m.attributes.lat || 0 ) - wp.lat ) < LAT_LNG_TOLERANCE &&
-                    Math.abs( ( m.attributes.lng || 0 ) - wp.lon ) < LAT_LNG_TOLERANCE
-            )
-        );
+		if ( newWaypoints.length === 0 ) {
+			return;
+		}
 
-        if ( newWaypoints.length === 0 ) {
-            return;
-        }
+		const timestamp = Date.now();
+		const newBlocks = newWaypoints.map( ( wp, idx ) =>
+			createBlock( 'mapthread/map-marker', {
+				id: `marker-${ timestamp }-${ idx }-${ Math.random()
+					.toString( 36 )
+					.slice( 2, 11 ) }`,
+				title: wp.name,
+				lat: wp.lat,
+				lng: wp.lon,
+				zoom: 14,
+			} )
+		);
 
-        const timestamp = Date.now();
-        const newBlocks = newWaypoints.map( ( wp, idx ) =>
-            createBlock( 'mapthread/map-marker', {
-                id: `marker-${ timestamp }-${ idx }-${ Math.random().toString( 36 ).slice( 2, 11 ) }`,
-                title: wp.name,
-                lat: wp.lat,
-                lng: wp.lon,
-                zoom: 14,
-            } )
-        );
+		const rootClientId = wp.data
+			.select( 'core/block-editor' )
+			.getBlockRootClientId( clientId );
+		const index =
+			wp.data.select( 'core/block-editor' ).getBlockIndex( clientId ) + 1;
+		insertBlocks( newBlocks, index, rootClientId );
+	};
 
-        const rootClientId = wp.data.select( 'core/block-editor' ).getBlockRootClientId( clientId );
-        const index = wp.data.select( 'core/block-editor' ).getBlockIndex( clientId ) + 1;
-        insertBlocks( newBlocks, index, rootClientId );
-    };
+	// Show processing state
+	if ( isProcessing ) {
+		return (
+			<div { ...blockProps }>
+				<Placeholder
+					icon="location-alt"
+					label={ __( 'Map GPX', 'mapthread' ) }
+				>
+					<Spinner />
+					<p>{ __( 'Processing GPX file…', 'mapthread' ) }</p>
+				</Placeholder>
+			</div>
+		);
+	}
 
-    // Show processing state
-    if ( isProcessing ) {
-        return (
-            <div { ...blockProps }>
-                <Placeholder
-                    icon="location-alt"
-                    label={ __( 'Map GPX', 'mapthread' ) }
-                >
-                    <Spinner />
-                    <p>{ __( 'Processing GPX file...', 'mapthread' ) }</p>
-                </Placeholder>
-            </div>
-        );
-    }
+	// Show upload interface if no GPX selected
+	if ( ! attachmentId || ! fileName ) {
+		return (
+			<>
+				<InspectorControls>
+					<PanelBody title={ __( 'Map Settings', 'mapthread' ) }>
+						<ToggleControl
+							label={ __(
+								'Show progress indicator',
+								'mapthread'
+							) }
+							checked={ showProgressIndicator }
+							onChange={ ( value ) =>
+								setAttributes( {
+									showProgressIndicator: value,
+								} )
+							}
+							help={ __(
+								'Animate position along track as readers scroll',
+								'mapthread'
+							) }
+						/>
+						<ToggleControl
+							label={ __( 'Allow GPX download', 'mapthread' ) }
+							checked={ allowGpxDownload }
+							onChange={ ( value ) =>
+								setAttributes( { allowGpxDownload: value } )
+							}
+							help={ __(
+								'Show a download button so visitors can save the GPX file',
+								'mapthread'
+							) }
+						/>
+					</PanelBody>
+				</InspectorControls>
+				<div { ...blockProps }>
+					<Placeholder
+						icon="location-alt"
+						label={ __( 'Map GPX', 'mapthread' ) }
+						instructions={ __(
+							'Upload a GPX file to display your route or track on an interactive map.',
+							'mapthread'
+						) }
+					>
+						{ validationError && (
+							<Notice status="error" isDismissible={ false }>
+								{ validationError }
+							</Notice>
+						) }
+						<MediaUploadCheck>
+							<MediaUpload
+								onSelect={ onSelectGPX }
+								allowedTypes={ [ 'application/gpx+xml' ] }
+								value={ attachmentId }
+								render={ ( { open } ) => (
+									<Button
+										onClick={ open }
+										variant="primary"
+										icon={ upload }
+									>
+										{ __( 'Upload GPX File', 'mapthread' ) }
+									</Button>
+								) }
+							/>
+						</MediaUploadCheck>
+					</Placeholder>
+				</div>
+			</>
+		);
+	}
 
-    // Show upload interface if no GPX selected
-    if ( ! attachmentId || ! fileName ) {
-        return (
-            <>
-                <InspectorControls>
-                    <PanelBody title={ __( 'Map Settings', 'mapthread' ) }>
-                        <ToggleControl
-                            label={ __( 'Show progress indicator', 'mapthread' ) }
-                            checked={ showProgressIndicator }
-                            onChange={ ( value ) => setAttributes( { showProgressIndicator: value } ) }
-                            help={ __( 'Animate position along track as readers scroll', 'mapthread' ) }
-                        />
-                        <ToggleControl
-                            label={ __( 'Allow GPX download', 'mapthread' ) }
-                            checked={ allowGpxDownload }
-                            onChange={ ( value ) => setAttributes( { allowGpxDownload: value } ) }
-                            help={ __( 'Show a download button so visitors can save the GPX file', 'mapthread' ) }
-                        />
-                    </PanelBody>
-                </InspectorControls>
-                <div { ...blockProps }>
-                    <Placeholder
-                        icon="location-alt"
-                        label={ __( 'Map GPX', 'mapthread' ) }
-                        instructions={ __( 'Upload a GPX file to display your route or track on an interactive map.', 'mapthread' ) }
-                    >
-                        { validationError && (
-                            <Notice status="error" isDismissible={ false }>
-                                { validationError }
-                            </Notice>
-                        ) }
-                        <MediaUploadCheck>
-                            <MediaUpload
-                                onSelect={ onSelectGPX }
-                                allowedTypes={ [ 'application/gpx+xml' ] }
-                                value={ attachmentId }
-                                render={ ( { open } ) => (
-                                    <Button
-                                        onClick={ open }
-                                        variant="primary"
-                                        icon={ upload }
-                                    >
-                                        { __( 'Upload GPX File', 'mapthread' ) }
-                                    </Button>
-                                ) }
-                            />
-                        </MediaUploadCheck>
-                    </Placeholder>
-                </div>
-            </>
-        );
-    }
+	// Compute waypoint import counts for UI and handler
+	const importedWaypointCount = gpxWaypoints.filter( ( wp ) =>
+		existingMarkers.some(
+			( m ) =>
+				Math.abs( ( m.attributes.lat || 0 ) - wp.lat ) <
+					LAT_LNG_TOLERANCE &&
+				Math.abs( ( m.attributes.lng || 0 ) - wp.lon ) <
+					LAT_LNG_TOLERANCE
+		)
+	).length;
+	const newWaypointCount = gpxWaypoints.length - importedWaypointCount;
 
-    // Compute waypoint import counts for UI and handler
-    const importedWaypointCount = gpxWaypoints.filter( ( wp ) =>
-        existingMarkers.some(
-            ( m ) =>
-                Math.abs( ( m.attributes.lat || 0 ) - wp.lat ) < LAT_LNG_TOLERANCE &&
-                Math.abs( ( m.attributes.lng || 0 ) - wp.lon ) < LAT_LNG_TOLERANCE
-        )
-    ).length;
-    const newWaypointCount = gpxWaypoints.length - importedWaypointCount;
+	// Show GPX info with replace/remove options
+	return (
+		<>
+			<InspectorControls>
+				<PanelBody title={ __( 'Map Settings', 'mapthread' ) }>
+					<ToggleControl
+						label={ __( 'Show progress indicator', 'mapthread' ) }
+						checked={ showProgressIndicator }
+						onChange={ ( value ) =>
+							setAttributes( { showProgressIndicator: value } )
+						}
+						help={ __(
+							'Animate position along track as readers scroll',
+							'mapthread'
+						) }
+					/>
+					<ToggleControl
+						label={ __( 'Show elevation profile', 'mapthread' ) }
+						checked={ showElevationProfile }
+						onChange={ ( value ) =>
+							setAttributes( { showElevationProfile: value } )
+						}
+						help={ __(
+							'Display elevation chart at bottom of map',
+							'mapthread'
+						) }
+					/>
+					<ToggleControl
+						label={ __( 'Allow GPX download', 'mapthread' ) }
+						checked={ allowGpxDownload }
+						onChange={ ( value ) =>
+							setAttributes( { allowGpxDownload: value } )
+						}
+						help={ __(
+							'Show a download button so visitors can save the GPX file',
+							'mapthread'
+						) }
+					/>
+					<SelectControl
+						label={ __( 'Default Map Style', 'mapthread' ) }
+						value={ defaultMapLayer }
+						options={
+							typeof mapthreadConfig !== 'undefined' &&
+							mapthreadConfig.availableLayers
+								? mapthreadConfig.availableLayers
+								: [
+										{
+											label: __(
+												'Street Map',
+												'mapthread'
+											),
+											value: 'Street',
+										},
+								  ]
+						}
+						onChange={ ( value ) =>
+							setAttributes( { defaultMapLayer: value } )
+						}
+						help={ __(
+							'Choose which map style displays when the page loads',
+							'mapthread'
+						) }
+					/>
+					<p className="components-base-control__help">
+						<a
+							href="/wp-admin/options-general.php?page=mapthread"
+							target="_blank"
+							rel="noopener noreferrer"
+						>
+							{ __( 'Configure map providers', 'mapthread' ) }
+						</a>
+					</p>
+				</PanelBody>
+			</InspectorControls>
+			<div { ...blockProps }>
+				<div className="mapthread-map-gpx-editor">
+					{ multipleBlockWarning && (
+						<Notice status="warning" isDismissible={ false }>
+							{ __(
+								'Multiple Map GPX blocks detected. Only the first block will be used on the frontend.',
+								'mapthread'
+							) }
+						</Notice>
+					) }
 
-    // Show GPX info with replace/remove options
-    return (
-        <>
-            <InspectorControls>
-                <PanelBody title={ __( 'Map Settings', 'mapthread' ) }>
-                    <ToggleControl
-                        label={ __( 'Show progress indicator', 'mapthread' ) }
-                        checked={ showProgressIndicator }
-                        onChange={ ( value ) => setAttributes( { showProgressIndicator: value } ) }
-                        help={ __( 'Animate position along track as readers scroll', 'mapthread' ) }
-                    />
-                    <ToggleControl
-                        label={ __( 'Show elevation profile', 'mapthread' ) }
-                        checked={ showElevationProfile }
-                        onChange={ ( value ) => setAttributes( { showElevationProfile: value } ) }
-                        help={ __( 'Display elevation chart at bottom of map', 'mapthread' ) }
-                    />
-                    <ToggleControl
-                        label={ __( 'Allow GPX download', 'mapthread' ) }
-                        checked={ allowGpxDownload }
-                        onChange={ ( value ) => setAttributes( { allowGpxDownload: value } ) }
-                        help={ __( 'Show a download button so visitors can save the GPX file', 'mapthread' ) }
-                    />
-                    <SelectControl
-                        label={ __( 'Default Map Style', 'mapthread' ) }
-                        value={ defaultMapLayer }
-                        options={
-                            ( typeof mapthreadConfig !== 'undefined' && mapthreadConfig.availableLayers )
-                                ? mapthreadConfig.availableLayers
-                                : [ { label: __( 'Street Map', 'mapthread' ), value: 'Street' } ]
-                        }
-                        onChange={ ( value ) => setAttributes( { defaultMapLayer: value } ) }
-                        help={ __( 'Choose which map style displays when the page loads', 'mapthread' ) }
-                    />
-                    <p className="components-base-control__help">
-                        <a href="/wp-admin/options-general.php?page=mapthread" target="_blank" rel="noopener noreferrer">
-                            { __( 'Configure map providers', 'mapthread' ) }
-                        </a>
-                    </p>
-                </PanelBody>
-            </InspectorControls>
-            <div { ...blockProps }>
-                <div className="mapthread-map-gpx-editor">
-                { multipleBlockWarning && (
-                    <Notice status="warning" isDismissible={ false }>
-                        { __( 'Multiple Map GPX blocks detected. Only the first block will be used on the frontend.', 'mapthread' ) }
-                    </Notice>
-                ) }
+					{ validationError && (
+						<Notice status="error" isDismissible={ false }>
+							{ validationError }
+						</Notice>
+					) }
 
-                { validationError && (
-                    <Notice status="error" isDismissible={ false }>
-                        { validationError }
-                    </Notice>
-                ) }
+					{ validationWarning && (
+						<Notice
+							status="warning"
+							isDismissible={ true }
+							onRemove={ () => setValidationWarning( '' ) }
+						>
+							{ validationWarning }
+						</Notice>
+					) }
 
-                { validationWarning && (
-                    <Notice status="warning" isDismissible={ true } onRemove={ () => setValidationWarning( '' ) }>
-                        { validationWarning }
-                    </Notice>
-                ) }
+					<div className="mapthread-map-gpx-info">
+						<div className="mapthread-map-gpx-icon">
+							<span className="dashicons dashicons-location-alt"></span>
+						</div>
+						<div className="mapthread-map-gpx-details">
+							<strong>
+								{ __( 'GPX uploaded:', 'mapthread' ) }
+							</strong>{ ' ' }
+							{ fileName }
+							<br />
+							<span className="mapthread-map-gpx-meta">
+								{ pointCount.toLocaleString() }{ ' ' }
+								{ __( 'track points', 'mapthread' ) }
+								{ ' • ' }
+								{ __( 'Bounds:', 'mapthread' ) }{ ' ' }
+								{ bounds.north.toFixed( 4 ) }°N,{ ' ' }
+								{ bounds.south.toFixed( 4 ) }°S,{ ' ' }
+								{ bounds.east.toFixed( 4 ) }°E,{ ' ' }
+								{ bounds.west.toFixed( 4 ) }°W
+							</span>
+						</div>
+					</div>
 
-                <div className="mapthread-map-gpx-info">
-                    <div className="mapthread-map-gpx-icon">
-                        <span className="dashicons dashicons-location-alt"></span>
-                    </div>
-                    <div className="mapthread-map-gpx-details">
-                        <strong>{ __( 'GPX uploaded:', 'mapthread' ) }</strong> { fileName }
-                        <br />
-                        <span className="mapthread-map-gpx-meta">
-                            { pointCount.toLocaleString() } { __( 'track points', 'mapthread' ) }
-                            { ' • ' }
-                            { __( 'Bounds:', 'mapthread' ) } { bounds.north.toFixed( 4 ) }°N, { bounds.south.toFixed( 4 ) }°S,
-                            { ' ' }{ bounds.east.toFixed( 4 ) }°E, { bounds.west.toFixed( 4 ) }°W
-                        </span>
-                    </div>
-                </div>
+					<div className="mapthread-map-gpx-actions">
+						<MediaUploadCheck>
+							<MediaUpload
+								onSelect={ onSelectGPX }
+								allowedTypes={ [ 'application/gpx+xml' ] }
+								value={ attachmentId }
+								render={ ( { open } ) => (
+									<Button
+										onClick={ open }
+										variant="secondary"
+									>
+										{ __( 'Replace GPX', 'mapthread' ) }
+									</Button>
+								) }
+							/>
+						</MediaUploadCheck>
+						<Button
+							onClick={ onRemoveGPX }
+							variant="tertiary"
+							isDestructive
+						>
+							{ __( 'Remove GPX', 'mapthread' ) }
+						</Button>
+					</div>
 
-                <div className="mapthread-map-gpx-actions">
-                    <MediaUploadCheck>
-                        <MediaUpload
-                            onSelect={ onSelectGPX }
-                            allowedTypes={ [ 'application/gpx+xml' ] }
-                            value={ attachmentId }
-                            render={ ( { open } ) => (
-                                <Button onClick={ open } variant="secondary">
-                                    { __( 'Replace GPX', 'mapthread' ) }
-                                </Button>
-                            ) }
-                        />
-                    </MediaUploadCheck>
-                    <Button onClick={ onRemoveGPX } variant="tertiary" isDestructive>
-                        { __( 'Remove GPX', 'mapthread' ) }
-                    </Button>
-                </div>
-
-                { gpxWaypoints.length > 0 && (
-                    <div className="mapthread-map-gpx-waypoints">
-                        <p className="mapthread-map-gpx-waypoints-info">
-                            { sprintf(
-                                /* translators: %d: number of named waypoints */
-                                __( '%d named waypoints found in GPX.', 'mapthread' ),
-                                gpxWaypoints.length
-                            ) }
-                            { importedWaypointCount > 0 && (
-                                ' ' + sprintf(
-                                    /* translators: %d: number of already-imported waypoints */
-                                    __( '%d already imported.', 'mapthread' ),
-                                    importedWaypointCount
-                                )
-                            ) }
-                        </p>
-                        <Button
-                            onClick={ onImportWaypoints }
-                            variant="secondary"
-                            disabled={ newWaypointCount === 0 }
-                        >
-                            { newWaypointCount === 0
-                                ? __( 'All waypoints imported', 'mapthread' )
-                                : sprintf(
-                                    /* translators: %d: number of waypoints to import */
-                                    __( 'Import %d as Map Markers', 'mapthread' ),
-                                    newWaypointCount
-                                )
-                            }
-                        </Button>
-                    </div>
-                ) }
-            </div>
-        </div>
-        </>
-    );
+					{ gpxWaypoints.length > 0 && (
+						<div className="mapthread-map-gpx-waypoints">
+							<p className="mapthread-map-gpx-waypoints-info">
+								{ sprintf(
+									/* translators: %d: number of named waypoints */
+									__(
+										'%d named waypoints found in GPX.',
+										'mapthread'
+									),
+									gpxWaypoints.length
+								) }
+								{ importedWaypointCount > 0 &&
+									' ' +
+										sprintf(
+											/* translators: %d: number of already-imported waypoints */
+											__(
+												'%d already imported.',
+												'mapthread'
+											),
+											importedWaypointCount
+										) }
+							</p>
+							<Button
+								onClick={ onImportWaypoints }
+								variant="secondary"
+								disabled={ newWaypointCount === 0 }
+							>
+								{ newWaypointCount === 0
+									? __(
+											'All waypoints imported',
+											'mapthread'
+									  )
+									: sprintf(
+											/* translators: %d: number of waypoints to import */
+											__(
+												'Import %d as Map Markers',
+												'mapthread'
+											),
+											newWaypointCount
+									  ) }
+							</Button>
+						</div>
+					) }
+				</div>
+			</div>
+		</>
+	);
 }
