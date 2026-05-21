@@ -23,14 +23,14 @@
   "author": "David Gilbert",
   "license": "GPL-2.0-or-later",
   "devDependencies": {
-    "@babel/runtime": "^7.28.6",
-    "@wordpress/icons": "^11.6.0",
-    "@wordpress/scripts": "^28.0.0",
-    "archiver": "^7.0.1"
+    "@babel/runtime": "^7.29.2",
+    "@wordpress/icons": "^13.0.0",
+    "@wordpress/scripts": "^32.0.0",
+    "archiver": "^8.0.0"
   },
   "dependencies": {
     "chart.js": "^4.5.1",
     "leaflet": "^1.9.4",
-    "leaflet.fullscreen": "^5.3.0"
+    "leaflet.fullscreen": "^5.3.1"
   }
 }

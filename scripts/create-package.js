@@ -1,6 +1,6 @@
 const fs = require('fs');
 const path = require('path');
-const archiver = require('archiver');
+const { ZipArchive } = require('archiver');
 
 // Read version from mapthread.php
 const pluginFile = fs.readFileSync('mapthread.php', 'utf8');
@@ -16,7 +16,7 @@ if (!fs.existsSync(distDir)) {
 // Output file path
 const outputPath = path.join(distDir, `mapthread-${version}.zip`);
 const output = fs.createWriteStream(outputPath);
-const archive = archiver('zip', { zlib: { level: 9 } });
+const archive = new ZipArchive({ zlib: { level: 9 } });
 
 // Listen for completion
 output.on('close', () => {
