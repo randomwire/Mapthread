@@ -1,19 +1,20 @@
 /**
  * Map Marker Block - Editor Component
  *
- * @package Mapthread
+ * @package
  */
 
 import { __, sprintf } from '@wordpress/i18n';
 import { useBlockProps, InspectorControls } from '@wordpress/block-editor';
 import {
-    PanelBody,
-    TextControl,
-    BaseControl,
-    Button,
-    Popover,
-    Notice,
-    __experimentalNumberControl as NumberControl
+	PanelBody,
+	TextControl,
+	BaseControl,
+	Button,
+	Popover,
+	Notice,
+	// eslint-disable-next-line @wordpress/no-unsafe-wp-apis -- stable NumberControl requires WP 6.5; plugin supports 6.0.
+	__experimentalNumberControl as NumberControl,
 } from '@wordpress/components';
 import { useEffect, useCallback, useState } from '@wordpress/element';
 import { useSelect } from '@wordpress/data';
@@ -26,7 +27,9 @@ import EmojiGrid from './components/EmojiGrid';
  * @return {string} Unique ID
  */
 function generateUniqueId() {
-    return `marker-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`;
+	return `marker-${ Date.now() }-${ Math.random()
+		.toString( 36 )
+		.substr( 2, 9 ) }`;
 }
 
 /**
@@ -39,50 +42,52 @@ function generateUniqueId() {
  * @return {number} Distance in kilometers
  */
 function calculateDistance( lat1, lon1, lat2, lon2 ) {
-    const R = 6371; // Earth's radius in km
-    const dLat = ( lat2 - lat1 ) * Math.PI / 180;
-    const dLon = ( lon2 - lon1 ) * Math.PI / 180;
-    const a =
-        Math.sin( dLat / 2 ) * Math.sin( dLat / 2 ) +
-        Math.cos( lat1 * Math.PI / 180 ) * Math.cos( lat2 * Math.PI / 180 ) *
-        Math.sin( dLon / 2 ) * Math.sin( dLon / 2 );
-    const c = 2 * Math.atan2( Math.sqrt( a ), Math.sqrt( 1 - a ) );
-    return R * c;
+	const R = 6371; // Earth's radius in km
+	const dLat = ( ( lat2 - lat1 ) * Math.PI ) / 180;
+	const dLon = ( ( lon2 - lon1 ) * Math.PI ) / 180;
+	const a =
+		Math.sin( dLat / 2 ) * Math.sin( dLat / 2 ) +
+		Math.cos( ( lat1 * Math.PI ) / 180 ) *
+			Math.cos( ( lat2 * Math.PI ) / 180 ) *
+			Math.sin( dLon / 2 ) *
+			Math.sin( dLon / 2 );
+	const c = 2 * Math.atan2( Math.sqrt( a ), Math.sqrt( 1 - a ) );
+	return R * c;
 }
 
 /**
  * Check if marker is within reasonable distance of GPX bounds
  *
- * @param {number} lat Marker latitude
- * @param {number} lng Marker longitude
+ * @param {number} lat    Marker latitude
+ * @param {number} lng    Marker longitude
  * @param {Object} bounds GPX bounds object
  * @return {Object} Result with isNear boolean and distance
  */
 function checkDistanceFromTrack( lat, lng, bounds ) {
-    if ( ! bounds || bounds.north === 0 ) {
-        return { isNear: true, distance: 0 };
-    }
+	if ( ! bounds || bounds.north === 0 ) {
+		return { isNear: true, distance: 0 };
+	}
 
-    // Calculate distance to each corner of bounds
-    const distances = [
-        calculateDistance( lat, lng, bounds.north, bounds.east ),
-        calculateDistance( lat, lng, bounds.north, bounds.west ),
-        calculateDistance( lat, lng, bounds.south, bounds.east ),
-        calculateDistance( lat, lng, bounds.south, bounds.west )
-    ];
+	// Calculate distance to each corner of bounds
+	const distances = [
+		calculateDistance( lat, lng, bounds.north, bounds.east ),
+		calculateDistance( lat, lng, bounds.north, bounds.west ),
+		calculateDistance( lat, lng, bounds.south, bounds.east ),
+		calculateDistance( lat, lng, bounds.south, bounds.west ),
+	];
 
-    // Also check center point
-    const centerLat = ( bounds.north + bounds.south ) / 2;
-    const centerLng = ( bounds.east + bounds.west ) / 2;
-    distances.push( calculateDistance( lat, lng, centerLat, centerLng ) );
+	// Also check center point
+	const centerLat = ( bounds.north + bounds.south ) / 2;
+	const centerLng = ( bounds.east + bounds.west ) / 2;
+	distances.push( calculateDistance( lat, lng, centerLat, centerLng ) );
 
-    // Get minimum distance
-    const minDistance = Math.min( ...distances );
+	// Get minimum distance
+	const minDistance = Math.min( ...distances );
 
-    return {
-        isNear: minDistance <= 50, // 50km threshold
-        distance: Math.round( minDistance )
-    };
+	return {
+		isNear: minDistance <= 50, // 50km threshold
+		distance: Math.round( minDistance ),
+	};
 }
 
 /**
@@ -92,206 +97,274 @@ function checkDistanceFromTrack( lat, lng, bounds ) {
  * @return {Object|null} GPX block or null
  */
 function findGPXBlockInList( blocks ) {
-    if ( ! blocks || ! Array.isArray( blocks ) ) {
-        return null;
-    }
-    for ( const block of blocks ) {
-        if ( block.name === 'mapthread/map-gpx' ) {
-            return block;
-        }
-        // Search nested blocks (innerBlocks)
-        if ( block.innerBlocks && block.innerBlocks.length > 0 ) {
-            const found = findGPXBlockInList( block.innerBlocks );
-            if ( found ) {
-                return found;
-            }
-        }
-    }
-    return null;
+	if ( ! blocks || ! Array.isArray( blocks ) ) {
+		return null;
+	}
+	for ( const block of blocks ) {
+		if ( block.name === 'mapthread/map-gpx' ) {
+			return block;
+		}
+		// Search nested blocks (innerBlocks)
+		if ( block.innerBlocks && block.innerBlocks.length > 0 ) {
+			const found = findGPXBlockInList( block.innerBlocks );
+			if ( found ) {
+				return found;
+			}
+		}
+	}
+	return null;
 }
 
 /**
  * Edit component for Map Marker block
  *
- * @param {Object} props Block props
+ * @param {Object} props               Block props
+ * @param          props.attributes
+ * @param          props.setAttributes
  * @return {Element} Block editor element
  */
-export default function Edit( { attributes, setAttributes, clientId } ) {
-    const blockProps = useBlockProps();
-    const { id, title, lat, lng, address, zoom, emoji } = attributes;
-    const [ showEmojiPicker, setShowEmojiPicker ] = useState( false );
+export default function Edit( { attributes, setAttributes } ) {
+	const blockProps = useBlockProps();
+	const { id, title, lat, lng, address, zoom, emoji } = attributes;
+	const [ showEmojiPicker, setShowEmojiPicker ] = useState( false );
 
-    // Auto-generate ID on mount if not set
-    useEffect( () => {
-        if ( ! id ) {
-            setAttributes( { id: generateUniqueId() } );
-        }
-    }, [] );
+	// Auto-generate ID on mount if not set
+	useEffect( () => {
+		if ( ! id ) {
+			setAttributes( { id: generateUniqueId() } );
+		}
+	}, [] );
 
-    // Handle address search selection
-    const handleAddressSelect = useCallback( ( location ) => {
-        setAttributes( {
-            lat: location.lat,
-            lng: location.lng,
-            address: location.address
-        } );
-    }, [ setAttributes ] );
+	// Handle address search selection
+	const handleAddressSelect = useCallback(
+		( location ) => {
+			setAttributes( {
+				lat: location.lat,
+				lng: location.lng,
+				address: location.address,
+			} );
+		},
+		[ setAttributes ]
+	);
 
-    // Find GPX block reactively using useSelect
-    const gpxBlock = useSelect( ( select ) => {
-        const blocks = select( 'core/block-editor' ).getBlocks();
-        return findGPXBlockInList( blocks );
-    } );
-    const hasGPXBlock = !! gpxBlock;
-    const gpxBounds = gpxBlock?.attributes?.bounds;
+	// Find GPX block reactively using useSelect
+	const gpxBlock = useSelect( ( select ) => {
+		const blocks = select( 'core/block-editor' ).getBlocks();
+		return findGPXBlockInList( blocks );
+	} );
+	const hasGPXBlock = !! gpxBlock;
+	const gpxBounds = gpxBlock?.attributes?.bounds;
 
-    // Validate coordinates
-    const hasValidCoords = lat !== 0 || lng !== 0;
-    const isMissingCoords = ! lat && ! lng;
+	// Validate coordinates
+	const hasValidCoords = lat !== 0 || lng !== 0;
+	const isMissingCoords = ! lat && ! lng;
 
-    // Check distance from GPX track
-    let distanceWarning = null;
-    if ( hasValidCoords && hasGPXBlock && gpxBounds ) {
-        const distanceCheck = checkDistanceFromTrack( lat, lng, gpxBounds );
-        if ( ! distanceCheck.isNear ) {
-            distanceWarning = sprintf(
-                /* translators: %d is the distance in kilometers */
-                __( 'This marker is %d km from the GPX track. Is this intentional?', 'mapthread' ),
-                distanceCheck.distance
-            );
-        }
-    }
+	// Check distance from GPX track
+	let distanceWarning = null;
+	if ( hasValidCoords && hasGPXBlock && gpxBounds ) {
+		const distanceCheck = checkDistanceFromTrack( lat, lng, gpxBounds );
+		if ( ! distanceCheck.isNear ) {
+			distanceWarning = sprintf(
+				/* translators: %d is the distance in kilometers */
+				__(
+					'This marker is %d km from the GPX track. Is this intentional?',
+					'mapthread'
+				),
+				distanceCheck.distance
+			);
+		}
+	}
 
-    return (
-        <>
-            <InspectorControls>
-                <PanelBody title={ __( 'Marker Settings', 'mapthread' ) } initialOpen={ true }>
-                    <TextControl
-                        label={ __( 'Title', 'mapthread' ) }
-                        value={ title }
-                        onChange={ ( value ) => setAttributes( { title: value } ) }
-                        placeholder={ __( 'Enter marker title...', 'mapthread' ) }
-                        help={ __( 'This will be displayed above the map pin', 'mapthread' ) }
-                    />
+	return (
+		<>
+			<InspectorControls>
+				<PanelBody
+					title={ __( 'Marker Settings', 'mapthread' ) }
+					initialOpen={ true }
+				>
+					<TextControl
+						label={ __( 'Title', 'mapthread' ) }
+						value={ title }
+						onChange={ ( value ) =>
+							setAttributes( { title: value } )
+						}
+						placeholder={ __( 'Enter marker title…', 'mapthread' ) }
+						help={ __(
+							'This will be displayed above the map pin',
+							'mapthread'
+						) }
+					/>
 
-                    <BaseControl label={ __( 'Marker Design (optional)', 'mapthread' ) }>
-                        <div style={ { display: 'flex', alignItems: 'center', gap: '8px' } }>
-                            <Button
-                                variant="secondary"
-                                onClick={ () => setShowEmojiPicker( ! showEmojiPicker ) }
-                                style={ { fontSize: emoji ? '20px' : '13px', minWidth: '36px', height: '36px' } }
-                            >
-                                { emoji || __( 'Pick Emoji', 'mapthread' ) }
-                            </Button>
-                            { emoji && (
-                                <Button
-                                    variant="link"
-                                    isDestructive
-                                    onClick={ () => setAttributes( { emoji: '' } ) }
-                                >
-                                    { __( 'Clear', 'mapthread' ) }
-                                </Button>
-                            ) }
-                        </div>
-                        { showEmojiPicker && (
-                            <Popover
-                                onClose={ () => setShowEmojiPicker( false ) }
-                                placement="left-start"
-                            >
-                                <EmojiGrid onSelect={ ( emojiChar ) => {
-                                    setAttributes( { emoji: emojiChar } );
-                                    setShowEmojiPicker( false );
-                                } } />
-                            </Popover>
-                        ) }
-                    </BaseControl>
+					<BaseControl
+						id="mapthread-marker-design"
+						label={ __( 'Marker Design (optional)', 'mapthread' ) }
+					>
+						<div
+							style={ {
+								display: 'flex',
+								alignItems: 'center',
+								gap: '8px',
+							} }
+						>
+							<Button
+								variant="secondary"
+								onClick={ () =>
+									setShowEmojiPicker( ! showEmojiPicker )
+								}
+								style={ {
+									fontSize: emoji ? '20px' : '13px',
+									minWidth: '36px',
+									height: '36px',
+								} }
+							>
+								{ emoji || __( 'Pick Emoji', 'mapthread' ) }
+							</Button>
+							{ emoji && (
+								<Button
+									variant="link"
+									isDestructive
+									onClick={ () =>
+										setAttributes( { emoji: '' } )
+									}
+								>
+									{ __( 'Clear', 'mapthread' ) }
+								</Button>
+							) }
+						</div>
+						{ showEmojiPicker && (
+							<Popover
+								onClose={ () => setShowEmojiPicker( false ) }
+								placement="left-start"
+							>
+								<EmojiGrid
+									onSelect={ ( emojiChar ) => {
+										setAttributes( { emoji: emojiChar } );
+										setShowEmojiPicker( false );
+									} }
+								/>
+							</Popover>
+						) }
+					</BaseControl>
 
-                    <AddressSearch
-                        onSelect={ handleAddressSelect }
-                        currentLat={ lat }
-                        currentLng={ lng }
-                        currentAddress={ address }
-                    />
+					<AddressSearch
+						onSelect={ handleAddressSelect }
+						currentLat={ lat }
+						currentLng={ lng }
+						currentAddress={ address }
+					/>
 
-                    <TextControl
-                        label={ __( 'Coordinates', 'mapthread' ) }
-                        value={ lat || lng ? `${ lat }, ${ lng }` : '' }
-                        onChange={ ( value ) => {
-                            const parts = value.split( ',' );
-                            if ( parts.length === 2 ) {
-                                const parsedLat = parseFloat( parts[ 0 ].trim() );
-                                const parsedLng = parseFloat( parts[ 1 ].trim() );
-                                if ( ! isNaN( parsedLat ) && ! isNaN( parsedLng ) ) {
-                                    setAttributes( { lat: parsedLat, lng: parsedLng } );
-                                }
-                            }
-                        } }
-                        placeholder="34.1818, 136.3069"
-                        help={ __( 'Latitude, longitude (e.g. 35.31909, 139.55064)', 'mapthread' ) }
-                    />
+					<TextControl
+						label={ __( 'Coordinates', 'mapthread' ) }
+						value={ lat || lng ? `${ lat }, ${ lng }` : '' }
+						onChange={ ( value ) => {
+							const parts = value.split( ',' );
+							if ( parts.length === 2 ) {
+								const parsedLat = parseFloat(
+									parts[ 0 ].trim()
+								);
+								const parsedLng = parseFloat(
+									parts[ 1 ].trim()
+								);
+								if (
+									! isNaN( parsedLat ) &&
+									! isNaN( parsedLng )
+								) {
+									setAttributes( {
+										lat: parsedLat,
+										lng: parsedLng,
+									} );
+								}
+							}
+						} }
+						placeholder="34.1818, 136.3069"
+						help={ __(
+							'Latitude, longitude (e.g. 35.31909, 139.55064)',
+							'mapthread'
+						) }
+					/>
 
-                    <NumberControl
-                        label={ __( 'Zoom Level', 'mapthread' ) }
-                        value={ zoom }
-                        onChange={ ( value ) => setAttributes( { zoom: parseInt( value ) || 14 } ) }
-                        min={ 1 }
-                        max={ 18 }
-                        help={ __( 'Map zoom when this marker is active (1-18, default: 14)', 'mapthread' ) }
-                    />
-                </PanelBody>
-            </InspectorControls>
+					<NumberControl
+						label={ __( 'Zoom Level', 'mapthread' ) }
+						value={ zoom }
+						onChange={ ( value ) =>
+							setAttributes( { zoom: parseInt( value ) || 14 } )
+						}
+						min={ 1 }
+						max={ 18 }
+						help={ __(
+							'Map zoom when this marker is active (1–18, default: 14)',
+							'mapthread'
+						) }
+					/>
+				</PanelBody>
+			</InspectorControls>
 
-            <div { ...blockProps }>
-                <div className="mapthread-map-marker-editor">
-                    { isMissingCoords && (
-                        <Notice status="error" isDismissible={ false }>
-                            { __( 'Please enter latitude and longitude in the block settings (sidebar).', 'mapthread' ) }
-                        </Notice>
-                    ) }
+			<div { ...blockProps }>
+				<div className="mapthread-map-marker-editor">
+					{ isMissingCoords && (
+						<Notice status="error" isDismissible={ false }>
+							{ __(
+								'Please enter latitude and longitude in the block settings (sidebar).',
+								'mapthread'
+							) }
+						</Notice>
+					) }
 
-                    { distanceWarning && (
-                        <Notice status="warning" isDismissible={ true }>
-                            { distanceWarning }
-                        </Notice>
-                    ) }
+					{ distanceWarning && (
+						<Notice status="warning" isDismissible={ true }>
+							{ distanceWarning }
+						</Notice>
+					) }
 
-                    <div className="mapthread-map-marker-display">
-                        <div className="mapthread-map-marker-icon">
-                            { emoji ? (
-                                <span style={ { fontSize: '24px' } }>{ emoji }</span>
-                            ) : (
-                                <span className="dashicons dashicons-location"></span>
-                            ) }
-                        </div>
-                        <div className="mapthread-map-marker-info">
-                            { title ? (
-                                <strong className="mapthread-map-marker-title">{ title }</strong>
-                            ) : (
-                                <em className="mapthread-map-marker-title-empty">
-                                    { __( 'Untitled Marker', 'mapthread' ) }
-                                </em>
-                            ) }
-                            <div className="mapthread-map-marker-coords">
-                                { hasValidCoords ? (
-                                    <>
-                                        { Math.abs( lat ).toFixed( 4 ) }°{ lat >= 0 ? 'N' : 'S' },
-                                        { ' ' }
-                                        { Math.abs( lng ).toFixed( 4 ) }°{ lng >= 0 ? 'E' : 'W' }
-                                        { address && (
-                                            <>
-                                                { ' • ' }
-                                                <span className="mapthread-map-marker-address">{ address }</span>
-                                            </>
-                                        ) }
-                                    </>
-                                ) : (
-                                    <em>{ __( 'No coordinates set', 'mapthread' ) }</em>
-                                ) }
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </>
-    );
+					<div className="mapthread-map-marker-display">
+						<div className="mapthread-map-marker-icon">
+							{ emoji ? (
+								<span style={ { fontSize: '24px' } }>
+									{ emoji }
+								</span>
+							) : (
+								<span className="dashicons dashicons-location"></span>
+							) }
+						</div>
+						<div className="mapthread-map-marker-info">
+							{ title ? (
+								<strong className="mapthread-map-marker-title">
+									{ title }
+								</strong>
+							) : (
+								<em className="mapthread-map-marker-title-empty">
+									{ __( 'Untitled Marker', 'mapthread' ) }
+								</em>
+							) }
+							<div className="mapthread-map-marker-coords">
+								{ hasValidCoords ? (
+									<>
+										{ Math.abs( lat ).toFixed( 4 ) }°
+										{ lat >= 0 ? 'N' : 'S' },{ ' ' }
+										{ Math.abs( lng ).toFixed( 4 ) }°
+										{ lng >= 0 ? 'E' : 'W' }
+										{ address && (
+											<>
+												{ ' • ' }
+												<span className="mapthread-map-marker-address">
+													{ address }
+												</span>
+											</>
+										) }
+									</>
+								) : (
+									<em>
+										{ __(
+											'No coordinates set',
+											'mapthread'
+										) }
+									</em>
+								) }
+							</div>
+						</div>
+					</div>
+				</div>
+			</div>
+		</>
+	);
 }

@@ -1,7 +1,7 @@
 /**
  * Map Marker Block
  *
- * @package Mapthread
+ * @package
  */
 
 import { registerBlockType } from '@wordpress/blocks';
@@ -13,6 +13,6 @@ import metadata from './block.json';
  * Register the Map Marker block
  */
 registerBlockType( metadata.name, {
-    edit: Edit,
-    save,
+	edit: Edit,
+	save,
 } );
