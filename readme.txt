@@ -5,7 +5,7 @@ Tags: map, gpx, travel, route, hiking
 Requires at least: 6.3
 Tested up to: 7.0
 Requires PHP: 7.4
-Stable tag: 1.6.1
+Stable tag: 1.6.2
 License: GPLv2 or later
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
 
@@ -214,6 +214,11 @@ This uses `@wordpress/scripts` (webpack) to compile the source files in `assets/
 
 == Changelog ==
 
+= 1.6.2 - 2026-05-21 =
+* Performance: Emit `preconnect` / `dns-prefetch` hints in `<head>` for each map's tile-server host (Mapbox, Thunderforest, JawgMaps, Stadia Maps, ArcGIS, OpenTopoMap, OpenStreetMap), and `preload as="fetch"` for each GPX file URL — downloads and DNS handshakes now overlap with HTML/script parsing instead of running sequentially.
+* Performance: Use WordPress 6.3+'s `strategy=defer` for the frontend script so it downloads in parallel with HTML parsing.
+* Changed: Minimum WordPress version raised to 6.3.
+
 = 1.6.1 - 2026-02-25 =
 * Added: Import named waypoints from GPX as Map Marker blocks — after uploading a GPX file, a button appears in the block editor to instantly create Map Marker blocks from any named `<wpt>` elements in the file. Already-imported waypoints are detected by coordinates and skipped to prevent duplicates.
 
@@ -330,6 +335,9 @@ This uses `@wordpress/scripts` (webpack) to compile the source files in `assets/
 * Performance optimizations
 
 == Upgrade Notice ==
+
+= 1.6.2 =
+Performance update — maps appear faster on cold page loads via resource hints (preconnect, preload) and script defer. Requires WordPress 6.3 or later.
 
 = 1.6.1 =
 GPX files with named waypoints can now be imported as Map Marker blocks in one click from the Map GPX block editor.

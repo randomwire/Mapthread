@@ -7,6 +7,18 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ---
 
+## [1.6.2] - 2026-05-21
+
+### Performance
+- Emit `preconnect` and `dns-prefetch` resource hints in `<head>` for the tile-server host of each Map GPX block's configured default layer (Mapbox, Thunderforest, JawgMaps, Stadia Maps, ArcGIS, OpenTopoMap, or OpenStreetMap). Hosts are deduplicated across blocks. Saves the cold DNS + TLS handshake (~150–300 ms) before the first tile request.
+- Emit `<link rel="preload" as="fetch" crossorigin>` for each Map GPX block's GPX file so the browser starts the download in parallel with HTML and script parsing instead of waiting for `fetch()` to run.
+- Switch the frontend script to WordPress 6.3+'s `strategy=defer` so the bundle downloads in parallel with HTML parsing instead of blocking at end-of-body.
+
+### Changed
+- Minimum WordPress version raised to **6.3** (released August 2023) to enable the script-loading-strategy API.
+
+---
+
 ## [1.6.1] - 2026-02-25
 
 ### Added
