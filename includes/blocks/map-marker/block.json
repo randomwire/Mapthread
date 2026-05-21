@@ -16,7 +16,8 @@
         },
         "title": {
             "type": "string",
-            "default": ""
+            "default": "",
+            "role": "content"
         },
         "lat": {
             "type": "number",
@@ -28,7 +29,8 @@
         },
         "address": {
             "type": "string",
-            "default": ""
+            "default": "",
+            "role": "content"
         },
         "zoom": {
             "type": "integer",
@@ -36,7 +38,8 @@
         },
         "emoji": {
             "type": "string",
-            "default": ""
+            "default": "",
+            "role": "content"
         }
     },
     "supports": {

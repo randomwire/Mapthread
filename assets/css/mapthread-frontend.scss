@@ -723,15 +723,15 @@ $shadow-lg: 0 3px 12px rgba(0, 0, 0, 0.4);
 // ============================================================================
 
 .mapthread-marker {
-    // Invisible scroll triggers
-    min-height: 0;
+    // Invisible scroll anchors — positioned absolutely at their static-flow
+    // location so they are removed from flex/block-gap participation (no dead
+    // space), while getBoundingClientRect() and scrollIntoView() still work.
+    position: absolute;
+    height: 0;
+    width: 0;
+    overflow: visible;
     margin: 0;
     padding: 0;
-
-    // Optional: Uncomment for debugging to see marker positions
-    // border-left: 3px solid rgba(231, 76, 60, 0.3);
-    // padding-left: 1rem;
-    // margin: 1.5rem 0;
 }
 
 .mapthread-map-gpx {
