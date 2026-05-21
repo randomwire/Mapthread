@@ -42,6 +42,9 @@ class Mapthread {
         // Enqueue frontend assets
         add_action( 'wp_enqueue_scripts', array( $this, 'enqueue_frontend_assets' ) );
 
+        // Emit performance resource hints (preconnect to tile hosts, preload GPX).
+        add_action( 'wp_head', array( $this, 'emit_resource_hints' ), 2 );
+
         // Localize block editor scripts with available layers.
         add_action( 'enqueue_block_editor_assets', array( $this, 'localize_editor_assets' ) );
 
@@ -99,13 +102,18 @@ class Mapthread {
             MAPTHREAD_VERSION
         );
 
-        // Enqueue plugin frontend JS (Leaflet is now bundled inside)
+        // Enqueue plugin frontend JS (Leaflet is now bundled inside).
+        // 'defer' lets the browser download the script in parallel with HTML
+        // parsing instead of blocking at end-of-body. Requires WP 6.3+.
         wp_enqueue_script(
             'mapthread-frontend',
             MAPTHREAD_PLUGIN_URL . 'build/mapthread-frontend.js',
             array(),
             MAPTHREAD_VERSION,
-            true
+            array(
+                'in_footer' => true,
+                'strategy'  => 'defer',
+            )
         );
 
         // Pass layers configuration to frontend JS.
@@ -125,6 +133,130 @@ class Mapthread {
             'mapthreadConfig',
             array( 'availableLayers' => $this->settings->get_available_layer_options() )
         );
+    }
+
+    /**
+     * Emit performance resource hints in <head>.
+     *
+     * - preconnect + dns-prefetch for each distinct tile-provider host in use
+     * - preload as=fetch for each GPX file URL on the page
+     *
+     * Runs only on singular views that actually contain Map GPX blocks.
+     */
+    public function emit_resource_hints() {
+        if ( ! is_singular() || ! $this->has_mapthread_blocks() ) {
+            return;
+        }
+
+        $gpx_blocks = $this->get_map_gpx_blocks();
+        if ( empty( $gpx_blocks ) ) {
+            return;
+        }
+
+        $hosts    = array();
+        $gpx_urls = array();
+        foreach ( $gpx_blocks as $block ) {
+            $attrs = isset( $block['attrs'] ) ? $block['attrs'] : array();
+
+            $layer = isset( $attrs['defaultMapLayer'] ) ? $attrs['defaultMapLayer'] : 'Street';
+            $host  = $this->get_tile_host_for_layer( $layer );
+            if ( $host ) {
+                $hosts[ $host ] = true;
+            }
+
+            $attachment_id = isset( $attrs['attachmentId'] ) ? absint( $attrs['attachmentId'] ) : 0;
+            if ( $attachment_id ) {
+                $url = wp_get_attachment_url( $attachment_id );
+                if ( $url ) {
+                    $gpx_urls[ $url ] = true;
+                }
+            }
+        }
+
+        foreach ( array_keys( $hosts ) as $host ) {
+            printf(
+                '<link rel="preconnect" href="%s" crossorigin>' . "\n",
+                esc_url( $host )
+            );
+            printf(
+                '<link rel="dns-prefetch" href="%s">' . "\n",
+                esc_url( $host )
+            );
+        }
+
+        foreach ( array_keys( $gpx_urls ) as $url ) {
+            printf(
+                '<link rel="preload" as="fetch" href="%s" crossorigin>' . "\n",
+                esc_url( $url )
+            );
+        }
+    }
+
+    /**
+     * Map a stored defaultMapLayer attribute value to the tile-server host.
+     *
+     * @param string $layer_name Layer attribute value (e.g. "Mapbox Outdoors").
+     * @return string|null Host (with scheme), or null if no match.
+     */
+    private function get_tile_host_for_layer( $layer_name ) {
+        $free_hosts = array(
+            'Street'      => 'https://tile.openstreetmap.org',
+            'Satellite'   => 'https://server.arcgisonline.com',
+            'Topographic' => 'https://tile.opentopomap.org',
+        );
+        if ( isset( $free_hosts[ $layer_name ] ) ) {
+            return $free_hosts[ $layer_name ];
+        }
+
+        $provider_hosts = array(
+            'Mapbox '        => 'https://api.mapbox.com',
+            'Thunderforest ' => 'https://tile.thunderforest.com',
+            'JawgMaps '      => 'https://tile.jawg.io',
+            'Stadia Maps '   => 'https://tiles.stadiamaps.com',
+        );
+        foreach ( $provider_hosts as $prefix => $host ) {
+            if ( 0 === strpos( $layer_name, $prefix ) ) {
+                return $host;
+            }
+        }
+
+        return null;
+    }
+
+    /**
+     * Collect all Map GPX blocks in the current post (recursive through innerBlocks).
+     *
+     * @return array Array of parsed block arrays.
+     */
+    private function get_map_gpx_blocks() {
+        global $post;
+        if ( ! $post ) {
+            return array();
+        }
+        return $this->find_blocks( parse_blocks( $post->post_content ), 'mapthread/map-gpx' );
+    }
+
+    /**
+     * Recursively collect blocks of a given name.
+     *
+     * @param array  $blocks     Parsed blocks.
+     * @param string $block_name Block name to match.
+     * @return array
+     */
+    private function find_blocks( $blocks, $block_name ) {
+        $matched = array();
+        foreach ( $blocks as $block ) {
+            if ( isset( $block['blockName'] ) && $block['blockName'] === $block_name ) {
+                $matched[] = $block;
+            }
+            if ( ! empty( $block['innerBlocks'] ) ) {
+                $matched = array_merge(
+                    $matched,
+                    $this->find_blocks( $block['innerBlocks'], $block_name )
+                );
+            }
+        }
+        return $matched;
     }
 
     /**
